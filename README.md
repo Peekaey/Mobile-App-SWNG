@@ -2,7 +2,7 @@
   <img width="" height="150" src="https://www.swng.org.au/wp-content/uploads/2019/07/top_logo-1.png">
 </p>
 
-# South West Networking Group Mobile App
+# South West Networking Group Mobile App v2
 
 Framework tools used
 - create-expo-app

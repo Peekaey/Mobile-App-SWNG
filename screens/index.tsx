@@ -1,17 +1,65 @@
 
 import { StyleSheet, Image } from 'react-native';
 import { Text, View } from '../components/Themed';
+const WordPressAPI = 'https://example.com/wp-json/wp/v2/posts?_embed&per_page=5';
 
+
+import axios, { AxiosResponse, AxiosError } from 'axios';
+import cheerio from 'cheerio';
+
+
+
+import { CamdenChapter } from '../components/ChapterMeetingDetails';
+import { CampbelltownChapter } from '../components/ChapterMeetingDetails';
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
+
 export default function IndexPage() {
 
-  // Anything in return is content displayed on the page
+// Flag for the chapter to scrape
+var Chapter = 'campbelltown'
+
+// Chapter Webpage to Scrape
+const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;
+
+axios.get(url)
+.then((response: any) => {
+  const html = response.data;
+  const $ = cheerio.load(html);
+  
+    // Grabbing Event Title
+    const firstHref = $('div.columns div.column:first-child a:first-child').text();
+    console.log('Event Title: ' + firstHref);
+
+    // Extracting event date
+    const eventDate = $('h3').text().trim();
+    const firstH3Text = $('div.columns div.column:first-child h3:first-of-type').text();
+    console.log('Event Date: ' + firstH3Text);
+
+    // Extracting venue information
+    const venueText = $('div.columns div.column:first-child strong:contains("Venue:")')[0].nextSibling.nodeValue.trim();
+    console.log('Venue: ' + venueText);
+
+    // Extracting Venue Time
+    const eventTimes = $('div.column:nth-child(1) > h3:nth-child(2)').map((i, el) => {
+      const time = $(el).next().text().trim().split(':')[1]; // extract the time from the element
+      return time;
+    }).get();
+    console.log('Event Time:' + eventTimes);
+  })
+  .catch((error:any)=> {
+    console.error(error);
+  });
+
+
+
+
+
   return (
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <Image style  = {styles.image
       } source={require('../assets//thumbnail_SWNG-white.png')} />
-      <Text> Index Page</Text>
+
 </View>
   );
 

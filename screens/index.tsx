@@ -11,103 +11,252 @@ import cheerio from 'cheerio';
 
 import { CamdenChapter } from '../components/ChapterMeetingDetails';
 import { CampbelltownChapter } from '../components/ChapterMeetingDetails';
+
+import * as React from "react";
+import { Pressable } from "react-native";
+import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useNavigation, ParamListBase } from '@react-navigation/native';
+
+
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
 
 export default function IndexPage() {
-
-// Flag for the chapter to scrape
-var Chapter = 'campbelltown'
-
-// Chapter Webpage to Scrape
-const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;
-
-axios.get(url)
-.then((response: any) => {
-  const html = response.data;
-  const $ = cheerio.load(html);
-  
-    // Grabbing Event Title
-    const firstHref = $('div.columns div.column:first-child a:first-child').text();
-    console.log('Event Title: ' + firstHref);
-
-    // Extracting event date
-    const eventDate = $('h3').text().trim();
-    const firstH3Text = $('div.columns div.column:first-child h3:first-of-type').text();
-    console.log('Event Date: ' + firstH3Text);
-
-    // Extracting venue information
-    const venueText = $('div.columns div.column:first-child strong:contains("Venue:")')[0].nextSibling.nodeValue.trim();
-    console.log('Venue: ' + venueText);
-
-    // Extracting Venue Time
-    const eventTimes = $('div.column:nth-child(1) > h3:nth-child(2)').map((i, el) => {
-      const time = $(el).next().text().trim().split(':')[1]; // extract the time from the element
-      return time;
-    }).get();
-    console.log('Event Time:' + eventTimes);
-  })
-  .catch((error:any)=> {
-    console.error(error);
-  });
-
-
-
-
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Image style  = {styles.image
-      } source={require('../assets//thumbnail_SWNG-white.png')} />
-
-</View>
-  );
+    <View style={styles.home}>
+    <Text style={styles.editProfile}>Edit Profile</Text>
+    <Text style={styles.phoneNumber}>Phone Number</Text>
+    <Image
+      style={styles.arrowLeftIcon}
+      resizeMode="cover"
+      source={require("../assets/arrowleft.png")}
+    />
+    <Image
+      style={styles.ushareAltIcon}
+      resizeMode="cover"
+      source={require("../assets/usharealt.png")}
+    />
+    <Image
+      style={styles.swngLogoTransparentCmyk12}
+      resizeMode="cover"
+      source={require("../assets/swng-logo-transparent-cmyk1-2.png")}
+    />
+    <Image
+      style={styles.swngLogoTransparentCmyk12}
+      resizeMode="cover"
+      source={require("../assets/swng-logo-transparent-cmyk1-2.png")}
+    />
+    <Image
+      style={[styles.homeChild, styles.homeChildPosition]}
+      resizeMode="cover"
+      source={require("../assets/rectangle-8.png")}
+    />
+    <Image
+      style={[styles.homeChild, styles.homeChildPosition]}
+      resizeMode="cover"
+      source={require("../assets/rectangle-8.png")}
+    />
+    <Pressable
+      style={[styles.messeage, styles.tickLayout]}
+      onPress={() => navigation.navigate("RapPage")}
+    >
+      <Image
+        style={styles.icon}
+        resizeMode="cover"
+        source={require("../assets/messeage.png")}
+      />
+    </Pressable>
+    <Image
+      style={[styles.homeIcon, styles.starLayout]}
+      resizeMode="cover"
+      source={require("../assets/home-icon.png")}
+    />
+    <Pressable
+      style={[styles.star, styles.starLayout]}
+      onPress={() => navigation.navigate("RapPage")}
+    >
+      <Image
+        style={styles.icon}
+        resizeMode="cover"
+        source={require("../assets/star.png")}
+      />
+    </Pressable>
+    <Pressable
+      style={[styles.tick, styles.tickLayout]}
+      onPress={() => navigation.navigate("AttendancePage")}
+    >
+      <Image
+        style={styles.icon}
+        resizeMode="cover"
+        source={require("../assets/tick.png")}
+      />
+    </Pressable>
+    <Text
+      style={[styles.upcomingEvent, styles.seeMoreTypo]}
+    >{`Upcoming Event `}</Text>
+    <Image
+      style={[styles.homeInner, styles.homeInnerPosition]}
+      resizeMode="cover"
+      source={require("../assets/line-1.png")}
+    />
+    <Image
+      style={[styles.rectangleIcon, styles.homeInnerPosition]}
+      resizeMode="cover"
+      source={require("../assets/rectangle-43.png")}
+    />
+    <Image
+      style={[styles.image1Icon, styles.homeChildPosition]}
+      resizeMode="cover"
+      source={require("../assets/image-1.png")}
+    />
+    <Text style={[styles.seeMore, styles.seeMoreTypo]}>{`See More `}</Text>
+    <Image
+      style={styles.unsplashjmurdhtm7ngIcon}
+      resizeMode="cover"
+      source={require("../assets/unsplashjmurdhtm7ng.png")}
+    />
+  </View>
+);
 
 }
 
 // More Styling
 const styles = StyleSheet.create({
-  container: {
+  homeChildPosition: {
+    width: 414,
+    left: 0,
+    position: "absolute",
+  },
+  tickLayout: {
+    height: 50,
+    width: 50,
+    top: 835,
+    position: "absolute",
+  },
+  starLayout: {
+    height: 58,
+    width: 58,
+    position: "absolute",
+  },
+  seeMoreTypo: {
+    fontFamily: FontFamily.poppinsBold,
+    fontWeight: "700",
+    fontSize: 19,
+    color: Color.black,
+    textAlign: "left",
+    position: "absolute",
+  },
+  homeInnerPosition: {
+    left: 31,
+    position: "absolute",
+  },
+  editProfile: {
+    left: 155,
+    fontSize: FontSize.size_mini,
+    fontWeight: "600",
+    fontFamily: FontFamily.poppinsSemibold,
+    color: Color.white,
+    textAlign: "left",
+    top: 54,
+    position: "absolute",
+  },
+  phoneNumber: {
+    top: 462,
+    left: 36,
+    fontSize: FontSize.size_sm,
+    fontWeight: "500",
+    fontFamily: FontFamily.poppinsMedium,
+    display: "none",
+    color: Color.black,
+    textAlign: "left",
+    position: "absolute",
+  },
+  arrowLeftIcon: {
+    top: 50,
+    left: 17,
+    width: 26,
+    height: 30,
+    position: "absolute",
+  },
+  ushareAltIcon: {
+    top: 47,
+    left: 350,
+    width: 21,
+    height: 21,
+    position: "absolute",
+    overflow: "hidden",
+  },
+  swngLogoTransparentCmyk12: {
+    left: 4,
+    borderRadius: Border.br_23xl,
+    width: 184,
+    height: 84,
+    top: 54,
+    position: "absolute",
+  },
+  homeChild: {
+    top: 831,
+    height: 65,
+  },
+  icon: {
+    height: "100%",
+    width: "100%",
+  },
+  messeage: {
+    left: 224,
+  },
+  homeIcon: {
+    top: 837,
+    left: 19,
+  },
+  star: {
+    left: 115,
+    top: 835,
+    width: 58,
+  },
+  tick: {
+    left: 330,
+  },
+  upcomingEvent: {
+    top: 169,
+    left: 106,
+    width: 336,
+    height: 57,
+  },
+  homeInner: {
+    top: 206,
+    width: 323,
+    height: 3,
+  },
+  rectangleIcon: {
+    top: 256,
+    width: 337,
+    height: 243,
+  },
+  image1Icon: {
+    top: 677,
+    height: 154,
+  },
+  seeMore: {
+    top: 513,
+    left: 276,
+    width: 136,
+    height: 61,
+  },
+  unsplashjmurdhtm7ngIcon: {
+    top: 65,
+    left: 316,
+    width: 67,
+    height: 68,
+    position: "absolute",
+  },
+  home: {
+    backgroundColor: Color.white,
     flex: 1,
-    alignItems: 'center',
-  },
-  image: {
-    marginTop: '5%',
-    marginBottom: '5%',
-    resizeMode: 'contain',
-    height: '20%',
-    width: '80%'
-    
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '50%',
-  },
-  input: {
-    width: '80%',
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#c11717',
-    width: '80%',
-    height: 50,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    height: 896,
+    overflow: "hidden",
+    width: "100%",
   },
 });

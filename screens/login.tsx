@@ -13,6 +13,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Nav from '../App';
 
 
+import {  Pressable } from "react-native";
+
+import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+
+
 
 
 export default function LoginScreen() {
@@ -100,4 +105,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

@@ -15,7 +15,7 @@ import LoginScreen from './screens/login';
 import IndexPage from './screens/index';
 import ReferralsPage from './screens/referrals';
 import AttendancePage from './screens/attendance';
-
+import RapPage from './screens/rap';
 
 const Tab = createBottomTabNavigator();
 // Function underneath is the styling of the bottom navigation bar, including icons
@@ -61,9 +61,10 @@ const HomeTabs = () => {
 
        {/* Navigation component - each new screen will need to be defined here for the router to be able to navigate to that screen */}
       <Tab.Screen name='LoginPage' component={LoginScreen} options={{ headerShown: false}} />
-      <Tab.Screen name='IndexPage' component={IndexPage} />
-      <Tab.Screen name='ReferralsPage' component={ReferralsPage} />
-      <Tab.Screen name='AttendancePage' component={AttendancePage} />
+      <Tab.Screen name='IndexPage' component={IndexPage} options={{ headerShown: false}} />
+      <Tab.Screen name='ReferralsPage' component={ReferralsPage} options={{ headerShown: false}}/>
+      <Tab.Screen name='AttendancePage' component={AttendancePage} options={{ headerShown: false}}/>
+      <Tab.Screen name='RapPage' component={RapPage} options={{ headerShown: false}} />
     </Tab.Navigator>
   );
 };

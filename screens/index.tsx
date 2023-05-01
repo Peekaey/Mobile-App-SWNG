@@ -19,7 +19,7 @@ import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 
   
 // Flag for the chapter to scrape
-var Chapter = 'Camden'
+var Chapter = 'Campbelltown'
 
 // Chapter Webpage to Scrape
 const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;
@@ -41,7 +41,7 @@ export default function IndexPage() {
 
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containerHead}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <Text style={styles.title } > Upcoming Event </Text> 
       <Text style={styles.title } > {Chapter} Chapter </Text> 
@@ -111,19 +111,27 @@ const GreyBox = () => {
       console.log('Called');
       Linking.openURL(eventURL);
     };
+    const ApologyButton = () => {
+      console.log('HitTheApologyButton');
 
+    };
 
   return (
-  <View style={styles.container}>
+  <View style={styles.containerBody}>
       <View style={styles.middleBox}>
         <Text style={styles.centeredBoxText}> {eventTitle} </Text>
         <Text style={styles.centeredBoxText}>{"\n"}Time: {eventTimes}:00  </Text>
         <Text style={styles.centeredBoxText}>Date: {eventDate}  </Text>
         <Text style={styles.centeredBoxText}>Venue: {venueText}  </Text>
       </View>
+      <View style={styles.buttonContainer}>
       <TouchableWithoutFeedback onPress={OpenEventDetails}>
-      <Text style={styles.RightBoxText}>SEE MORE</Text>
+      <Text style={styles.LeftBoxText}>SEE MORE</Text>
       </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={ApologyButton}>
+      <Text style={styles.RightBoxText}>Apology</Text>
+      </TouchableWithoutFeedback>
+      </View>
       </View>
   );
 };
@@ -171,16 +179,17 @@ const RedBox = () => {
 
   return (
     <View style={styles.bottomBox}>
+        <Text style={[styles.contactText, { textAlignVertical: 'top' }]}> Contact SWNG! </Text>
     <View style={styles.gridRow}>
       <View style={styles.chapterContainer}>
         <TouchableWithoutFeedback onPress={OpenBrowserCamden}>
         <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
         </TouchableWithoutFeedback >
-        <Text style={styles.chapterTitle}>CAMDEN CHAPTER
+        <Text style={styles.chapterTitle}>CAMDEN {'\n'}
         President: {'\n'}
-        David Young
+        David Young {'\n'}
         Phone: {'\n'}
-        0450525005
+        0450525005 {'\n'}
         </Text>
  
       </View>
@@ -188,11 +197,11 @@ const RedBox = () => {
       <TouchableWithoutFeedback onPress={OpenBrowserCampbelltown}>
         <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
       </TouchableWithoutFeedback>
-        <Text style={styles.chapterTitle}>CAMPBELLTOWN CHAPTER
+        <Text style={styles.chapterTitle}>CAMPBELLTOWN {'\n'}
         President: {'\n'}
-        Wendy White
+        Wendy White {'\n'}
         Phone: {'\n'}
-        0409 228 149
+        0409 228 149 {'\n'}
         </Text>
       </View>
     </View>
@@ -201,9 +210,9 @@ const RedBox = () => {
         <TouchableWithoutFeedback onPress={OpenBrowserLiverpool}>
         <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
         </TouchableWithoutFeedback>
-        <Text style={styles.chapterTitle}>LIVERPOOL CHAPTER
+        <Text style={styles.chapterTitle}>LIVERPOOL {'\n'}
         President: {'\n'}
-        Rolf Fuchs
+        Rolf Fuchs {'\n'}
         Phone: {'\n'}
         0404 840 506
         </Text>
@@ -212,11 +221,14 @@ const RedBox = () => {
         <TouchableWithoutFeedback onPress={OpenBrowserNarellan}>
         <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
         </TouchableWithoutFeedback>
-        <Text style={styles.chapterTitle}>NARELLAN CHAPTER
+        <Text style={styles.chapterTitle}>NARELLAN {'\n'}
         President: {'\n'}
-        Darrel Stenhouse
+        Darrel Stenhouse {'\n'}
         Phone: {'\n'}
-        0438 789 455
+        0438 789 455 {'\n'}
+        </Text>
+        <Text>
+          
         </Text>
       </View>
     </View>
@@ -231,7 +243,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  
+  containerHead: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  containerBody: {
+
+  },
   title: {
     fontSize: 31,
     fontWeight: 'bold',
@@ -252,11 +270,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
   },
-  RightBoxText: {
-    textAlign:'right',
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+
+  },
+  LeftBoxText: {
+    textAlign:'left',
     fontSize: 22 ,
     fontWeight: 'bold',
   },
+  RightBoxText: {
+    textAlign:'left',
+    fontSize: 22,
+    fontWeight: 'bold',
+    backgroundColor: '#d93b39', // change this to your preferred shade of grey
+    color: 'white',
+  },
+
   gridItemBodyText: {
     flexBasis: '50%',
     height: 80,
@@ -277,6 +308,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    MarginTop: 100
   },
   gridRow: {
     width: '100%',
@@ -299,12 +331,24 @@ const styles = StyleSheet.create({
     height: 80,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'grey',
+    backgroundColor: 'transparent',
     marginHorizontal: 5,
     paddingLeft: 10,
     paddingRight: 10,
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 13,
+  },
+  chapterBody: {
+    flexBasis: '80%',
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    marginHorizontal: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    color: 'white',
     fontSize: 13,
   },
   chapterArrow: {
@@ -313,8 +357,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 5, // add some margin between arrow and title
     backgroundColor: 'transparent'
   },
+  contactText: {
+    position: 'absolute',
+    top: -20,
+    left: 0,
+    right: 0,
 
+    backgroundColor: '#fff',
+    zIndex: 1,
 
+  }
 
 
 });

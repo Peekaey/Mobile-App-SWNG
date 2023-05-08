@@ -18,18 +18,22 @@ import ReferralsPage from './screens/referrals';
 import AttendancePage from './screens/attendance';
 import RapPage from './screens/rap';
 import ProfilePage from './screens/profile';
+import LoadingPage from './screens/loading';
 import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
 
 
 
 export const homeRoutes = [
+  { name: 'Loading', component: LoadingPage },
   { name: 'Login', component: LoginScreen },
   { name: 'Home', component: IndexPage },
+  { name: 'Profile', component: ProfilePage },
   { name: 'Rap', component: RapPage },
   { name: 'Referrals', component: ReferralsPage },
   { name: 'Attendance', component: AttendancePage },
-  { name: 'Profile', component: ProfilePage }
+
+
 ];
 
 
@@ -63,7 +67,9 @@ const HomeTabs = () => {
           if (route.name === 'Attendance') {
             iconName = focused ? 'calendar' : 'calendar-outline';
           }
-
+          if (route.name === 'Loading') {
+            iconName = focused ? 'person-circle' : 'person-circle-outline';
+          }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -71,14 +77,16 @@ const HomeTabs = () => {
         tabBarInactiveTintColor: 'white',
         tabBarStyle: {
         // Hides the bottom navigation bar for the LoginPage screen
-          display: route.name === 'Login' ? 'none' : 'flex',
+          display: (route.name === 'Login' || route.name === 'Loading') ? 'none' : 'flex',
           backgroundColor: 'grey'
         },
         
         // Removes the screen from the navigation bar - include the page name for each new screen that you don't want the nav bar
         tabBarButton: [
+          'Loading',
           'Login',
-          'Profile'
+          'Profile',
+
         ].includes(route.name)
         ? () => {
           return null;
@@ -109,10 +117,14 @@ export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
 
   const currentPage = route?.name;
 
+  if (!route || !currentPage || currentPage === 'Loading') {
+    return null;
+  }
 
   if (!route || !currentPage || currentPage === 'Login') {
     return null;
   }
+
 
   return (
     <SafeAreaView edges={['top']} style={{ backgroundColor: 'white'   }}>

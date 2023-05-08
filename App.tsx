@@ -44,7 +44,7 @@ const HomeTabs = () => {
 
 
   return (
-    <Tab.Navigator tabBar={props => <BottomTabBar {...props} state={{...props.state, routes: props.state.routes.slice(0,6)}}></BottomTabBar>}
+    <Tab.Navigator tabBar={props => <BottomTabBar {...props} state={{...props.state, routes: props.state.routes.slice(0,7)}}></BottomTabBar>}
       initialRouteName='Login'
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -67,9 +67,7 @@ const HomeTabs = () => {
           if (route.name === 'Attendance') {
             iconName = focused ? 'calendar' : 'calendar-outline';
           }
-          if (route.name === 'Loading') {
-            iconName = focused ? 'person-circle' : 'person-circle-outline';
-          }
+
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },

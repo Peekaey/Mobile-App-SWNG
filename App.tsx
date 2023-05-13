@@ -10,7 +10,6 @@ import { ApplicationProvider, Layout} from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
 // Import each new screen when it is created so the navigator can read it
 import LoginScreen from './screens/login';
 import IndexPage from './screens/index';

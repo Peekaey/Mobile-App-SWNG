@@ -1,8 +1,8 @@
-
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, } from 'react-native';
-
 import { Text, View } from '../components/Themed';
+import { SelectList } from 'react-native-dropdown-select-list';
+import React from 'react';
 
 
 export default function AttendancePage() {

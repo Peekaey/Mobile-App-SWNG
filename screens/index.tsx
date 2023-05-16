@@ -15,20 +15,17 @@ import { TouchableOpacity} from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
 
+import { Chapter, swngURL } from './loading';
 
+import {
+  getEventTitle,
+  getEventDate,
+  getVenueText,
+  getEventTimes,
+  getEventURL,
+} from './loading';
 
   
-// Flag for the chapter to scrape
-var Chapter = 'Campbelltown'
-
-// Chapter Webpage to Scrape
-const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;
-const swngURL: string = 'https://www.swng.org.au/';
-
-// Declaring Variables to Store Web Data
-
-
-
 
 
 
@@ -60,61 +57,23 @@ export default function IndexPage() {
 }
 
 
-const GreyBox = () => {
-  const [eventTitle, seteventTitle] = useState('');
-  const [eventDate, seteventDate] = useState('');
-  const [venueText, setvenueText] = useState('');
-  const [eventTimes, seteventTimes] = useState('');
-  const [eventURL, seteventURL] = useState('');
+export const GreyBox = () => {
+  
+  const eventTitle = getEventTitle();
+  const eventTimes = getEventTimes();
+  const eventDate = getEventDate();
+  const venueText = getVenueText();
 
-  axios.get(url)
-  .then((response: any) => {
-    const html = response.data;
-    const $ = cheerio.load(html);
-    
-      // Grabbing Event Title
-      var eventTitle = $('div.columns div.column:first-child a:first-child').text();
-      // console.log('Event Title: ' + eventTitle);
-      seteventTitle(eventTitle);
+  if (!eventTitle || !eventTimes || !eventDate || !venueText) {
+    // Render loading state or return null
+    return null;
+  }
 
-      // Extracting event date
-      var eventDate = $('div.columns div.column:first-child h3:first-of-type').text();
-      // console.log('Event Date: ' + eventDate);
-      seteventDate(eventDate);
+  console.log(eventTitle)
+  console.log(eventTimes)
+  console.log(eventDate)
+  console.log(venueText)
 
-      // Extracting venue information
-      var venueText = $('div.columns div.column:first-child strong:contains("Venue:")')[0].nextSibling.nodeValue.trim();
-      // console.log('Venue: ' + venueText);
-      setvenueText(venueText);
-
-      // Extracting Venue Time
-      var eventTimes = $('div.column:nth-child(1) > h3:nth-child(2)').map((i, el) => {
-        const time = $(el).next().text().trim().split(':')[1]; // extract the time from the element
-        return time;
-      }).get();
-      // console.log('Event Time:' + eventTimes);
-      seteventTimes(eventTimes.join(', '));
-
-      // Extracting Event ReadMore
-      const EventDetailsURL = $('div.column:nth-child(1) > a:nth-child(5)').attr('href');
-      seteventURL(EventDetailsURL)
-
-      console.log('EventURL' + EventDetailsURL)
-
-    })
-    .catch((error:any)=> {
-      console.error(error);
-    });
-
-
-    const OpenEventDetails = () => {
-      console.log('Called');
-      Linking.openURL(eventURL);
-    };
-    const ApologyButton = () => {
-      console.log('HitTheApologyButton');
-
-    };
 
   return (
   <View style={styles.containerBody}>
@@ -125,12 +84,12 @@ const GreyBox = () => {
         <Text style={styles.centeredBoxText}>Venue: {venueText}  </Text>
       </View>
       <View style={styles.buttonContainer}>
-      <TouchableWithoutFeedback onPress={OpenEventDetails}>
+      {/* <TouchableWithoutFeedback onPress={OpenEventDetails}> */}
       <Text style={styles.LeftBoxText}>SEE MORE</Text>
-      </TouchableWithoutFeedback>
-      <TouchableWithoutFeedback onPress={ApologyButton}>
+      {/* </TouchableWithoutFeedback> */}
+      {/* <TouchableWithoutFeedback onPress={ApologyButton}> */}
       <Text style={styles.RightBoxText}>Apology</Text>
-      </TouchableWithoutFeedback>
+      {/* </TouchableWithoutFeedback> */}
       </View>
       </View>
   );

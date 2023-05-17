@@ -21,8 +21,7 @@ export default function AttendancePage() {
   return (
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Image style={styles.image} source={require('../assets/thumbnail_SWNG-white.png')} />
-      <Text style={styles.title}>Attendance Page</Text>
+      <Text style={styles.title}>Attendance List </Text>
       {names.map((name, index) => (
         <View key={index} style={styles.row}>
           <Text style={[styles.name, attendance[index] && styles.absent]}>{name}</Text>
@@ -38,38 +37,42 @@ export default function AttendancePage() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 20,
+    paddingTop: 50, 
+    paddingBottom: 50, 
+    backgroundColor: 'white',
   },
-  image: {
-    marginTop: '5%',
-    marginBottom: '5%',
-    resizeMode: 'contain',
-    height: '20%',
-    width: '80%',
-  },
+
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 20,
     textAlign: 'center',
   },
+
   separator: {
-    marginVertical: 30,
+    marginVertical: 20,
     height: 1,
     width: '50%',
   },
+
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 10,
   },
   name: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 18,
+    textAlign: 'left',
+    marginLeft: 10,
   },
   absent: {
     color: 'red',
@@ -90,11 +93,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#c11717',
-    width: '80%',
+    width: '50%',
     height: 50,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 30,
   },
   buttonText: {
     color: '#fff',

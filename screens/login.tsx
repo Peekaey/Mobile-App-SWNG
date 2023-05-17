@@ -1,4 +1,5 @@
-import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, } from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Text, View } from '../components/Themed';
 
@@ -11,6 +12,11 @@ import { useNavigation, ParamListBase } from '@react-navigation/native';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Nav from '../App';
+import axios from 'axios';
+
+
+
+
 
 
 
@@ -20,11 +26,38 @@ export default function LoginScreen() {
   
 
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-
-  // const Stack = createNativeStackNavigator();
-
-  // const navigation = useNavigation();
   navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+
+  const handleLogin = async () => {
+
+    try {
+      const response = await axios.post('https://www.swng.org.au/wp-json/jwt-auth/v1/token', {
+        username,
+        password,
+      });
+  
+      const token = response.data.token; // Retrieve the JWT token from the API response
+      await AsyncStorage.setItem('token', token);
+      //
+
+
+
+
+
+      
+      // Perform any necessary actions after successful authentication, such as navigating to a new screen
+      console.log('JWT SWNG Token' + token)
+      navigation.navigate('Loading' as never);
+    } catch (error) {
+      // Handle login error
+      console.log(error);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -34,21 +67,22 @@ export default function LoginScreen() {
 
       } source={require('../assets//thumbnail_SWNG-white.png')} />
       <Text></Text>
-      <TextInput placeholder="Username" style={styles.input}/>
-      <TextInput placeholder="Password" style={styles.input}/>  
-<TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Loading' as never)}   >
-<Text style={styles.buttonText} >Login</Text>
-</TouchableOpacity>
-<Text style = {styles.poweredBy}> Powered By </Text>
-<Image style  = {styles.mobileAppsLogo} source={require('../assets/MobileAppsManLogo.png')} />
+      <TextInput placeholder="Username" style={styles.input} value ={username} onChangeText={text => setUsername(text)}/>
+      <TextInput placeholder="Password" style={styles.input} value ={password} onChangeText={text => setPassword(text)}/>  
+      <TouchableOpacity style={styles.button} onPress={handleLogin}   >
+      <Text style={styles.buttonText} >Login</Text>
+      </TouchableOpacity>
+      <Text style = {styles.poweredBy}> Powered By </Text>
+      <Image style  = {styles.mobileAppsLogo} source={require('../assets/MobileAppsManLogo.png')} />
 
 
 </View>
   );
-
-
-  
 }
+
+
+
+
 
 
 const styles = StyleSheet.create({

@@ -228,6 +228,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     height: 1,
     width: '50%',
+    backgroundColor: 'white',
   },
   
   middleBox: {

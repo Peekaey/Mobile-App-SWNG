@@ -31,8 +31,14 @@ export default function LoginScreen() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const [errorMessage, setError] = useState('');
+
+  const [isLoading, setLoading] = useState(false); // New state variable
+
 
   const handleLogin = async () => {
+
+    setLoading(true); // Start the loading process
 
     try {
       const response = await axios.post('https://www.swng.org.au/wp-json/jwt-auth/v1/token', {
@@ -40,43 +46,59 @@ export default function LoginScreen() {
         password,
       });
   
-      const token = response.data.token; // Retrieve the JWT token from the API response
+      const token = response.data.token; 
       await AsyncStorage.setItem('token', token);
-      //
 
 
+      // This is how you store/call the session token
+      const localstoragetoken = await AsyncStorage.getItem('token');
+      console.log("LocalStorageToken",localstoragetoken);
 
 
 
       
       // Perform any necessary actions after successful authentication, such as navigating to a new screen
-      console.log('JWT SWNG Token' + token)
+
       navigation.navigate('Loading' as never);
     } catch (error) {
       // Handle login error
       console.log(error);
+      setError('Invalid username or password');
+    } finally {
+      setLoading(false); // Reset the loading state
     }
   };
 
 
   return (
     <View style={styles.container}>
-
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Image style  = {styles.image
-
-      } source={require('../assets//thumbnail_SWNG-white.png')} />
+      <Image style={styles.image} source={require('../assets//thumbnail_SWNG-white.png')} />
       <Text></Text>
-      <TextInput placeholder="Username" style={styles.input} value ={username} onChangeText={text => setUsername(text)}/>
-      <TextInput placeholder="Password" style={styles.input} value ={password} onChangeText={text => setPassword(text)}/>  
-      <TouchableOpacity style={styles.button} onPress={handleLogin}   >
-      <Text style={styles.buttonText} >Login</Text>
+      {errorMessage !== '' && <Text style={styles.errorMessage}>{errorMessage}</Text>}
+      <TextInput
+        placeholder="Username"
+        style={styles.input}
+        value={username}
+        onChangeText={(text) => setUsername(text)}
+      />
+      <TextInput
+        placeholder="Password"
+        style={styles.input}
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+        secureTextEntry // Use asterisks instead of plain text
+      />
+      <TouchableOpacity
+        style={[styles.button, isLoading && styles.disabledButton]} // Disable button style if loading
+        onPress={handleLogin}
+        disabled={isLoading} // Disable button if loading
+      >
+        <Text style={styles.buttonText}>{isLoading ? 'Logging In...' : 'Login'}</Text>
       </TouchableOpacity>
-      <Text style = {styles.poweredBy}> Powered By </Text>
-      <Image style  = {styles.mobileAppsLogo} source={require('../assets/MobileAppsManLogo.png')} />
-
-
-</View>
+      <Text style={styles.poweredBy}> Powered By </Text>
+      <Image style={styles.mobileAppsLogo} source={require('../assets/MobileAppsManLogo.png')} />
+    </View>
   );
 }
 
@@ -99,7 +121,6 @@ const styles = StyleSheet.create({
     
   },
   mobileAppsLogo: {
-
     marginBottom: '5%',
     resizeMode: 'contain',
     height: '10%',
@@ -143,6 +164,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errorMessage: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 

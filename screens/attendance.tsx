@@ -43,14 +43,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingHorizontal: 20,
-    paddingTop: 50, 
-    paddingBottom: 50, 
     backgroundColor: 'white',
   },
 
   title: {
-    fontSize: 24,
+    fontSize: 31,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',

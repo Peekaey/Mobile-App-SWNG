@@ -1,7 +1,7 @@
 import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, } from 'react-native';
 
 import { Text, View } from '../components/Themed';
-import logo from '../assets/favicon.png'
+
 import React, { useState } from 'react';
 import { ScreenStackHeaderSearchBarView } from 'react-native-screens';
 import { Navigator } from 'expo-router';
@@ -46,6 +46,9 @@ export default function LoginScreen() {
 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Loading' as never)}   >
 <Text style={styles.buttonText} >Login</Text>
 </TouchableOpacity>
+<Text style = {styles.poweredBy}> Powered By </Text>
+<Image style  = {styles.mobileAppsLogo} source={require('../assets/MobileAppsManLogo.png')} />
+
 
 </View>
   );
@@ -67,6 +70,21 @@ const styles = StyleSheet.create({
     height: '20%',
     width: '80%'
     
+  },
+  mobileAppsLogo: {
+
+    marginBottom: '5%',
+    resizeMode: 'contain',
+    height: '10%',
+    width: '50%'
+  },
+  poweredBy: {
+    height: '10%',
+    width: '50%',
+    textAlign: 'center',
+    marginTop: '20%',
+    paddingTop: '15%',
+    fontSize: 14,
   },
   title: {
     fontSize: 20,

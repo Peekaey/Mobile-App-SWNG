@@ -21,18 +21,18 @@ export default function ProfilePage() {
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}> Username</Text>
-      <TextInput placeholder="Username" style={styles.input}> johnappleseed@gmail.com </TextInput>
+      <TextInput placeholder="Username" style={styles.input}>  </TextInput>
       </View>
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}> Phone Number</Text>
-      <TextInput placeholder="Password" style={styles.input}> 00 0000 0000 </TextInput>
+      <TextInput placeholder="Password" style={styles.input}>  </TextInput>
       </View>
 
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}> Password</Text>
-      <TextInput placeholder="Password" style={styles.input}> **** </TextInput>
+      <TextInput placeholder="Password" style={styles.input}>  </TextInput>
       </View>
 <View style={styles.centeredContainer}>
 <TouchableOpacity style={styles.button}>
@@ -67,10 +67,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 30,
+    marginVertical: 20,
     height: 1,
     width: '50%',
-    alignItems: 'center',
   },
   input: {
     width: '80%',
@@ -82,6 +81,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
     textAlign: 'center',
+    color: 'red'
   },
   button: {
     backgroundColor: '#2ea043',

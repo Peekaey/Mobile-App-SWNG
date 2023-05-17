@@ -66,9 +66,10 @@ const Chapters = () => {
   const [selected, setSelected] = React.useState("");
   
   const data = [
-      {key:'1', value:'Chapter1'},
-      {key:'2', value:'Chapter2'},
-      {key:'3', value:'Chapter3'}
+      {key:'1', value:'Camden'},
+      {key:'2', value:'Campbelltown'},
+      {key:'3', value:'Liverpool'},
+      {key:'4', value:'Narellan'}
   ];
   return(
     <View>
@@ -85,6 +86,7 @@ const Members = () => {
   const data = [
       {key:'1', value:'Member1'},
       {key:'2', value:'Member2'},
+      {key:'3', value:'Member3'},
       {key:'3', value:'Member3'}
   ];
   return(
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 30,
+    marginVertical: 20,
     height: 1,
     width: '50%',
   },

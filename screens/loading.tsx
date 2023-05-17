@@ -66,11 +66,6 @@ export function getEventURL() {
 
 export function BackEndLoading() {
 
-
-
-  
-
-
   axios.get(url)
   .then((response: any) => {
     const html = response.data;
@@ -99,16 +94,10 @@ export function BackEndLoading() {
 
       console.log('EventURL' + getEventURL())
 
-
-
-
     })
     .catch((error:any)=> {
       console.error(error);
     });
-
-
-
 
 }
 
@@ -123,10 +112,23 @@ export default function LoadingPage(props: LoadingPageProps) {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
 
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await BackEndLoading();
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+
   const spinValue = React.useRef(new Animated.Value(0)).current;
   const scaleValue = React.useRef(new Animated.Value(1)).current;
 
-  React.useEffect(() => {
+  useEffect(() => {
     spin();
   }, []);
 
@@ -160,6 +162,19 @@ export default function LoadingPage(props: LoadingPageProps) {
   });
 
   const transformStyle = { transform: [{ rotate: spinAnimation }, { scale: scaleValue }] };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Animated.Image
+          style={[styles.logo, transformStyle]}
+          source={require('../assets/thumbnail_SWNG-white.png')}
+        />
+      </View>
+    );
+  }
+
+  // Render the actual content once the loading is done
 
   return (
     <View style={styles.container}>

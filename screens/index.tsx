@@ -63,6 +63,7 @@ export const GreyBox = () => {
   const eventTimes = getEventTimes();
   const eventDate = getEventDate();
   const venueText = getVenueText();
+  const eventURL = getEventURL();
 
   if (!eventTitle || !eventTimes || !eventDate || !venueText) {
     // Render loading state or return null
@@ -74,6 +75,16 @@ export const GreyBox = () => {
   console.log(eventDate)
   console.log(venueText)
 
+  const OpenEventDetails = () => {
+    console.log('Called');
+    Linking.openURL(eventURL);
+  };
+  const ApologyButton = () => {
+    console.log('HitTheApologyButton');
+
+  };
+
+
 
   return (
   <View style={styles.containerBody}>
@@ -84,12 +95,12 @@ export const GreyBox = () => {
         <Text style={styles.centeredBoxText}>Venue: {venueText}  </Text>
       </View>
       <View style={styles.buttonContainer}>
-      {/* <TouchableWithoutFeedback onPress={OpenEventDetails}> */}
+      <TouchableWithoutFeedback onPress={OpenEventDetails}>
       <Text style={styles.LeftBoxText}>SEE MORE</Text>
-      {/* </TouchableWithoutFeedback> */}
-      {/* <TouchableWithoutFeedback onPress={ApologyButton}> */}
+      </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={ApologyButton}>
       <Text style={styles.RightBoxText}>Apology</Text>
-      {/* </TouchableWithoutFeedback> */}
+      </TouchableWithoutFeedback>
       </View>
       </View>
   );
@@ -243,8 +254,8 @@ const styles = StyleSheet.create({
     textAlign:'left',
     fontSize: 22,
     fontWeight: 'bold',
-    backgroundColor: '#d93b39', // change this to your preferred shade of grey
-    color: 'white',
+    // backgroundColor: '#d93b39', // change this to your preferred shade of grey
+    color: 'red',
   },
 
   gridItemBodyText: {

@@ -34,15 +34,8 @@ export default function LoginScreen() {
 
       } source={require('../assets//thumbnail_SWNG-white.png')} />
       <Text></Text>
-      <TextInput 
-      placeholder="Username" 
-      style={styles.input}
-      > Username </TextInput>
-            <TextInput 
-      placeholder="Password" 
-      style={styles.input}
-      > Password </TextInput>
-
+      <TextInput placeholder="Username" style={styles.input}/>
+      <TextInput placeholder="Password" style={styles.input}/>  
 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Loading' as never)}   >
 <Text style={styles.buttonText} >Login</Text>
 </TouchableOpacity>

@@ -21,18 +21,18 @@ export default function ProfilePage() {
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}> Username</Text>
-      <TextInput placeholder="Username" style={styles.input}>  </TextInput>
+      <TextInput placeholder="johnapplesmith@gmail.com" style={styles.input}/> 
       </View>
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}> Phone Number</Text>
-      <TextInput placeholder="Password" style={styles.input}>  </TextInput>
+      <TextInput placeholder="0410236256" style={styles.input}/>
       </View>
 
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}> Password</Text>
-      <TextInput placeholder="Password" style={styles.input}>  </TextInput>
+      <TextInput placeholder="*******" style={styles.input}/> 
       </View>
 <View style={styles.centeredContainer}>
 <TouchableOpacity style={styles.button}>

@@ -10,11 +10,10 @@ const Chapters = () => {
   const [selected, setSelected] = React.useState("");
   
   const data = [
-    {key:'1', value:'Camden'},
-    {key:'2', value:'Campbelltown'},
-    {key:'3', value:'Liverpool'},
-    {key:'4', value:'Narellan'}
-];
+      {key:'1', value:'Chapter1'},
+      {key:'2', value:'Chapter2'},
+      {key:'3', value:'Chapter3'}
+  ];
   return(
     <View>
       <Text style={styles.textboxAnchorText}> Select the Chapter:</Text>
@@ -41,6 +40,40 @@ const Members = () => {
 };
 
 export default function ReferralsPage() {
+
+  const [username, setUsername] = React.useState('');
+  const [email, setemail] = React.useState('');
+  const[checkValidEmail, setCheckValidEmail] = React.useState(false);
+  const [phonenum, setphonenum] = React.useState('');
+  const[checkValidPhoneNum, setcheckValidPhoneNum] = React.useState(false);
+  const [notes, setnotes] = React.useState('');
+
+  const isAnyFieldEmpty = !username || checkValidPhoneNum || checkValidEmail || !notes;
+  const buttonBackgroundColor = isAnyFieldEmpty ? '#8B0000' : '#c11717';
+
+  const handleCheckEmail = text => {
+    let re = /\S+@\S+\.\S+/;
+    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+    setemail(text);
+    if (re.test(text) || regex.test(text)) {
+      setCheckValidEmail(false);
+    } else {
+      setCheckValidEmail(true);
+    }
+  };
+
+  const handleCheckPhoneNum = Value => {
+    let regex1 = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+    setphonenum(Value);
+    if (regex1.test(Value)) {
+      setcheckValidPhoneNum(false);
+    } else {
+      setcheckValidPhoneNum(true);
+    }
+  };
+
   return (
 
     <View style={styles.container}>
@@ -57,7 +90,7 @@ export default function ReferralsPage() {
       
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}>Name(required):</Text>
-      <TextInput placeholder="name" style={styles.input1}></TextInput>
+      <TextInput placeholder="name" value={username} onChangeText={text => setUsername(text)} style={styles.input1}></TextInput>
       </View>
       
       <View style={styles.centeredContainer}>
@@ -67,50 +100,69 @@ export default function ReferralsPage() {
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}>Phone:</Text>
-      <TextInput placeholder="00 0000 0000" style={styles.input1}></TextInput>
+      <TextInput placeholder="0000000000" value={phonenum} onChangeText={text => handleCheckPhoneNum(text)}  style={styles.input1}></TextInput>
+      </View>
+      <View style={styles.errorContainer}>
+      {checkValidPhoneNum ? (
+        <Text style={styles.errorMessage}>Please enter a valid Phone number</Text>
+      ) : (
+        <Text style={styles.errorMessage}> </Text>
+      )}
       </View>
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}>Email(required):</Text>
-      <TextInput placeholder="someone@example.com" style={styles.input1}></TextInput>
+      <TextInput placeholder="someone@example.com" value={email} onChangeText={text => handleCheckEmail(text)} style={styles.input1}></TextInput>
+      </View>
+      <View style={styles.errorContainer}>
+      {checkValidEmail ? (
+        <Text style={styles.errorMessage}>Please enter a valid email address</Text>
+      ) : (
+        <Text style={styles.errorMessage}> </Text>
+      )}
       </View>
 
       <View style={styles.centeredContainer}>
       <Text style={styles.textboxAnchorText}>Notes(required):</Text>
-      <TextInput placeholder=" " style={styles.input1}></TextInput>
+      <TextInput placeholder=" " value={notes} onChangeText={text => setnotes(text)} style={styles.input1}></TextInput>
       </View>
 
-      <TouchableOpacity style={styles.button} >
-      <Text style={styles.buttonText} >Submit Referral</Text>
-      </TouchableOpacity>
+      <TouchableOpacity
+          style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
+          disabled={isAnyFieldEmpty}>
+          <Text style={styles.buttonText}>Submit Referral</Text>
+        </TouchableOpacity>
     </View>     
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     flex: 1,
   },
   centeredContainer: {
     alignItems: 'center',
-    top: 100,
+    top: 110,
   },
   dropdown:{
     flexDirection: 'row',
     alignSelf: 'flex-start',
-    marginLeft: '4%',
+    marginLeft: '5%',
     marginBottom: '2%',
     backgroundColor: "white",
     position: "absolute",
-    top: 20,
+    top: 30,
     width: "100%",
-    zIndex: 999,
+    zIndex: 1,
    },
    chap_dropdown:{
     padding:5,
+    width: "45%",
    },
   mem_dropdown:{
     padding:5,
+    width: "45%",
    },
   textboxAnchorText: {
     alignSelf: 'flex-start',
@@ -139,9 +191,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 20,
+    marginVertical: 3,
     height: 1,
-    width: '50%',
+    width: '100%',
+    top:15,
   },
   input1: {
     width: '80%',
@@ -160,11 +213,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: '10%',
-    top: 100,
+    top: 110,
   },
   buttonText: {
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  errorContainer: {
+    top: 90,
+    marginLeft:40,
+  },
+  errorMessage: {
+    color: 'red',
+    fontWeight: 'bold',
+    fontSize: 13,
+    position:'absolute',
   },
 });

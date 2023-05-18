@@ -1,6 +1,6 @@
 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, } from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import React from 'react';
@@ -41,8 +41,8 @@ const Members = () => {
 };
 
 export default function ReferralsPage() {
-  return (
 
+  return (
     <View style={styles.container}>
       <View style = {styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
@@ -84,6 +84,7 @@ export default function ReferralsPage() {
       <Text style={styles.buttonText} >Submit Referral</Text>
       </TouchableOpacity>
     </View>     
+
   );
 }
 

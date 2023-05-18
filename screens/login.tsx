@@ -1,4 +1,4 @@
-import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Text, View } from '../components/Themed';
@@ -23,7 +23,8 @@ import axios from 'axios';
 
 export default function LoginScreen() {
 
-  
+
+
 
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
@@ -46,17 +47,18 @@ export default function LoginScreen() {
         password,
       });
   
-      const token = response.data.token; 
+      const { token, user_id } = response.data; // Extract the token and user_id from the response
       await AsyncStorage.setItem('token', token);
-
+      await AsyncStorage.setItem('user_id', user_id.toString()); // Store the user_id in AsyncStorage
 
       // This is how you store/call the session token
-      const localstoragetoken = await AsyncStorage.getItem('token');
-      console.log("LocalStorageToken",localstoragetoken);
-
-
+      const storedToken = await AsyncStorage.getItem('token');
+      const storedUserId = await AsyncStorage.getItem('user_id');
+      console.log('Stored Token:', storedToken);
+      console.log('Stored User ID:', storedUserId);
 
       
+
       // Perform any necessary actions after successful authentication, such as navigating to a new screen
 
       navigation.navigate('Loading' as never);
@@ -67,6 +69,7 @@ export default function LoginScreen() {
     } finally {
       setLoading(false); // Reset the loading state
     }
+
   };
 
 
@@ -113,12 +116,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    marginTop: '5%',
-    marginBottom: '5%',
+
     resizeMode: 'contain',
-    height: '20%',
+    height: 200,
     width: '80%'
-    
+  
   },
   mobileAppsLogo: {
     marginBottom: '5%',
@@ -169,5 +171,8 @@ const styles = StyleSheet.create({
     color: 'red',
     marginBottom: 10,
   },
+  disabledButton: {
+    backgroundColor: '#8B0000',
+  }
 });
 

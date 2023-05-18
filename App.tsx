@@ -20,6 +20,7 @@ import ProfilePage from './screens/profile';
 import LoadingPage from './screens/loading';
 import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -36,10 +37,26 @@ export const homeRoutes = [
 ];
 
 
+var storedUserId:any;
+
+async function getAvatar() {
+  storedUserId = await AsyncStorage.getItem('avatarURL');
+
+  if (storedUserId === null) {
+    console.log('The stored avatar URL is null.');
+    storedUserId = '../Mobile-App-SWNG/assets/user-avatar.png';
+  } else {
+    console.log('The stored avatar URL is:', storedUserId);
+  }
+}
+
+
+
 const Tab = createBottomTabNavigator();
 // Function underneath is the styling of the bottom navigation bar, including icons
 const HomeTabs = () => {
 
+  getAvatar();
 
 
   return (
@@ -70,6 +87,7 @@ const HomeTabs = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: '#c11717',
         tabBarInactiveTintColor: 'white',
         tabBarStyle: {
@@ -112,6 +130,8 @@ const HomeTabs = () => {
 
 export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
 
+
+
   const currentPage = route?.name;
 
   if (!route || !currentPage || currentPage === 'Loading') {
@@ -124,12 +144,18 @@ export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
 
 
   return (
-    <SafeAreaView edges={['top']} style={{ backgroundColor: 'white'   }}>
-    <View style={styles.container}>
-
+    <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
+      <View style={styles.container}>
         <Image source={require('../Mobile-App-SWNG/assets/thumbnail_SWNG-transparent.png')} style={styles.logo} />
         <TouchableOpacity onPress={() => navigation.navigate('Profile' as never)}>
-          <Image source={require('../Mobile-App-SWNG/assets/user-avatar.png')} style={styles.avatar} />
+          {storedUserId ? (
+            <Image source={{ uri: storedUserId }} style={styles.avatar} />
+          ) : (
+            <Image
+              source={require('../Mobile-App-SWNG/assets/user-avatar.png')}
+              style={styles.avatar}
+            />
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -144,7 +170,7 @@ const App = () => {
         <NavigationContainer>
           <Layout style={{ flex: 1 }}>
           <TopNavigationSimpleUsageShowcase />
-            <HomeTabs />
+            <HomeTabs  />
           </Layout>
         </NavigationContainer>
       </ApplicationProvider>

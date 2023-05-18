@@ -8,9 +8,10 @@ import { useNavigation, ParamListBase, CommonActions } from '@react-navigation/n
 import axios from 'axios';
 import cheerio from 'cheerio';
 import { GreyBox } from '.';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Flag for the chapter to scrape
-export var Chapter = 'Liverpool'
+export var Chapter = 'Camden'
 
 // Chapter Webpage to Scrape
 export const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;
@@ -64,7 +65,7 @@ export function getEventURL() {
 
 
 
-export function BackEndLoading() {
+export async function BackEndLoading() {
 
   axios.get(url)
   .then((response: any) => {
@@ -99,6 +100,33 @@ export function BackEndLoading() {
       console.error(error);
     });
 
+    // Grabbing User URL
+    const storedUserId = await AsyncStorage.getItem('user_id');
+    const storedToken = await AsyncStorage.getItem('token');
+
+    console.log ("LOADING SCREEN STORED USER ID", storedUserId)
+
+// Set the Authorization header with the bearer token
+const axiosInstance = axios.create({
+  headers: {
+    Authorization: `Bearer ${storedToken}`,
+  },
+});
+
+
+// Make a GET request to the specific user's endpoint
+axiosInstance.get(`https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`)
+  .then(response => {
+    const avatarUrl = response.data.avatar_urls['96']; // Access the desired avatar URL
+
+    AsyncStorage.setItem('avatarURL', avatarUrl);
+  })
+  .catch(error => {
+    console.error('Error retrieving user data:', error);
+  });
+
+  const storedavatarURL = await AsyncStorage.getItem('avatarURL')
+  console.log(storedavatarURL);
 }
 
 
@@ -107,7 +135,7 @@ interface LoadingPageProps {
   // Define the types for any props that your component will receive
 }
 export default function LoadingPage(props: LoadingPageProps) {
-  BackEndLoading();
+
   // Navigator Stuff
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});

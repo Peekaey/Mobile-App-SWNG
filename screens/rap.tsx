@@ -33,7 +33,7 @@ const animatedScaleStyle = {
 };
 
 return (
-  <SafeAreaView style={{ flex: 1 }}>
+  <SafeAreaView>
     <View style={styles.container1}>
     <Text style={styles.rateheading} >Tap to Rate</Text>
       <View style={styles.stars}>
@@ -97,6 +97,12 @@ const Members = () => {
 
 export default function RapPage() {
 
+  const [subject, setsubject] = React.useState('');
+  const [review, setreview] = React.useState('');
+
+  const isAnyFieldEmpty = !subject || !review;
+  const buttonBackgroundColor = isAnyFieldEmpty ? '#c11717' : '#ed3434';
+
   return (
 
     
@@ -115,16 +121,19 @@ export default function RapPage() {
       <Star/>
 
       <View style={styles.centeredContainer}>
-      <TextInput placeholder="Enter subject" style={styles.input}></TextInput>
+      <TextInput placeholder="Enter subject" value={subject} onChangeText={text => setsubject(text)} style={styles.input}></TextInput>
       </View>
-
+    
       <View style={styles.centeredContainer}>
-      <TextInput placeholder="Enter your review..." style={styles.input1}></TextInput>
+      <TextInput placeholder="Enter your review..."  value={review} onChangeText={text => setreview(text)} style={styles.input1}></TextInput>
       </View>
 
-      <TouchableOpacity style={styles.button} >
-      <Text style={styles.buttonText} >Submit Review</Text>
-      </TouchableOpacity>
+      
+      <TouchableOpacity
+          style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
+          disabled={isAnyFieldEmpty}>
+          <Text style={styles.buttonText}>Submit Review</Text>
+        </TouchableOpacity>
 
     </View>
   );
@@ -137,27 +146,28 @@ const styles = StyleSheet.create({
   },
   centeredContainer: {
     alignItems: 'center',
+    top: 110,
   },
   //dropdown css
   dropdown:{
    flexDirection: 'row',
-   alignSelf: 'flex-start',
-   marginLeft: '8%',
+   marginLeft: '5%',
    marginBottom: '2%',
    backgroundColor: "white",
    position: "absolute",
    top: 40,
    width: "100%",
-   zIndex: 999,
+   zIndex: 1,
   },
   chap_dropdown:{
     padding:5,
+    width: "45%",
    },
   mem_dropdown:{
     padding:5,
+    width: "45%",
    },
 
-   // input text css
   textboxAnchorText: {
     alignSelf: 'flex-start',
     marginBottom: '2%',
@@ -174,10 +184,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 30,
+    marginVertical: 20,
     height: 1,
-    width: '50%',
+    width: '100%',
   },
+  // input text css
   input: {
     width: '80%',
     height: 50,
@@ -205,6 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: '10%',
+    top:110,
   },
   buttonText: {
     color: '#fff',
@@ -234,10 +246,8 @@ const styles = StyleSheet.create({
     color: '#ffb300',
   },
   container1: {
-    flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    top:30,
-  },
+    top:90,
+   },
 });

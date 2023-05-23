@@ -1,9 +1,9 @@
 
-import { StyleSheet, Image, View, Text, Platform, TouchableOpacity} from 'react-native';
+import { StyleSheet, Image, View, Text, Platform, TouchableOpacity, AppRegistry} from 'react-native';
 import { NavigationContainer, useNavigation, useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout} from '@ui-kitten/components';
@@ -21,6 +21,19 @@ import LoadingPage from './screens/loading';
 import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import firebase from '@react-native-firebase/app';
+import { expo } from './app.json';
+import messaging from '@react-native-firebase/messaging';
+import '@react-native-firebase/messaging';
+import * as Notifications from 'expo-notifications';
+
+import { registerRootComponent } from 'expo';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import '@react-native-firebase/messaging';
+
+
 
 
 
@@ -162,22 +175,67 @@ export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
   );
 };
 
+
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+
 const App = () => {
+  useEffect(() => {
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig); // Provide your Firebase configuration object here
+    }
+
+    // Request permission for receiving push notifications
+    Notifications.requestPermissionsAsync().then(({ status }) => {
+      if (status === 'granted') {
+        // Handle notifications when the app is in the foreground
+        Notifications.addNotificationReceivedListener((notification) => {
+          console.log('Notification received:', notification);
+        });
+
+        // Handle notifications when the app is in the background or closed
+        Notifications.addNotificationResponseReceivedListener((response) => {
+          console.log('Notification response received:', response);
+        });
+      }
+    });
+
+    // Initialize Firebase messaging
+    const messaging = firebase.messaging();
+
+    // Handle background messages
+    messaging.setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log('Message handled in the background!', remoteMessage);
+    });
+  }, []);
+
   return (
     <React.Fragment>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
-        <NavigationContainer>
-          <Layout style={{ flex: 1 }}>
-          <TopNavigationSimpleUsageShowcase />
-            <HomeTabs  />
-          </Layout>
-        </NavigationContainer>
+        <SafeAreaView>
+          <NavigationContainer>
+            <Layout style={{ flex: 1 }}>
+              <TopNavigationSimpleUsageShowcase />
+              <HomeTabs />
+            </Layout>
+          </NavigationContainer>
+        </SafeAreaView>
       </ApplicationProvider>
     </React.Fragment>
   );
 };
 
+registerRootComponent(App);
 
 export default App;
 

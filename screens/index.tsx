@@ -6,8 +6,8 @@ import React, { useState, useEffect } from 'react';
 
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import cheerio from 'cheerio';
-
-
+import messaging from '@react-native-firebase/messaging';
+import firebase from '@react-native-firebase/app';
 
 import { CamdenChapter } from '../components/ChapterMeetingDetails';
 import { CampbelltownChapter } from '../components/ChapterMeetingDetails';
@@ -28,16 +28,31 @@ import {
   
 
 
-
-
-
-
 export default function IndexPage() {
 
+  // const requestUserPermission = async () => {
+  //   const authStatus = await messaging().requestPermission();
+  //   console.log('Authorization status:', authStatus);
+  // };
 
+  // const getToken = async () => {
+  //   const token = await messaging().getToken();
+  //   console.log('Device Token:', token);
+  // };
 
+  // messaging().onMessage(async (remoteMessage) => {
+  //   console.log('Received message:', remoteMessage);
+  //   // Handle the incoming message here
+  // });
+  
+  // messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  //   console.log('Background message:', remoteMessage);
+  //   // Handle background messages here
+  // });
 
   return (
+
+
     <View style={styles.containerHead}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <Text style={styles.title } > Upcoming Event </Text> 

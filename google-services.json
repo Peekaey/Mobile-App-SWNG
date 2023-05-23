@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1090721082574",
+    "project_id": "swngandroidapp",
+    "storage_bucket": "swngandroidapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090721082574:android:b0e7bcbb785599894cb49f",
+        "android_client_info": {
+          "package_name": "com.company.SWNG"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1090721082574-gs69tei5vk3vpegt1gsc0elkffn9253c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnieyqKjB0kNWeRbwbyX_4Hn1DyisUroU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1090721082574-gs69tei5vk3vpegt1gsc0elkffn9253c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

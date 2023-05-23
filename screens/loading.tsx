@@ -11,7 +11,7 @@ import { GreyBox } from '.';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Flag for the chapter to scrape
-export var Chapter = 'Camden'
+export var Chapter = 'Liverpool'
 
 // Chapter Webpage to Scrape
 export const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;

@@ -14,9 +14,82 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Nav from '../App';
 import axios from 'axios';
 
+import * as Notifications from 'expo-notifications';
 
 
+const enableForegroundNotifications = async () => {
+  let settings = await Notifications.getPermissionsAsync();
+  let finalStatus = settings.granted;
 
+  if (!finalStatus) {
+    settings = await Notifications.requestPermissionsAsync();
+    finalStatus = settings.granted;
+  }
+
+  if (!finalStatus) {
+    console.log('Notification permission not granted');
+    return;
+  }
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+
+  Notifications.addNotificationReceivedListener(handleNotificationReceived);
+  Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'Default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+
+    const channel = await Notifications.getNotificationChannelAsync('default');
+if (channel?.sound === null) {
+  await Notifications.setNotificationChannelAsync('default', {
+    ...channel,
+    sound: 'default',
+  });
+}
+  }
+};
+
+const handleNotificationReceived = (notification) => {
+  console.log('Notification received:', notification);
+  // Handle the received notification in the foreground
+};
+
+const handleNotificationResponse = (response) => {
+  console.log('Notification response:', response);
+  // Handle the user's response to the notification
+};
+
+// Call the function to enable foreground notifications and schedule a local notification
+enableForegroundNotifications();
+
+// Schedule a local notification
+const scheduleLocalNotification = async () => {
+  const schedulingOptions = {
+    content: {
+      title: 'Scheduled Notification',
+      body: "Notification Contents",
+    },
+    trigger: {
+      seconds: 15, // Schedule after 15 seconds
+    },
+  };
+
+  const notificationId = await Notifications.scheduleNotificationAsync(schedulingOptions);
+  console.log('Scheduled notification with ID:', notificationId);
+};
+
+scheduleLocalNotification();
 
 
 

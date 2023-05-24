@@ -1,5 +1,5 @@
 
-import { StyleSheet, Image, View, Text, Platform, TouchableOpacity} from 'react-native';
+import { StyleSheet, Image, View, Text, Platform, TouchableOpacity, AppRegistry} from 'react-native';
 import { NavigationContainer, useNavigation, useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
@@ -21,6 +21,8 @@ import LoadingPage from './screens/loading';
 import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 
 
@@ -162,6 +164,9 @@ export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
   );
 };
 
+
+
+
 const App = () => {
   return (
     <React.Fragment>
@@ -169,8 +174,8 @@ const App = () => {
       <ApplicationProvider {...eva} theme={eva.light}>
         <NavigationContainer>
           <Layout style={{ flex: 1 }}>
-          <TopNavigationSimpleUsageShowcase />
-            <HomeTabs  />
+            <TopNavigationSimpleUsageShowcase />
+            <HomeTabs />
           </Layout>
         </NavigationContainer>
       </ApplicationProvider>

@@ -1,9 +1,9 @@
-import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform, Linking } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Text, View } from '../components/Themed';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScreenStackHeaderSearchBarView } from 'react-native-screens';
 import { Navigator } from 'expo-router';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -14,18 +14,98 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Nav from '../App';
 import axios from 'axios';
 
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 
+const enableForegroundNotifications = async () => {
+  const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
 
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status: newStatus } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    finalStatus = newStatus;
+  }
 
+  if (finalStatus !== 'granted') {
+    console.log('Notification permission not granted');
+    return;
+  }
 
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
 
+  Notifications.addNotificationReceivedListener(handleNotificationReceived);
+  Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
 
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'Default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+};
+
+const handleNotificationReceived = (notification) => {
+  console.log('Notification received:', notification);
+  // Handle the received notification in the foreground
+};
+
+const handleNotificationResponse = (response) => {
+  console.log('Notification response:', response);
+  // Handle the user's response to the notification
+};
+
+// Call the function to enable foreground notifications and schedule a local notification
+enableForegroundNotifications();
+
+// Schedule a local notification
+const scheduleLocalNotification = async () => {
+  const schedulingOptions = {
+    content: {
+      title: 'Scheduled Notification',
+      body: "I'm so proud of myself!",
+    },
+    trigger: {
+      seconds: 15, // Schedule after 15 seconds
+    },
+  };
+
+  const notificationId = await Notifications.scheduleNotificationAsync(schedulingOptions);
+  console.log('Scheduled notification with ID:', notificationId);
+};
+
+scheduleLocalNotification();
 
 export default function LoginScreen() {
 
 
 
+  // Working
+  // useEffect(() => {
+  //   const showLocalNotification = async () => {
+  //     const notificationContent = {
+  //       title: 'My Notification',
+  //       body: 'This is a local notification!',
+  //     };
 
+  //     // Display a local notification immediately
+  //     await Notifications.presentNotificationAsync(notificationContent);
+  //   };
+
+  //   showLocalNotification();
+  // }, []);
+
+
+
+
+  // DOn't change the below
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
 

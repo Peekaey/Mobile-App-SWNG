@@ -23,6 +23,63 @@ import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, I
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+import 'firebase/auth';
+import 'firebase/firestore';
+import * as Notifications from 'expo-notifications';
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDVV130ZzKxahIADAkRlSjz1I4KbN0pqTA",
+  authDomain: "swngandroidapp.firebaseapp.com",
+  projectId: "swngandroidapp",
+  storageBucket: "swngandroidapp.appspot.com",
+  messagingSenderId: "1090721082574",
+  appId: "1:1090721082574:web:32d97de7f8bcfccf4cb49f",
+  measurementId: "G-K4N1C5YQQ2"
+};
+firebase.initializeApp(firebaseConfig);
+
+
+// Configure Expo Notifications
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+// Get the user's Expo push token for FCM registration
+const registerForPushNotificationsAsync = async () => {
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  if (finalStatus !== 'granted') {
+    console.log('Failed to obtain push token');
+    return;
+  }
+
+  const token = (await Notifications.getExpoPushTokenAsync()).data;
+  console.log('Push token:', token);
+
+  // Store the token on your server or use it to send push notifications
+};
+
+// Register for push notifications
+registerForPushNotificationsAsync();
+
+
+
+
 
 export const homeRoutes = [
   { name: 'Loading', component: LoadingPage },

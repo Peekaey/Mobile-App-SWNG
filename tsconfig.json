@@ -3,5 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "typeRoots": ["dec.d.ts"]
-  }
+  },
+  "types": ["firebase"]
+
 }

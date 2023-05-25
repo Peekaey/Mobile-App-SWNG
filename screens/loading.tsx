@@ -9,9 +9,10 @@ import axios from 'axios';
 import cheerio from 'cheerio';
 import { GreyBox } from '.';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 // Flag for the chapter to scrape
-export var Chapter = 'Camden'
+export var Chapter = 'Liverpool'
 
 // Chapter Webpage to Scrape
 export const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;
@@ -101,8 +102,8 @@ export async function BackEndLoading() {
     });
 
     // Grabbing User URL
-    const storedUserId = await AsyncStorage.getItem('user_id');
-    const storedToken = await AsyncStorage.getItem('token');
+    const storedToken = await SecureStore.getItemAsync('token');
+    const storedUserId = await SecureStore.getItemAsync('user_id');
 
     console.log ("LOADING SCREEN STORED USER ID", storedUserId)
 
@@ -114,22 +115,25 @@ const axiosInstance = axios.create({
 });
 
 
-// Make a GET request to the specific user's endpoint
-axiosInstance.get(`https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`)
-  .then(response => {
-    const avatarUrl = response.data.avatar_urls['96']; // Access the desired avatar URL
 
-    AsyncStorage.setItem('avatarURL', avatarUrl);
-  })
-  .catch(error => {
+const fetchAndStoreAvatar = async (storedUserId) => {
+  try {
+    const response = await axiosInstance.get(`https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`);
+    const avatarUrl = response.data.avatar_urls['96'];
+    await SecureStore.setItemAsync('avatarURL', avatarUrl);
+    console.log('Avatar URL stored successfully');
+
+    const storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
+    console.log(storedAvatarURL);
+  } catch (error) {
     console.error('Error retrieving user data:', error);
-  });
+  }
+};
 
-  const storedavatarURL = await AsyncStorage.getItem('avatarURL')
-  console.log(storedavatarURL);
+// Call the function
+fetchAndStoreAvatar(storedUserId);
+
 }
-
-
 
 interface LoadingPageProps {
   // Define the types for any props that your component will receive

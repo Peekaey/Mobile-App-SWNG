@@ -1,5 +1,4 @@
 import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Text, View } from '../components/Themed';
 
@@ -16,6 +15,7 @@ import axios from 'axios';
 
 import * as Notifications from 'expo-notifications';
 import { FontAwesome } from '@expo/vector-icons'; // Import the required icon library
+import * as SecureStore from 'expo-secure-store';
 
 const enableForegroundNotifications = async () => {
   let settings = await Notifications.getPermissionsAsync();
@@ -115,18 +115,17 @@ export default function LoginScreen() {
 
   const [rememberPassword, setRememberPassword] = useState(false);
 
-
   useEffect(() => {
     const checkStoredLoginCredentials = async () => {
-      const RememberPassword = await AsyncStorage.getItem('RememberPassword');
+      const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
 
       if (RememberPassword === 'true') {
-        const storedUsername = await AsyncStorage.getItem('LongTermUsername');
-        const storedPassword = await AsyncStorage.getItem('LongTermPassword');
+        const storedUsername = await SecureStore.getItemAsync('LongTermUsername');
+        const storedPassword = await SecureStore.getItemAsync('LongTermPassword');
         if (storedUsername && storedPassword) {
           setUsername(storedUsername);
           setPassword(storedPassword);
-          setRememberPassword(true); // Set rememberPassword to true if credentials are found
+          setRememberPassword(true);
         }
       } else {
         setUsername('');
@@ -152,66 +151,55 @@ export default function LoginScreen() {
       });
   
       const { token, user_id } = response.data; // Extract the token and user_id from the response
-      await AsyncStorage.setItem('token', token);
-      await AsyncStorage.setItem('user_id', user_id.toString()); // Store the user_id in AsyncStorage
+      await SecureStore.setItemAsync('token', token);
+      await SecureStore.setItemAsync('user_id', user_id.toString());
 
-      // This is how you store/call the session token
-      const storedToken = await AsyncStorage.getItem('token');
-      const storedUserId = await AsyncStorage.getItem('user_id');
+      const storedToken = await SecureStore.getItemAsync('token');
+      const storedUserId = await SecureStore.getItemAsync('user_id');
       console.log('Stored Token:', storedToken);
       console.log('Stored User ID:', storedUserId);
 
-      if (rememberPassword == true) {
-        console.log("Storing Password Long Term");
-        
-        await AsyncStorage.setItem('LongTermUsername', username);
-        await AsyncStorage.setItem('LongTermPassword', password);
-        await AsyncStorage.setItem('RememberPassword', rememberPassword.toString())
+      if (rememberPassword) {
+        console.log('Storing Password Long Term');
 
-        const LongTermUsername = await AsyncStorage.getItem('LongTermUsername');
-        const LongTermPassword = await AsyncStorage.getItem('LongTermPassword');
-        const RememberPassword = await AsyncStorage.getItem('RememberPassword')
+        await SecureStore.setItemAsync('LongTermUsername', username);
+        await SecureStore.setItemAsync('LongTermPassword', password);
+        await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
+
+        const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
+        const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
+        const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
         console.log('Stored Username:', LongTermUsername);
         console.log('Stored Password:', LongTermPassword);
-        console.log('Remember Password Stored valuje:', RememberPassword)
-      }
+        console.log('Remember Password Stored value:', RememberPassword);
+      } else {
+        console.log('Removing Password Long Term');
 
-      if (rememberPassword == false) {
-        console.log("Removing Password Long Term");
-        
-        await AsyncStorage.removeItem('LongTermUsername');
-        await AsyncStorage.removeItem('LongTermPassword');
+        await SecureStore.deleteItemAsync('LongTermUsername');
+        await SecureStore.deleteItemAsync('LongTermPassword');
+        await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
 
-        await AsyncStorage.setItem('RememberPassword', rememberPassword.toString())
-
-        const LongTermUsername = await AsyncStorage.getItem('LongTermUsername');
-        const LongTermPassword = await AsyncStorage.getItem('LongTermPassword');
-        const RememberPassword = await AsyncStorage.getItem('RememberPassword')
+        const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
+        const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
+        const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
         console.log('Stored Username:', LongTermUsername);
         console.log('Stored Password:', LongTermPassword);
-        console.log('Remember Password Stored valuje:', RememberPassword)
+        console.log('Remember Password Stored value:', RememberPassword);
       }
-
-
-
-
-
-      // Perform any necessary actions after successful authentication, such as navigating to a new screen
 
       navigation.navigate('Loading' as never);
     } catch (error) {
-      // Handle login error
       console.log(error);
       setError('Invalid username or password');
     } finally {
-      setLoading(false); // Reset the loading state
+      setLoading(false);
     }
-
   };
 
-  const usernamePlaceholder = rememberPassword ? '' : 'Username';
-  const passwordPlaceholder = rememberPassword ? '' : 'Password';
+  const usernamePlaceholder = rememberPassword ? 'Username' : 'Username';
+  const passwordPlaceholder = rememberPassword ? 'Password' : 'Password';
 
+  
   return (
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />

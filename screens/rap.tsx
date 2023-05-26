@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Image, TextInput, TouchableOpacity,SafeAreaView,TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView, Animated} from 'react-native';
+import { StyleSheet, ScrollView, Image, TextInput, TouchableOpacity,SafeAreaView,TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView, Animated} from 'react-native';
 import { Text, View } from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -108,7 +108,8 @@ export default function RapPage() {
     
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      
+      <ScrollView automaticallyAdjustKeyboardInsets={true}  contentContainerStyle={{flex: 1}}>
+
       <View style={styles.dropdown}>
         <View style={styles.chap_dropdown}>
           <Chapters/>
@@ -133,8 +134,8 @@ export default function RapPage() {
           style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
           disabled={isAnyFieldEmpty}>
           <Text style={styles.buttonText}>Submit Review</Text>
-        </TouchableOpacity>
-
+      </TouchableOpacity>
+        </ScrollView>
     </View>
   );
 }
@@ -155,7 +156,6 @@ const styles = StyleSheet.create({
    marginBottom: '2%',
    backgroundColor: "white",
    position: "absolute",
-   top: 40,
    width: "100%",
    zIndex: 1,
   },

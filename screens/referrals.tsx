@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, } from 'react-native';
+import { StyleSheet, ScrollView, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import React from 'react';
@@ -15,7 +15,7 @@ const Chapters = () => {
   ];
   return(
     <View>
-      <Text style={styles.textboxAnchorText}> Select the Chapter:</Text>
+      <Text style={styles.dropDownText}> Select the Chapter:</Text>
       <SelectList data={data} setSelected={setSelected} />
     </View>
   );
@@ -32,7 +32,7 @@ const Members = () => {
   ];
   return(
     <View>
-      <Text style={styles.textboxAnchorText}> Select the Member:</Text>
+      <Text style={styles.dropDownText}> Select the Member:</Text>
       <SelectList data={data} setSelected={setSelected} />
     </View>
   );
@@ -77,7 +77,7 @@ export default function ReferralsPage() {
 
     <View style={styles.container}>
       <View style = {styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-
+      <ScrollView automaticallyAdjustKeyboardInsets={true}  contentContainerStyle={{flex: 1}}>
       <View style={styles.dropdown}>
         <View style={styles.chap_dropdown}>
           <Chapters/>
@@ -130,7 +130,8 @@ export default function ReferralsPage() {
           style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
           disabled={isAnyFieldEmpty}>
           <Text style={styles.buttonText}>Submit Referral</Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
+        </ScrollView>
     </View>     
   );
 }
@@ -146,12 +147,11 @@ const styles = StyleSheet.create({
   },
   dropdown:{
     flexDirection: 'row',
-    alignSelf: 'flex-start',
     marginLeft: '5%',
     marginBottom: '2%',
     backgroundColor: "white",
     position: "absolute",
-    top: 30,
+    top: 20,
     width: "100%",
     zIndex: 1,
    },
@@ -163,6 +163,10 @@ const styles = StyleSheet.create({
     padding:5,
     width: "45%",
    },
+  dropDownText:{
+    alignSelf: 'flex-start',
+    marginBottom: '2%',
+  },
   textboxAnchorText: {
     alignSelf: 'flex-start',
     marginLeft: '10%',
@@ -193,7 +197,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     height: 1,
     width: '100%',
-    top:15,
+    marginTop: 20,
   },
   input1: {
     width: '80%',
@@ -212,7 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: '10%',
-    top: 110,
+    top: 100,
   },
   buttonText: {
     color: '#fff',
@@ -226,7 +230,7 @@ const styles = StyleSheet.create({
   errorMessage: {
     color: 'red',
     fontWeight: 'bold',
-    fontSize: 13,
+    fontSize: 12,
     position:'absolute',
   },
 });

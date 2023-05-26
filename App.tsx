@@ -21,6 +21,7 @@ import LoadingPage from './screens/loading';
 import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
 import * as SecureStore from 'expo-secure-store';
+import CheckTokenStatus from './components/checkTokenStatus';
 
 
 export const homeRoutes = [

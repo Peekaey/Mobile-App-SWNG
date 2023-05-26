@@ -6,6 +6,7 @@ import { Text, View } from '../components/Themed';
 import { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 
+import CheckTokenStatus from '../components/checkTokenStatus';
 
 var storedUserId:any;
 
@@ -25,6 +26,8 @@ async function getAvatar() {
 
 
 export default function ProfilePage() {
+
+  CheckTokenStatus();
 
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
 

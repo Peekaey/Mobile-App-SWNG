@@ -1,26 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Image, TextInput, Toucha
-        leOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+
+
+import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 
 import { Text, View } from '../components/Themed';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
+var storedUserId:any;
+
+async function getAvatar() {
+  storedUserId = await AsyncStorage.getItem('avatarURL');
+
+  if (storedUserId === null) {
+    console.log("Profile Photo Local Storage is empty")
+    storedUserId = '';
+  } 
+  console.log("Profile Photo Local Storage is not empty and is:", storedUserId);''
+
+}
+
+
 
 export default function ProfilePage() {
+
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
-  const [businessName, setBusinessName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [businessUrl, setBusinessUrl] = useState('');
-  const [companyDescription, setCompanyDescription] = useState('');
+
 
   useEffect(() => {
     const getAvatar = async () => {
       const storedUserId = await AsyncStorage.getItem('avatarURL');
       if (storedUserId === null) {
-        console.log('Profile Photo Local Storage is empty');
+        console.log("Profile Photo Local Storage is empty");
         setAvatarUrl(undefined);
       } else {
-        console.log('Profile Photo Local Storage is not empty and is:', storedUserId);
+        console.log("Profile Photo Local Storage is not empty and is:", storedUserId);
         setAvatarUrl(storedUserId);
       }
     };
@@ -28,161 +43,153 @@ export default function ProfilePage() {
     getAvatar();
   }, []);
 
-  const submitProfileUpdate = async () => {
-    try {
-      // Send the updated profile information to the backend
-      const updatedProfile = {
-        businessName,
-        userEmail,
-        businessUrl,
-        companyDescription,
-      };
-      const response = await axios.post(
-        'https://www.swng.org.au/wp-json/jwt-auth/v1/token', // Corrected URL
-        updatedProfile,
-        {
-          headers: {
-            Authorization: 'Bearer ' + (await AsyncStorage.getItem('token')), // Include the JWT token in the request headers
-          },
-        }
-      );
 
-      // Handle the response from the backend if necessary
-      console.log('Profile update successful:', response.data);
-    } catch (error) {
-      // Handle the error
-      console.error('Profile update failed:', error);
-    }
+  const [username, setUsername] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [isAnyFieldFilled, setIsAnyFieldFilled] = useState(false);
+
+  const isAnyFieldEmpty = !isAnyFieldFilled;
+  const buttonBackgroundColor = isAnyFieldFilled ? '#2ea043' : '#13461c';
+ 
+
+  const SubmitProfileUpdate = () => {
+    console.log('Update Profile Picture');
+
   };
 
+
   return (
+    
     <View style={styles.container}>
-      {/* Avatar */}
-      <View style={styles.avatarContainer}>
-        {avatarUrl ? (
-          <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
-        ) : (
-          <View>
-            <Image source={require('../assets/user-avatar.png')} style={styles.avatarImage} />
-            <Text style={styles.profilePhotoAnchorText}>Edit ✎</Text>
-          </View>
-        )}
+      <View style={styles.centeredContainer}>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       </View>
 
-      {/* Business Name */}
-      <View style={styles.textInputContainer}>
-        <Text style={styles.textboxAnchorText}>Business Name</Text>
+      <View style={styles.centeredContainer}>
+      {avatarUrl ? (
+        <Image source={{ uri: avatarUrl }} style={styles.image} />
+      ) : (
+        <View>
+          <Image
+            source={require('../assets/user-avatar.png')}
+            style={styles.image}
+          />
+          <Text style={styles.ProfilePhotoAnchorText}> Edit ✎ </Text>
+        </View>
+  )}
+</View>
+      <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}> Username</Text>
         <TextInput
-          placeholder="Enter business name"
+          placeholder="johnapplesmith@gmail.com"
           style={styles.input}
-          value={businessName}
-          onChangeText={(text) => setBusinessName(text)}
+          value={username}
+          onChangeText={text => {
+            setUsername(text);
+            setIsAnyFieldFilled(text !== '' || phoneNumber !== '' || password !== '');
+          }}
         />
       </View>
 
-      {/* User Email */}
-      <View style={styles.textInputContainer}>
-        <Text style={styles.textboxAnchorText}>User Email</Text>
+      <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}> Phone Number</Text>
         <TextInput
-          placeholder="Enter user email"
+          placeholder="0410236256"
           style={styles.input}
-          value={userEmail}
-          onChangeText={(text) => setUserEmail(text)}
+          value={phoneNumber}
+          onChangeText={text => {
+            setPhoneNumber(text);
+            setIsAnyFieldFilled(text !== '' || username !== '' || password !== '');
+          }}
         />
       </View>
 
-      {/* Business Website URL */}
-      <View style={styles.textInputContainer}>
-        <Text style={styles.textboxAnchorText}>Business Website URL</Text>
+      <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}> Password</Text>
         <TextInput
-          placeholder="Enter business website URL"
+          placeholder="*******"
           style={styles.input}
-          value={businessUrl}
-          onChangeText={(text) => setBusinessUrl(text)}
+          value={password}
+          onChangeText={text => {
+            setPassword(text);
+            setIsAnyFieldFilled(text !== '' || username !== '' || phoneNumber !== '');
+          }}
         />
       </View>
 
-      {/* Company Description */}
-      <View style={styles.textInputContainer}>
-        <Text style={styles.textboxAnchorText}>Company Description</Text>
-        <TextInput
-          placeholder="Enter company description"
-          style={[styles.input, styles.companyDescriptionInput]}
-          value={companyDescription}
-          onChangeText={(text) => setCompanyDescription(text)}
-          multiline
-        />
+      <View style={styles.centeredContainer}>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
+          disabled={isAnyFieldEmpty}
+          onPress={SubmitProfileUpdate}
+        >
+          <Text style={styles.buttonText}>Update Profile</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Submit Button */}
-      <TouchableOpacity
-        style={[
-          styles.button,
-          { backgroundColor: businessName !== '' ? '#2ea043' : '#13461c' },
-        ]}
-        disabled={businessName === ''}
-        onPress={submitProfileUpdate}
-      >
-        <Text style={styles.buttonText}>Update Profile</Text>
-      </TouchableOpacity>
     </View>
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     flex: 1,
+  },
+  centeredContainer: {
+
     alignItems: 'center',
-    justifyContent: 'center',
+
+
   },
-  avatarContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
+  image: {
+    resizeMode: 'contain',
+    height: 100,
+    width: 100, 
   },
-  avatarImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 10,
-  },
-  profilePhotoAnchorText: {
-    fontSize: 14,
-    marginTop: -20,
-    marginLeft: 70,
-    color: 'blue',
-  },
-  textboxAnchorText: {
+  title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
+  },
+  separator: {
+    marginVertical: 20,
+    height: 1,
+    width: '50%',
+    backgroundColor: 'white',
   },
   input: {
     width: '80%',
-    height: 40,
+    height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     paddingHorizontal: 10,
-  },
-  companyDescriptionInput: {
-    height: 80,
-    textAlignVertical: 'top',
+    marginBottom: 20,
+    alignItems: 'center',
+    textAlign: 'center',
+
   },
   button: {
     backgroundColor: '#2ea043',
     width: '80%',
-    height: 40,
+    height: 50,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: '25%',
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  textInputContainer: {
-    marginBottom: 20,
+  textboxAnchorText: {
+    paddingTop: 20,
   },
+  ProfilePhotoAnchorText: {
+    marginBottom: '5%'
+  }
+
 });

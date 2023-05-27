@@ -15,7 +15,8 @@ import axios from 'axios';
 import * as Notifications from 'expo-notifications';
 import { FontAwesome } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
-
+import MobileAppsManLogo from '../assets/MobileAppsManLogo.png'
+import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
 
 
 // Placeholder code for now, please do not edit any notification related code 
@@ -212,7 +213,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Image style={styles.image} source={require('../assets//thumbnail_SWNG-white.png')} />
+      <Image style={styles.image} source={SWNGLogoWhite} />
       <Text></Text>
       {errorMessage !== '' && <Text style={styles.errorMessage}>{errorMessage}</Text>}
       <TextInput
@@ -257,7 +258,7 @@ export default function LoginScreen() {
         <Text style={styles.buttonText}>{isLoading ? 'Logging In...' : 'Login'}</Text>
       </TouchableOpacity>
       <Text style={styles.poweredBy}> Powered By </Text>
-      <Image style={styles.mobileAppsLogo} source={require('../assets/MobileAppsManLogo.png')} />
+      <Image style={styles.mobileAppsLogo} source={MobileAppsManLogo} />
     </View>
   );
 }

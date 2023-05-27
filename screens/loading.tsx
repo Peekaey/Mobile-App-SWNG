@@ -10,8 +10,8 @@ import { useNavigation, ParamListBase, CommonActions } from '@react-navigation/n
 import axios from 'axios';
 import cheerio from 'cheerio';
 import { GreyBox } from '.';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
+import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
 
 // Flag for the chapter to scrape
 export var Chapter = 'Liverpool'
@@ -204,7 +204,7 @@ export default function LoadingPage(props: LoadingPageProps) {
       <View style={styles.container}>
         <Animated.Image
           style={[styles.logo, transformStyle]}
-          source={require('../assets/thumbnail_SWNG-white.png')}
+          source={SWNGLogoWhite}
         />
       </View>
     );
@@ -216,7 +216,7 @@ export default function LoadingPage(props: LoadingPageProps) {
     <View style={styles.container}>
       <Animated.Image
         style={[styles.logo, transformStyle]}
-        source={require('../assets/thumbnail_SWNG-white.png')}
+        source={SWNGLogoWhite}
       />
     </View>
   );

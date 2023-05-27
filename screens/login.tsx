@@ -1,22 +1,25 @@
+// Modules and Stuff to work
+// Need to refactor and remove thats unneeded in future
+
 import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
-
 import { Text, View } from '../components/Themed';
-
 import React, { useState, useEffect } from 'react';
 import { ScreenStackHeaderSearchBarView } from 'react-native-screens';
 import { Navigator } from 'expo-router';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation, ParamListBase } from '@react-navigation/native';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Nav from '../App';
 import axios from 'axios';
-
 import * as Notifications from 'expo-notifications';
-import { FontAwesome } from '@expo/vector-icons'; // Import the required icon library
+import { FontAwesome } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
 
+
+
+// Placeholder code for now, please do not edit any notification related code 
+// - Related to asking the user for notification permission to display event notifications
 const enableForegroundNotifications = async () => {
   let settings = await Notifications.getPermissionsAsync();
   let finalStatus = settings.granted;
@@ -31,6 +34,7 @@ const enableForegroundNotifications = async () => {
     return;
   }
 
+  // Config/settings for the notifications
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldShowAlert: true,
@@ -39,9 +43,11 @@ const enableForegroundNotifications = async () => {
     }),
   });
 
+  // Listeners - not exactly sure what each thing does but related to receiving permissions
   Notifications.addNotificationReceivedListener(handleNotificationReceived);
   Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
 
+  // Android specific code for displaying request permission for notification
   if (Platform.OS === 'android') {
     Notifications.setNotificationChannelAsync('default', {
       name: 'Default',
@@ -51,10 +57,10 @@ const enableForegroundNotifications = async () => {
     });
 
     const channel = await Notifications.getNotificationChannelAsync('default');
-if (channel?.sound === null) {
-  await Notifications.setNotificationChannelAsync('default', {
-    ...channel,
-    sound: 'default',
+  if (channel?.sound === null) {
+    await Notifications.setNotificationChannelAsync('default', {
+      ...channel,
+      sound: 'default',
   });
 }
   }
@@ -89,11 +95,8 @@ const scheduleLocalNotification = async () => {
   console.log('Scheduled notification with ID:', notificationId);
 };
 
+// Schedules the notification
 scheduleLocalNotification();
-
-
-var defaultUsername:any;
-var defaultPassword:any;
 
 
 export default function LoginScreen() {
@@ -102,19 +105,19 @@ export default function LoginScreen() {
 
 
   
-
+  // Declaring navigation dependencies
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
 
+
+  // State variables for various functions
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
   const [errorMessage, setError] = useState('');
-
-  const [isLoading, setLoading] = useState(false); // New state variable
-
+  const [isLoading, setLoading] = useState(false); 
   const [rememberPassword, setRememberPassword] = useState(false);
 
+  // Grabs stored username and password - if rememeber password function was not used on last saved - uses placeholder values
   useEffect(() => {
     const checkStoredLoginCredentials = async () => {
       const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
@@ -136,21 +139,21 @@ export default function LoginScreen() {
     checkStoredLoginCredentials();
   }, []); // Empty dependency array to run the effect only once
 
-
-
-
-
   const handleLogin = async () => {
 
-    setLoading(true); // Start the loading process
+    setLoading(true); // Start the loading process once "Login" has been clicked
 
+    // Hitting wordpress API to get a JWT session token
     try {
       const response = await axios.post('https://www.swng.org.au/wp-json/jwt-auth/v1/token', {
         username,
         password,
       });
   
-      const { token, user_id } = response.data; // Extract the token and user_id from the response
+      // Extract the token and user_id from the response
+      const { token, user_id } = response.data; 
+
+      // Stores the token and userid in encrypted local storage
       await SecureStore.setItemAsync('token', token);
       await SecureStore.setItemAsync('user_id', user_id.toString());
 
@@ -159,6 +162,7 @@ export default function LoginScreen() {
       console.log('Stored Token:', storedToken);
       console.log('Stored User ID:', storedUserId);
 
+      // If rememberPassword option was ticked - stores the username and password in encrypted local storage
       if (rememberPassword) {
         console.log('Storing Password Long Term');
 
@@ -172,6 +176,8 @@ export default function LoginScreen() {
         console.log('Stored Username:', LongTermUsername);
         console.log('Stored Password:', LongTermPassword);
         console.log('Remember Password Stored value:', RememberPassword);
+      
+      // Otherwise deletes/clears and local saved username/passwords
       } else {
         console.log('Removing Password Long Term');
 
@@ -187,19 +193,22 @@ export default function LoginScreen() {
         console.log('Remember Password Stored value:', RememberPassword);
       }
 
+      // After login is successful - navigates to loading screen
       navigation.navigate('Loading' as never);
     } catch (error) {
       console.log(error);
+      // Otherwises sticks to login screen and displays error if username/password was incorrect
       setError('Invalid username or password');
     } finally {
       setLoading(false);
     }
   };
 
+  // State Variables to display placeholder username/password values in this order: Default , RememberPasswordTicked
   const usernamePlaceholder = rememberPassword ? 'Username' : 'Username';
   const passwordPlaceholder = rememberPassword ? 'Password' : 'Password';
 
-  
+  // Displays various content
   return (
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
@@ -217,7 +226,8 @@ export default function LoginScreen() {
         style={styles.input}
         value={password}
         onChangeText={(text) => setPassword(text)}
-        secureTextEntry // Use asterisks instead of plain text
+        // Use asterisks instead of plain text for password security
+        secureTextEntry 
       />
   
   <View style={styles.checkboxContainer}>
@@ -238,9 +248,11 @@ export default function LoginScreen() {
 
 
       <TouchableOpacity
-        style={[styles.button, isLoading && styles.disabledButton]} // Disable button style if loading
+        // Disable button style if loading
+        style={[styles.button, isLoading && styles.disabledButton]} 
         onPress={handleLogin}
-        disabled={isLoading} // Disable button if loading
+        // Disable button if loading
+        disabled={isLoading} 
       >
         <Text style={styles.buttonText}>{isLoading ? 'Logging In...' : 'Login'}</Text>
       </TouchableOpacity>
@@ -251,10 +263,7 @@ export default function LoginScreen() {
 }
 
 
-
-
-
-
+// Local Style Sheet
 const styles = StyleSheet.create({
   container: {
     flex: 1,

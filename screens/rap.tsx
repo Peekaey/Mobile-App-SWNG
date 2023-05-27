@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Image, TextInput, TouchableOpacity,SafeAreaView,TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView, Animated} from 'react-native';
+import { StyleSheet, ScrollView, Image, TextInput, TouchableOpacity,SafeAreaView,TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView, Animated} from 'react-native';
 import { Text, View } from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -101,14 +101,15 @@ export default function RapPage() {
   const [review, setreview] = React.useState('');
 
   const isAnyFieldEmpty = !subject || !review;
-  const buttonBackgroundColor = isAnyFieldEmpty ? '#8B0000' : '#c11717';
+  const buttonBackgroundColor = isAnyFieldEmpty ? '#c11717' : '#ed3434';
 
   return (
 
     
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} automaticallyAdjustKeyboardInsets={true}>
+
       <View style={styles.dropdown}>
         <View style={styles.chap_dropdown}>
           <Chapters/>
@@ -133,11 +134,12 @@ export default function RapPage() {
           style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
           disabled={isAnyFieldEmpty}>
           <Text style={styles.buttonText}>Submit Review</Text>
-        </TouchableOpacity>
-
+      </TouchableOpacity>
+        </ScrollView>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

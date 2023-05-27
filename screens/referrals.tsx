@@ -1,9 +1,11 @@
-
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, } from 'react-native';
+import { StyleSheet,  Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import React from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
+
+
 
 const Chapters = () => {
 
@@ -16,7 +18,7 @@ const Chapters = () => {
   ];
   return(
     <View>
-      <Text style={styles.textboxAnchorText}> Select the Chapter:</Text>
+      <Text style={styles.dropDownText}> Select the Chapter:</Text>
       <SelectList data={data} setSelected={setSelected} />
     </View>
   );
@@ -33,7 +35,7 @@ const Members = () => {
   ];
   return(
     <View>
-      <Text style={styles.textboxAnchorText}> Select the Member:</Text>
+      <Text style={styles.dropDownText}> Select the Member:</Text>
       <SelectList data={data} setSelected={setSelected} />
     </View>
   );
@@ -49,7 +51,7 @@ export default function ReferralsPage() {
   const [notes, setnotes] = React.useState('');
 
   const isAnyFieldEmpty = !username || checkValidPhoneNum || checkValidEmail || !notes;
-  const buttonBackgroundColor = isAnyFieldEmpty ? '#8B0000' : '#c11717';
+  const buttonBackgroundColor = isAnyFieldEmpty ? '#c11717' : '#ed3434';
 
   const handleCheckEmail = text => {
     let re = /\S+@\S+\.\S+/;
@@ -74,66 +76,67 @@ export default function ReferralsPage() {
     }
   };
 
-  return (
+return (
+  <View style={styles.container}>
+    <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
-    <View style={styles.container}>
-      <View style = {styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-
+    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} automaticallyAdjustKeyboardInsets={true}>
       <View style={styles.dropdown}>
         <View style={styles.chap_dropdown}>
           <Chapters/>
         </View>
         <View style={styles.mem_dropdown}>
-         <Members/>
+          <Members/>
         </View>
       </View>
-      
+
       <View style={styles.centeredContainer}>
-      <Text style={styles.textboxAnchorText}>Name(required):</Text>
-      <TextInput placeholder="name" value={username} onChangeText={text => setUsername(text)} style={styles.input1}></TextInput>
-      </View>
-      
-      <View style={styles.centeredContainer}>
-      <Text style={styles.textboxAnchorText}>Business/Organisation:</Text>
-      <TextInput placeholder="Business/Organisation" style={styles.input1}></TextInput>
+        <Text style={styles.textboxAnchorText}>Name(required):</Text>
+        <TextInput placeholder="name" value={username} onChangeText={text => setUsername(text)} style={styles.input1}></TextInput>
       </View>
 
       <View style={styles.centeredContainer}>
-      <Text style={styles.textboxAnchorText}>Phone:</Text>
-      <TextInput placeholder="0000000000" value={phonenum} onChangeText={text => handleCheckPhoneNum(text)}  style={styles.input1}></TextInput>
+        <Text style={styles.textboxAnchorText}>Business/Organisation:</Text>
+        <TextInput placeholder="Business/Organisation" style={styles.input1}></TextInput>
+      </View>
+
+      <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}>Phone:</Text>
+        <TextInput placeholder="0000000000" value={phonenum} onChangeText={text => handleCheckPhoneNum(text)} style={styles.input1}></TextInput>
       </View>
       <View style={styles.errorContainer}>
-      {checkValidPhoneNum ? (
-        <Text style={styles.errorMessage}>Please enter a valid Phone number</Text>
-      ) : (
-        <Text style={styles.errorMessage}> </Text>
-      )}
+        {checkValidPhoneNum ? (
+          <Text style={styles.errorMessage}>Please enter a valid Phone number</Text>
+        ) : (
+          <Text style={styles.errorMessage}> </Text>
+        )}
       </View>
 
       <View style={styles.centeredContainer}>
-      <Text style={styles.textboxAnchorText}>Email(required):</Text>
-      <TextInput placeholder="someone@example.com" value={email} onChangeText={text => handleCheckEmail(text)} style={styles.input1}></TextInput>
+        <Text style={styles.textboxAnchorText}>Email(required):</Text>
+        <TextInput placeholder="someone@example.com" value={email} onChangeText={text => handleCheckEmail(text)} style={styles.input1}></TextInput>
       </View>
       <View style={styles.errorContainer}>
-      {checkValidEmail ? (
-        <Text style={styles.errorMessage}>Please enter a valid email address</Text>
-      ) : (
-        <Text style={styles.errorMessage}> </Text>
-      )}
+        {checkValidEmail ? (
+          <Text style={styles.errorMessage}>Please enter a valid email address</Text>
+        ) : (
+          <Text style={styles.errorMessage}> </Text>
+        )}
       </View>
 
       <View style={styles.centeredContainer}>
-      <Text style={styles.textboxAnchorText}>Notes(required):</Text>
-      <TextInput placeholder=" " value={notes} onChangeText={text => setnotes(text)} style={styles.input1}></TextInput>
+        <Text style={styles.textboxAnchorText}>Notes(required):</Text>
+        <TextInput placeholder=" " value={notes} onChangeText={text => setnotes(text)} style={styles.input1}></TextInput>
       </View>
 
       <TouchableOpacity
-          style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
-          disabled={isAnyFieldEmpty}>
-          <Text style={styles.buttonText}>Submit Referral</Text>
-        </TouchableOpacity>
-    </View>     
-  );
+        style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
+        disabled={isAnyFieldEmpty}>
+        <Text style={styles.buttonText}>Submit Referral</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -229,5 +232,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 13,
     position:'absolute',
+  },
+  dropDownText:{
+    alignSelf: 'flex-start',
+    marginBottom: '2%',
   },
 });

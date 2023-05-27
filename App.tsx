@@ -18,8 +18,8 @@ import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
 import * as SecureStore from 'expo-secure-store';
 
-import SWNGLogo from '../Mobile-App-SWNG/assets/SWNGTransparentLogo.png'
-import userAvatar from '../Mobile-App-SWNG/assets/userAvatar.png'
+import SWNGLogo from './assets/SWNGTransparentLogo.png'
+import userAvatar from './assets/userAvatar.png'
 
 
 // Import each new screen when it is created so the navigator can read it

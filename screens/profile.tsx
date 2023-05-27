@@ -4,43 +4,46 @@ import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, Keyboa
 
 import { Text, View } from '../components/Themed';
 import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
-
+import CheckTokenStatus from '../components/checkTokenStatus';
 
 var storedUserId:any;
 
 async function getAvatar() {
-  storedUserId = await AsyncStorage.getItem('avatarURL');
+  let storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
 
-  if (storedUserId === null) {
-    console.log("Profile Photo Local Storage is empty")
-    storedUserId = '';
-  } 
-  console.log("Profile Photo Local Storage is not empty and is:", storedUserId);''
+  if (storedAvatarURL === null) {
+    console.log("Profile Photo Local Storage is empty");
+    storedAvatarURL = '';
+  } else {
+    console.log("Profile Photo Local Storage is not empty and is:", storedAvatarURL);
+  }
 
+  return storedAvatarURL;
 }
 
 
 
 export default function ProfilePage() {
 
+  CheckTokenStatus();
+
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
 
 
   useEffect(() => {
-    const getAvatar = async () => {
-      const storedUserId = await AsyncStorage.getItem('avatarURL');
-      if (storedUserId === null) {
-        console.log("Profile Photo Local Storage is empty");
+    const fetchAvatar = async () => {
+      const storedAvatarURL = await getAvatar();
+
+      if (storedAvatarURL === '') {
         setAvatarUrl(undefined);
       } else {
-        console.log("Profile Photo Local Storage is not empty and is:", storedUserId);
-        setAvatarUrl(storedUserId);
+        setAvatarUrl(storedAvatarURL);
       }
     };
 
-    getAvatar();
+    fetchAvatar();
   }, []);
 
 

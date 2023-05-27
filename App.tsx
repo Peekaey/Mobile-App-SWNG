@@ -20,8 +20,8 @@ import ProfilePage from './screens/profile';
 import LoadingPage from './screens/loading';
 import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import * as SecureStore from 'expo-secure-store';
+import CheckTokenStatus from './components/checkTokenStatus';
 
 
 export const homeRoutes = [
@@ -37,10 +37,11 @@ export const homeRoutes = [
 ];
 
 
-var storedUserId:any;
+
+let storedUserId: any;
 
 async function getAvatar() {
-  storedUserId = await AsyncStorage.getItem('avatarURL');
+  storedUserId = await SecureStore.getItemAsync('avatarURL');
 
   if (storedUserId === null) {
     console.log('The stored avatar URL is null.');
@@ -49,6 +50,7 @@ async function getAvatar() {
     console.log('The stored avatar URL is:', storedUserId);
   }
 }
+
 
 
 

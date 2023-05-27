@@ -18,6 +18,9 @@ import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
 import * as SecureStore from 'expo-secure-store';
 
+import SWNGLogo from '../Mobile-App-SWNG/assets/SWNGTransparentLogo.png'
+import userAvatar from '../Mobile-App-SWNG/assets/userAvatar.png'
+
 
 // Import each new screen when it is created so the navigator can read it
 import LoginScreen from './screens/login';
@@ -28,6 +31,7 @@ import RapPage from './screens/rap';
 import ProfilePage from './screens/profile';
 import LoadingPage from './screens/loading';
 import CheckTokenStatus from './components/checkTokenStatus';
+import { useEffect, useState } from 'react';
 
 
 // Pages for the navigation to be able to navigate to
@@ -44,19 +48,6 @@ export const homeRoutes = [
 ];
 
 
-// Grabs Members Avatar during login
-let storedUserId: any;
-
-async function getAvatar() {
-  storedUserId = await SecureStore.getItemAsync('avatarURL');
-
-  if (storedUserId === null) {
-    console.log('The stored avatar URL is null.');
-    storedUserId = '../Mobile-App-SWNG/assets/user-avatar.png';
-  } else {
-    console.log('The stored avatar URL is:', storedUserId);
-  }
-}
 
 
 
@@ -136,9 +127,23 @@ const HomeTabs = () => {
         );
       };
 
-// Creating Top Navigation Bar
-export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
 
+
+// Grabs Members Avatar during login
+async function getAvatar() {
+  let storedUserId = await SecureStore.getItemAsync('avatarURL');
+  return storedUserId || '../Mobile-App-SWNG/assets/user-avatar.png';
+}
+
+// Creating Top Navigation Bar
+export const TopNavigationSimpleUsageShowcase = ({ navigation, route }: any) => {
+  const [avatarSource, setAvatarSource] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    getAvatar().then((avatarUrl) => {
+      setAvatarSource(avatarUrl);
+    });
+  }, []);
 
   // Gets current page and doesn't display top navbar if any of the below
   const currentPage = route?.name;
@@ -155,15 +160,12 @@ export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
   return (
     <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
       <View style={styles.container}>
-        <Image source={require('../Mobile-App-SWNG/assets/thumbnail_SWNG-transparent.png')} style={styles.logo} />
+        <Image source={SWNGLogo} style={styles.logo} />
         <TouchableOpacity onPress={() => navigation.navigate('Profile' as never)}>
-          {storedUserId ? (
-            <Image source={{ uri: storedUserId }} style={styles.avatar} />
+          {avatarSource ? (
+            <Image source={{ uri: avatarSource }} style={styles.avatar} />
           ) : (
-            <Image
-              source={require('../Mobile-App-SWNG/assets/user-avatar.png')}
-              style={styles.avatar}
-            />
+            <Image source={userAvatar} style={styles.avatar} />
           )}
         </TouchableOpacity>
       </View>

@@ -1,4 +1,5 @@
-
+// Modules and Stuff to work
+// Need to refactor and remove thats unneeded in future
 import { StyleSheet, Image, Linking } from 'react-native';
 import { Text, View } from '../components/Themed';
 const WordPressAPI = 'https://example.com/wp-json/wp/v2/posts?_embed&per_page=5';
@@ -7,16 +8,13 @@ import React, { useState, useEffect } from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import cheerio from 'cheerio';
 
-
-
-import { CamdenChapter } from '../components/ChapterMeetingDetails';
-import { CampbelltownChapter } from '../components/ChapterMeetingDetails';
 import { TouchableOpacity} from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
 
 import { Chapter, swngURL } from './loading';
 
+// Import Event Details from loading page
 import {
   getEventTitle,
   getEventDate,
@@ -25,17 +23,12 @@ import {
   getEventURL,
 } from './loading';
 
-  
 
-
-
-
-
-
+// Main function
 export default function IndexPage() {
 
 
-
+  // Display page information - call several functions and variables for data
 
   return (
     <View style={styles.containerHead}>
@@ -44,26 +37,21 @@ export default function IndexPage() {
       <Text style={styles.title } > {Chapter} Chapter </Text> 
       <GreyBox/>
       <RedBox/>
-
-
       </View> 
-
-
-
-
-
   );
 
 }
 
-
+// Function for all event data in the center box
 export const GreyBox = () => {
   
+  // Grab event details
   const eventTitle = getEventTitle();
   const eventTimes = getEventTimes();
   const eventDate = getEventDate();
   const venueText = getVenueText();
   const eventURL = getEventURL();
+
 
   if (!eventTitle || !eventTimes || !eventDate || !venueText) {
     // Render loading state or return null
@@ -75,17 +63,19 @@ export const GreyBox = () => {
   console.log(eventDate)
   console.log(venueText)
 
+  // Action to open EventURL in browser
   const OpenEventDetails = () => {
     console.log('Called');
     Linking.openURL(eventURL);
   };
+
+  // Action for Apology button
   const ApologyButton = () => {
     console.log('HitTheApologyButton');
 
   };
 
-
-
+  // Display content in center box
   return (
   <View style={styles.containerBody}>
       <View style={styles.middleBox}>
@@ -106,29 +96,11 @@ export const GreyBox = () => {
   );
 };
 
+// Function to display content in bottom of screen
 const RedBox = () => {
 
-  axios.get(swngURL)
-  .then((response: any) => {
-    const html = response.data;
-    const $ = cheerio.load(html);
-    const CamdenpresidentText = $('.et_pb_blurb_8 > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > p:nth-child(1)').text();
-    const CamdenpresidentName = CamdenpresidentText.replace('President: ', '');
 
-
-    const CamdenphoneText = $('.et_pb_blurb_8 > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > p:nth-child(1)').text();
-    const Camdenphone = CamdenphoneText.replace('Phone: ', '');
-
-
-    console.log(CamdenpresidentName); // Output: John Doe
-
-  
-
-  })
-  .catch((error:any)=> {
-    console.error(error);
-  });
-
+  // Actions to open each chapters page
 
   const OpenBrowserCamden = () => {
     console.log('Called');
@@ -146,6 +118,8 @@ const RedBox = () => {
     console.log('Called');
     Linking.openURL('https://www.swng.org.au/chapters/narellan');
   };
+
+  // Displays red box info
 
   return (
     <View style={styles.bottomBox}>
@@ -207,7 +181,7 @@ const RedBox = () => {
 };
 
 
-// More Styling
+// Page Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,4 +1,9 @@
+// TO DO
+// - Update and change storedUserId variable to storedUserURL
 
+
+// Modules and Stuff to work
+// Need to refactor and remove thats unneeded in future
 import { StyleSheet, Image, View, Text, Platform, TouchableOpacity} from 'react-native';
 import { NavigationContainer, useNavigation, useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -9,6 +14,10 @@ import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout} from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { TouchableWebElement } from '@ui-kitten/components/devsupport';
+import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
+import * as SecureStore from 'expo-secure-store';
+
 
 // Import each new screen when it is created so the navigator can read it
 import LoginScreen from './screens/login';
@@ -18,12 +27,10 @@ import AttendancePage from './screens/attendance';
 import RapPage from './screens/rap';
 import ProfilePage from './screens/profile';
 import LoadingPage from './screens/loading';
-import { TouchableWebElement } from '@ui-kitten/components/devsupport';
-import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
-import * as SecureStore from 'expo-secure-store';
 import CheckTokenStatus from './components/checkTokenStatus';
 
 
+// Pages for the navigation to be able to navigate to
 export const homeRoutes = [
   { name: 'Loading', component: LoadingPage },
   { name: 'Login', component: LoginScreen },
@@ -37,7 +44,7 @@ export const homeRoutes = [
 ];
 
 
-
+// Grabs Members Avatar during login
 let storedUserId: any;
 
 async function getAvatar() {
@@ -53,8 +60,9 @@ async function getAvatar() {
 
 
 
-
+// Creates the bottom navigation bar
 const Tab = createBottomTabNavigator();
+
 // Function underneath is the styling of the bottom navigation bar, including icons
 const HomeTabs = () => {
 
@@ -68,7 +76,7 @@ const HomeTabs = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName = '';
 
-          // Only Uncomment for Easy Debugging
+          // Icons for each route
           if (route.name === 'Login') {
             iconName = focused ? 'person-circle' : 'person-circle-outline';
 
@@ -85,15 +93,15 @@ const HomeTabs = () => {
           if (route.name === 'Attendance') {
             iconName = focused ? 'calendar' : 'calendar-outline';
           }
-
-
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+        // Tab Bar settings
         tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: '#c11717',
         tabBarInactiveTintColor: 'white',
+
         tabBarStyle: {
-        // Hides the bottom navigation bar for the LoginPage screen
+        // Hides the bottom navigation bar for the Login and Loading Page
           display: (route.name === 'Login' || route.name === 'Loading') ? 'none' : 'flex',
           backgroundColor: 'grey'
         },
@@ -103,7 +111,6 @@ const HomeTabs = () => {
           'Loading',
           'Login',
           'Profile',
-
         ].includes(route.name)
         ? () => {
           return null;
@@ -111,29 +118,29 @@ const HomeTabs = () => {
         : undefined,
       })
       }>
-{homeRoutes.map(route => (
-        <Tab.Screen
-          key={route.name}
-          name={route.name}
-          component={route.component}
-          options={{ 
-            header: ({ navigation, route }) => (
-              <TopNavigationSimpleUsageShowcase navigation={navigation} route={route} />
-            ),
-            headerShown: true,
-          }}
-        />
-      ))}
-    </Tab.Navigator>
-  );
-};
+        
+      {homeRoutes.map(route => (
+              <Tab.Screen
+                key={route.name}
+                name={route.name}
+                component={route.component}
+                options={{ 
+                  header: ({ navigation, route }) => (
+                    <TopNavigationSimpleUsageShowcase navigation={navigation} route={route} />
+                  ),
+                  headerShown: true,
+                }}
+              />
+            ))}
+          </Tab.Navigator>
+        );
+      };
 
-
-
+// Creating Top Navigation Bar
 export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
 
 
-
+  // Gets current page and doesn't display top navbar if any of the below
   const currentPage = route?.name;
 
   if (!route || !currentPage || currentPage === 'Loading') {
@@ -144,7 +151,7 @@ export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
     return null;
   }
 
-
+  // Returns and displays the navbar
   return (
     <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
       <View style={styles.container}>
@@ -164,6 +171,7 @@ export const TopNavigationSimpleUsageShowcase = ({navigation, route}: any) => {
   );
 };
 
+// Components of the app - incldues all dependencies as well as bottom/top navbars
 const App = () => {
   return (
     <React.Fragment>
@@ -179,7 +187,6 @@ const App = () => {
     </React.Fragment>
   );
 };
-
 
 export default App;
 

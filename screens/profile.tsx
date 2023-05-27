@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 
 import CheckTokenStatus from '../components/checkTokenStatus';
+import userAvatar from '../assets/userAvatar.png'
+
 
 var storedUserId:any;
 
@@ -76,7 +78,7 @@ export default function ProfilePage() {
       ) : (
         <View>
           <Image
-            source={require('../assets/user-avatar.png')}
+            source={userAvatar}
             style={styles.image}
           />
           <Text style={styles.ProfilePhotoAnchorText}> Edit ✎ </Text>

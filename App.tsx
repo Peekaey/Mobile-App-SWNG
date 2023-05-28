@@ -18,6 +18,7 @@ import { TouchableWebElement } from '@ui-kitten/components/devsupport';
 import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
 import * as SecureStore from 'expo-secure-store';
 
+
 import SWNGLogo from './assets/SWNGTransparentLogo.png'
 import userAvatar from './assets/userAvatar.png'
 

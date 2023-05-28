@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Mobile-App-SWNG",
-    "slug": "Mobile-App-SWNG",
+    "name": "SWNG",
+    "slug": "SWNGApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/SWNGWhiteLogo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/SWNGTransparentLogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,13 +19,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/SWNGWhiteLogo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.peekay.MobileAppSWNG"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/SWNGWhiteLogo.png"
     },
     "extra": {
       "eas": {

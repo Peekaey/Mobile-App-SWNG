@@ -20,17 +20,17 @@ import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
 
 
 // Placeholder code for now, please do not edit any notification related code 
-// - Related to asking the user for notification permission to display event notifications
+// // - Related to asking the user for notification permission to display event notifications
 const enableForegroundNotifications = async () => {
-  let settings = await Notifications.getPermissionsAsync();
-  let finalStatus = settings.granted;
+  const { status } = await Notifications.getPermissionsAsync();
+  let finalStatus = status;
 
-  if (!finalStatus) {
-    settings = await Notifications.requestPermissionsAsync();
-    finalStatus = settings.granted;
+  if (status !== 'granted') {
+    const { status: newStatus } = await Notifications.requestPermissionsAsync();
+    finalStatus = newStatus;
   }
 
-  if (!finalStatus) {
+  if (finalStatus !== 'granted') {
     console.log('Notification permission not granted');
     return;
   }
@@ -56,14 +56,14 @@ const enableForegroundNotifications = async () => {
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#FF231F7C',
     });
-
+  
     const channel = await Notifications.getNotificationChannelAsync('default');
-  if (channel?.sound === null) {
-    await Notifications.setNotificationChannelAsync('default', {
-      ...channel,
-      sound: 'default',
-  });
-}
+    if (channel && channel.sound === null) {
+      await Notifications.setNotificationChannelAsync('default', {
+        ...channel,
+        sound: 'default',
+      });
+    }
   }
 };
 
@@ -79,6 +79,9 @@ const handleNotificationResponse = (response) => {
 
 // Call the function to enable foreground notifications and schedule a local notification
 enableForegroundNotifications();
+
+
+// -- Doesnt error out scheduling a notification - only when asking for it on android
 
 // Schedule a local notification
 const scheduleLocalNotification = async () => {

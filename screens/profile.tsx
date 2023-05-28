@@ -1,16 +1,11 @@
-
-
 import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
-
 import { Text, View } from '../components/Themed';
 import { useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-
 import CheckTokenStatus from '../components/checkTokenStatus';
-import userAvatar from '../assets/userAvatar.png'
+import axios from 'axios';
 
-
-var storedUserId:any;
+var storedUserId: any;
 
 async function getAvatar() {
   let storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
@@ -25,14 +20,28 @@ async function getAvatar() {
   return storedAvatarURL;
 }
 
-
+async function fetchUserDetails(userId: number) {
+  try {
+    const response = await axios.get(`https://www.swng.org.au/wp-json/wp/v2/users/${userId}`);
+    const user = response.data;
+    console.log('User Details:', user);
+    // Handle the user details here as needed
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    // Handle the error here
+  }
+}
 
 export default function ProfilePage() {
-
   CheckTokenStatus();
 
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
-
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [businessName, setBusinessName] = useState('');
+  const [businessURL, setBusinessURL] = useState('');
+  const [description, setDescription] = useState('');
+  const [isAnyFieldFilled, setIsAnyFieldFilled] = useState(false);
 
   useEffect(() => {
     const fetchAvatar = async () => {
@@ -48,78 +57,83 @@ export default function ProfilePage() {
     fetchAvatar();
   }, []);
 
+  const handleProfileUpdate = () => {
+    // Perform profile update action here
+    console.log('Perform profile update action');
+  };
 
-  const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-
-  const [isAnyFieldFilled, setIsAnyFieldFilled] = useState(false);
+  const handleFetchUserDetails = () => {
+    fetchUserDetails(100); // Provide the user ID to fetch the details
+  };
 
   const isAnyFieldEmpty = !isAnyFieldFilled;
   const buttonBackgroundColor = isAnyFieldFilled ? '#2ea043' : '#13461c';
- 
-
-  const SubmitProfileUpdate = () => {
-    console.log('Update Profile Picture');
-
-  };
-
 
   return (
-    
     <View style={styles.container}>
       <View style={styles.centeredContainer}>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       </View>
 
       <View style={styles.centeredContainer}>
-      {avatarUrl ? (
-        <Image source={{ uri: avatarUrl }} style={styles.image} />
-      ) : (
-        <View>
-          <Image
-            source={userAvatar}
-            style={styles.image}
-          />
-          <Text style={styles.ProfilePhotoAnchorText}> Edit ✎ </Text>
-        </View>
-  )}
-</View>
+        {avatarUrl ? (
+          <Image source={{ uri: avatarUrl }} style={styles.image} />
+        ) : (
+          <View>
+            <Image source={require('../assets/user-avatar.png')} style={styles.image} />
+            <Text style={styles.ProfilePhotoAnchorText}> Edit ✎ </Text>
+          </View>
+        )}
+      </View>
+
       <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}> Username</Text>
+        <Text style={styles.textboxAnchorText}> Business Name</Text>
         <TextInput
-          placeholder="johnapplesmith@gmail.com"
+          placeholder="Enter business name"
           style={styles.input}
-          value={username}
-          onChangeText={text => {
-            setUsername(text);
-            setIsAnyFieldFilled(text !== '' || phoneNumber !== '' || password !== '');
+          value={businessName}
+          onChangeText={(text) => {
+            setBusinessName(text);
+            setIsAnyFieldFilled(text !== '' || email !== '' || businessURL !== '' || description !== '');
           }}
         />
       </View>
 
       <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}> Phone Number</Text>
+        <Text style={styles.textboxAnchorText}> Email</Text>
         <TextInput
-          placeholder="0410236256"
+          placeholder="Enter email"
           style={styles.input}
-          value={phoneNumber}
-          onChangeText={text => {
-            setPhoneNumber(text);
-            setIsAnyFieldFilled(text !== '' || username !== '' || password !== '');
+          value={email}
+          onChangeText={(text) => {
+            setEmail(text);
+            setIsAnyFieldFilled(text !== '' || businessName !== '' || businessURL !== '' || description !== '');
           }}
         />
       </View>
 
       <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}> Password</Text>
+        <Text style={styles.textboxAnchorText}> Business URL</Text>
         <TextInput
-          placeholder="*******"
+          placeholder="Enter business URL"
           style={styles.input}
-          value={password}
-          onChangeText={text => {
-            setPassword(text);
-            setIsAnyFieldFilled(text !== '' || username !== '' || phoneNumber !== '');
+          value={businessURL}
+          onChangeText={(text) => {
+            setBusinessURL(text);
+            setIsAnyFieldFilled(text !== '' || businessName !== '' || email !== '' || description !== '');
+          }}
+        />
+      </View>
+
+      <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}> Description</Text>
+        <TextInput
+          placeholder="Enter description"
+          style={styles.input}
+          value={description}
+          onChangeText={(text) => {
+            setDescription(text);
+            setIsAnyFieldFilled(text !== '' || businessName !== '' || email !== '' || businessURL !== '');
           }}
         />
       </View>
@@ -128,15 +142,20 @@ export default function ProfilePage() {
         <TouchableOpacity
           style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
           disabled={isAnyFieldEmpty}
-          onPress={SubmitProfileUpdate}
+          onPress={handleProfileUpdate}
         >
           <Text style={styles.buttonText}>Update Profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.centeredContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleFetchUserDetails}>
+          <Text style={styles.buttonText}>Fetch User Details</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -144,19 +163,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   centeredContainer: {
-
     alignItems: 'center',
-
-
   },
   image: {
     resizeMode: 'contain',
     height: 100,
-    width: 100, 
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    width: 100,
   },
   separator: {
     marginVertical: 20,
@@ -174,7 +186,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
     textAlign: 'center',
-
   },
   button: {
     backgroundColor: '#2ea043',
@@ -194,7 +205,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   ProfilePhotoAnchorText: {
-    marginBottom: '5%'
-  }
-
+    marginBottom: '5%',
+  },
 });

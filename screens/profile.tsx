@@ -1,142 +1,145 @@
-
-
-import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
-
-import { Text, View } from '../components/Themed';
-import { useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Image, Modal, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { Text, View } from '../components/Themed';
+import React, {useState} from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
 
-import CheckTokenStatus from '../components/checkTokenStatus';
-import userAvatar from '../assets/userAvatar.png'
+// const for pop-up
+const MyModal = ({visible, onClose}) => {
+  return (
+    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
+      <View style={styles.popUpContainer}>
+        <View style={styles.popUpTextContainer}>
+          <Text style={styles.popUpText}>Your Profile is updated</Text>
+          <TouchableOpacity onPress={onClose}>
+            <Text style={styles.popUpButton}>RETURN</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
 
+// const for update data 
+const updateUserProfile = async (user_name, user_url, user_description) => {
 
-var storedUserId:any;
+  const storedToken = await SecureStore.getItemAsync('token');
+  const storedUserId = await SecureStore.getItemAsync('user_id');
 
-async function getAvatar() {
-  let storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
-
-  if (storedAvatarURL === null) {
-    console.log("Profile Photo Local Storage is empty");
-    storedAvatarURL = '';
-  } else {
-    console.log("Profile Photo Local Storage is not empty and is:", storedAvatarURL);
+ // console.log ("PROFILE SCREEN STORED USER ID", storedUserId)
+ // console.log ("PROFILE SCREEN STORED token", storedToken)
+  
+  const end_point = `https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`;
+  const data ={};
+  if(user_name){
+    data.name = user_name;
   }
-
-  return storedAvatarURL;
-}
-
-
+  if(user_url){
+    data.url = user_url;
+  }
+  if(user_description){
+    data.description = user_description;
+  }
+ 
+  const options = {
+  method: 'PUT',
+  headers: {
+  Authorization: `Bearer ${storedToken}`,
+  'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(data),
+  };
+  const response = await fetch(end_point, options);
+  const result = await response.json();
+  return result;
+  };
 
 export default function ProfilePage() {
 
-  CheckTokenStatus();
+    const [isUpdated, setIsUpdated] = useState(false);
+    const [user_name, setName] = useState('');
+    const [user_description, setdescription] = useState('');
+    const[checkValidURL, setcheckValidURL] = useState(false);
+    const [user_url, setUrl] = useState('');
+    
+    //Variable for regx validation 
+    const is_URL_Wrong = checkValidURL;
+    const is_URL_empty = user_url;
+    const buttonBackgroundColor = is_URL_Wrong? '#c11717' : '#ed3434';
 
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
+    const updateinfo = async () => {
+    const result = await updateUserProfile(user_name, user_url, user_description); //call updateUserProfile function
+     console.log(result);
 
+    setIsUpdated(true);
+    setName('');
+    setUrl('');
+    setdescription('');
+    };
 
-  useEffect(() => {
-    const fetchAvatar = async () => {
-      const storedAvatarURL = await getAvatar();
-
-      if (storedAvatarURL === '') {
-        setAvatarUrl(undefined);
-      } else {
-        setAvatarUrl(storedAvatarURL);
+    //function for regx validation
+    const handleCheckURL = text => {
+      let regx = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/im;
+      setUrl(text);
+      if (regx.test(text)) {
+        setcheckValidURL(false);
+      }
+       else {
+        setcheckValidURL(true);
       }
     };
 
-    fetchAvatar();
-  }, []);
+    // check if the url input box is empty 
+    const handleBlur = () => {
+      if(is_URL_empty == ""){
+      setcheckValidURL("");
+      }
+    };
 
+    return (
 
-  const [username, setUsername] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-
-  const [isAnyFieldFilled, setIsAnyFieldFilled] = useState(false);
-
-  const isAnyFieldEmpty = !isAnyFieldFilled;
-  const buttonBackgroundColor = isAnyFieldFilled ? '#2ea043' : '#13461c';
- 
-
-  const SubmitProfileUpdate = () => {
-    console.log('Update Profile Picture');
-
-  };
-
-
-  return (
-    
     <View style={styles.container}>
+
       <View style={styles.centeredContainer}>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       </View>
 
-      <View style={styles.centeredContainer}>
-      {avatarUrl ? (
-        <Image source={{ uri: avatarUrl }} style={styles.image} />
-      ) : (
-        <View>
-          <Image
-            source={userAvatar}
-            style={styles.image}
-          />
-          <Text style={styles.ProfilePhotoAnchorText}> Edit ✎ </Text>
+        <View style={styles.centeredContainer}>
+        <Image source={require('../assets/userAvatar.png')} style={styles.image} />
+        <Text style={styles.ProfilePhotoAnchorText}> Edit ✎</Text>
         </View>
-  )}
-</View>
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}> Username</Text>
-        <TextInput
-          placeholder="johnapplesmith@gmail.com"
-          style={styles.input}
-          value={username}
-          onChangeText={text => {
-            setUsername(text);
-            setIsAnyFieldFilled(text !== '' || phoneNumber !== '' || password !== '');
-          }}
-        />
-      </View>
 
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}> Phone Number</Text>
-        <TextInput
-          placeholder="0410236256"
-          style={styles.input}
-          value={phoneNumber}
-          onChangeText={text => {
-            setPhoneNumber(text);
-            setIsAnyFieldFilled(text !== '' || username !== '' || password !== '');
-          }}
-        />
-      </View>
+        <MyModal visible={isUpdated} onClose={() => setIsUpdated(false)} />
+        <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}>Business Name</Text>
+        <TextInput placeholder="Enter business name"  onChangeText={setName} style={styles.input}></TextInput>
+        </View>
 
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}> Password</Text>
-        <TextInput
-          placeholder="*******"
-          style={styles.input}
-          value={password}
-          onChangeText={text => {
-            setPassword(text);
-            setIsAnyFieldFilled(text !== '' || username !== '' || phoneNumber !== '');
-          }}
-        />
-      </View>
+        <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}>Business Website URL</Text>
+        <TextInput placeholder="https://example.com" value={user_url} onChangeText={text => handleCheckURL(text)} 
+        onBlur={handleBlur} style={styles.input}></TextInput>
+        </View>
+        {checkValidURL? (
+          <Text style={styles.errorMessage}>Please enter a valid URL</Text>
+        ) : (
+          <Text style={styles.errorMessage}></Text>
+        )}
 
-      <View style={styles.centeredContainer}>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
-          disabled={isAnyFieldEmpty}
-          onPress={SubmitProfileUpdate}
-        >
-          <Text style={styles.buttonText}>Update Profile</Text>
+        <View style={styles.centeredContainer}>
+        <Text style={styles.textboxAnchorText}>Company Description</Text>
+        <TextInput placeholder="Enter company description" value={user_description} onChangeText={setdescription} style={styles.input}></TextInput>
+        </View>
+
+        <View style={styles.centeredContainer}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: buttonBackgroundColor }]} disabled={is_URL_Wrong} onPress={updateinfo}>
+        <Text style={styles.buttonText} >Update Profile</Text>
         </TouchableOpacity>
-      </View>
+        </View>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -144,10 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   centeredContainer: {
-
     alignItems: 'center',
-
-
   },
   image: {
     resizeMode: 'contain',
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
   separator: {
     marginVertical: 20,
     height: 1,
-    width: '50%',
-    backgroundColor: 'white',
+    width: '100%',
+    alignItems: 'center',
   },
   input: {
     width: '80%',
@@ -174,27 +174,53 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
     textAlign: 'center',
-
   },
   button: {
-    backgroundColor: '#2ea043',
-    width: '80%',
+    backgroundColor: '#ed3434',
+    width: '40%',
     height: 50,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: '25%',
+    marginTop: '2%',
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   textboxAnchorText: {
-    paddingTop: 20,
+    marginBottom: '2%',
   },
   ProfilePhotoAnchorText: {
     marginBottom: '5%'
-  }
-
+  },
+  errorMessage: {
+    color: 'red',
+    fontWeight: 'bold',
+    fontSize: 13,
+    position:'absolute',
+    margin:10,
+    top: 335,
+    marginLeft: 40,
+  },
+  //pop-up css
+  popUpContainer:{
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+  },
+  popUpTextContainer:{
+    backgroundColor: '#fff', 
+    padding: 20, 
+  },
+  popUpText:{
+    fontSize: 28,
+  },
+  popUpButton:{
+    color: 'red',
+    marginTop: 20,
+    fontSize: 20,
+    marginLeft: 100,
+  },
 });

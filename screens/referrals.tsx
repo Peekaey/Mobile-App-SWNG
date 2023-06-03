@@ -52,6 +52,7 @@ export default function ReferralsPage() {
 
   const isAnyFieldEmpty = !username || checkValidPhoneNum || checkValidEmail || !notes;
   const buttonBackgroundColor = isAnyFieldEmpty ? '#c11717' : '#ed3434';
+  const isPhoneEmpty = phonenum;
 
   const handleCheckEmail = text => {
     let re = /\S+@\S+\.\S+/;
@@ -76,6 +77,12 @@ export default function ReferralsPage() {
     }
   };
 
+  const handleBlur = () => {
+    if(phonenum.length==0){
+    setcheckValidPhoneNum("");
+    }
+  };
+
 return (
   <View style={styles.container}>
     <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
@@ -92,17 +99,17 @@ return (
 
       <View style={styles.centeredContainer}>
         <Text style={styles.textboxAnchorText}>Name(required):</Text>
-        <TextInput placeholder="name" value={username} onChangeText={text => setUsername(text)} style={styles.input1}></TextInput>
+        <TextInput placeholder="Enter Name" value={username} onChangeText={text => setUsername(text)} style={styles.input1}></TextInput>
       </View>
 
       <View style={styles.centeredContainer}>
         <Text style={styles.textboxAnchorText}>Business/Organisation:</Text>
-        <TextInput placeholder="Business/Organisation" style={styles.input1}></TextInput>
+        <TextInput placeholder=" Enter Business/Organisation" style={styles.input1}></TextInput>
       </View>
 
       <View style={styles.centeredContainer}>
         <Text style={styles.textboxAnchorText}>Phone:</Text>
-        <TextInput placeholder="0000000000" value={phonenum} onChangeText={text => handleCheckPhoneNum(text)} style={styles.input1}></TextInput>
+        <TextInput placeholder="0000000000" value={phonenum} onChangeText={text => handleCheckPhoneNum(text)} onBlur={handleBlur} style={styles.input1}></TextInput>
       </View>
       <View style={styles.errorContainer}>
         {checkValidPhoneNum ? (

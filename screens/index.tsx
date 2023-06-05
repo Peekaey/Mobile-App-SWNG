@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import cheerio from 'cheerio';
-
+import * as MailComposer from 'expo-mail-composer';
 import { TouchableOpacity} from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
@@ -70,10 +70,10 @@ export const GreyBox = () => {
   };
 
   // Action for Apology button
-  const ApologyButton = () => {
-    console.log('HitTheApologyButton');
-
-  };
+  // const ApologyButton = () => {
+  //   console.log('HitTheApologyButton');
+  //
+  // };
 
   // Display content in center box
   return (
@@ -95,6 +95,25 @@ export const GreyBox = () => {
       </View>
   );
 };
+
+
+const ApologyButton = () => {
+  console.log('HitTheApologyButton');
+
+  const subject = 'UNAVAILABLE for upcoming event';
+  const body = 'Hey, hope you are well. Unfortunately, I will not be able to attend the upcoming event.';
+
+  const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  Linking.openURL(mailtoLink)
+      .then(() => {
+        console.log('Email app opened successfully');
+      })
+      .catch((error) => {
+        console.error('Error opening email app:', error);
+      });
+};
+
 
 // Function to display content in bottom of screen
 const RedBox = () => {
@@ -122,61 +141,61 @@ const RedBox = () => {
   // Displays red box info
 
   return (
-    <View style={styles.bottomBox}>
+      <View style={styles.bottomBox}>
         <Text style={[styles.contactText, { textAlignVertical: 'top' }]}> Contact SWNG! </Text>
-    <View style={styles.gridRow}>
-      <View style={styles.chapterContainer}>
-        <TouchableWithoutFeedback onPress={OpenBrowserCamden}>
-        <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
-        </TouchableWithoutFeedback >
-        <Text style={styles.chapterTitle}>CAMDEN {'\n'}
-        President: {'\n'}
-        David Young {'\n'}
-        Phone: {'\n'}
-        0450525005 {'\n'}
-        </Text>
- 
+        <View style={styles.gridRow}>
+          <View style={styles.chapterContainer}>
+            <TouchableWithoutFeedback onPress={OpenBrowserCamden}>
+              <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
+            </TouchableWithoutFeedback >
+            <Text style={styles.chapterTitle}>CAMDEN {'\n'}
+              President: {'\n'}
+              David Young {'\n'}
+              Phone: {'\n'}
+              0450525005 {'\n'}
+            </Text>
+
+          </View>
+          <View style={styles.chapterContainer}>
+            <TouchableWithoutFeedback onPress={OpenBrowserCampbelltown}>
+              <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
+            </TouchableWithoutFeedback>
+            <Text style={styles.chapterTitle}>CAMPBELLTOWN {'\n'}
+              President: {'\n'}
+              Wendy White {'\n'}
+              Phone: {'\n'}
+              0409 228 149 {'\n'}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.gridRow}>
+          <View style={styles.chapterContainer}>
+            <TouchableWithoutFeedback onPress={OpenBrowserLiverpool}>
+              <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
+            </TouchableWithoutFeedback>
+            <Text style={styles.chapterTitle}>LIVERPOOL {'\n'}
+              President: {'\n'}
+              Rolf Fuchs {'\n'}
+              Phone: {'\n'}
+              0404 840 506
+            </Text>
+          </View>
+          <View style={styles.chapterContainer}>
+            <TouchableWithoutFeedback onPress={OpenBrowserNarellan}>
+              <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
+            </TouchableWithoutFeedback>
+            <Text style={styles.chapterTitle}>NARELLAN {'\n'}
+              President: {'\n'}
+              Darrel Stenhouse {'\n'}
+              Phone: {'\n'}
+              0438 789 455 {'\n'}
+            </Text>
+            <Text>
+
+            </Text>
+          </View>
+        </View>
       </View>
-      <View style={styles.chapterContainer}>
-      <TouchableWithoutFeedback onPress={OpenBrowserCampbelltown}>
-        <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
-      </TouchableWithoutFeedback>
-        <Text style={styles.chapterTitle}>CAMPBELLTOWN {'\n'}
-        President: {'\n'}
-        Wendy White {'\n'}
-        Phone: {'\n'}
-        0409 228 149 {'\n'}
-        </Text>
-      </View>
-    </View>
-    <View style={styles.gridRow}>
-      <View style={styles.chapterContainer}>
-        <TouchableWithoutFeedback onPress={OpenBrowserLiverpool}>
-        <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
-        </TouchableWithoutFeedback>
-        <Text style={styles.chapterTitle}>LIVERPOOL {'\n'}
-        President: {'\n'}
-        Rolf Fuchs {'\n'}
-        Phone: {'\n'}
-        0404 840 506
-        </Text>
-      </View>
-      <View style={styles.chapterContainer}>
-        <TouchableWithoutFeedback onPress={OpenBrowserNarellan}>
-        <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
-        </TouchableWithoutFeedback>
-        <Text style={styles.chapterTitle}>NARELLAN {'\n'}
-        President: {'\n'}
-        Darrel Stenhouse {'\n'}
-        Phone: {'\n'}
-        0438 789 455 {'\n'}
-        </Text>
-        <Text>
-          
-        </Text>
-      </View>
-    </View>
-  </View>
   );
 };
 

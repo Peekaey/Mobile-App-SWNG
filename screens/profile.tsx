@@ -137,14 +137,16 @@ CheckTokenStatusOnPageLoad();
 
         const response = await axiosInstance.post('https://swng.org.au/wp-json/jwt-auth/v1/token/validate');
         if (response.data.code === 'jwt_auth_valid_token' && response.data.data.status === 200) {
-          console.log('Token is valid');
+          console.log('Token is valid111');
           await updateinfo();
         } else {
           navigation.navigate('Login');
+          console.log('Token is Invalid111');
           Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
         }
       } catch (error) {
         navigation.navigate('Login');
+        console.log("Token is error")
         Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
       }
     };

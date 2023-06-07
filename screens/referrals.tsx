@@ -1,49 +1,138 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,  Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Text, View} from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as SecureStore from 'expo-secure-store';
 
-
-
-const Chapters = () => {
-
+const Chapters_Members = () => {
   const [selected, setSelected] = React.useState("");
-  
-  const data = [
-      {key:'1', value:'Chapter1'},
-      {key:'2', value:'Chapter2'},
-      {key:'3', value:'Chapter3'}
-  ];
-  return(
-    <View>
-      <Text style={styles.dropDownText}> Select the Chapter:</Text>
-      <SelectList data={data} setSelected={setSelected} />
-    </View>
+  const [chapterNames, setChapterNames] = React.useState([]);
+  const [memberNames, setMemberNames] = React.useState([]);
+
+  React.useEffect(() => {
+      async function fetchChapterNames() {
+          try {
+              const response = await fetch(
+                  "https://www.swng.org.au/wp-json/swng-app/v1/chapterNames"
+              );
+              const data = await response.json();
+              const names = Object.values(data);
+              setChapterNames(names);
+          } catch (error) {
+              console.error(error);
+          }
+      }
+      fetchChapterNames();
+  }, []);
+
+  React.useEffect(() => {
+      async function fetchMemberNames() {
+          try {
+              if (selected) {
+                  const response = await fetch(
+                      `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${selected}`
+                  );
+                  const data = await response.json();
+                  const names = Object.values(data).map((member) => member.name);
+                  setMemberNames(names);
+              } else {
+                  setMemberNames([]);
+              }
+          } 
+          catch (error) {
+              console.error(error);
+          }
+      }
+      fetchMemberNames();
+  }, [selected]);
+
+  const chapterData = chapterNames.slice(1).map((name, index) => ({
+      key: index.toString(),
+      value: name,
+  }));
+
+  const memberData = memberNames.map((name, index) => ({
+      key: index.toString(),
+      value: name,
+  }));
+
+  const handleSelectChapter = (selectedOption) => {
+      const selectedChapterName = chapterData.find(
+          (option) => option.key === selectedOption
+      )?.value;
+      setSelected(selectedChapterName);
+  };
+
+  const handleSelectMember = (selectedOption) => {
+      const selectedMemberName = memberData.find(
+          (option) => option.key === selectedOption
+      )?.value;
+  };
+
+  return (
+      <View style={styles.dropdown}>
+          <View style={styles.chap_dropdown}>
+            <Text style={styles.dropDownText}>Select the Chapter:</Text>
+            <SelectList data={chapterData} setSelected={handleSelectChapter} />
+          </View>
+          <View style={styles.mem_dropdown}>
+            <Text style={styles.dropDownText}>Select the Member:</Text>
+            <SelectList data={memberData} setSelected={handleSelectMember} />
+          </View>
+      </View>
   );
 };
 
-const Members = () => {
+// const for POST data 
+const postReferral = async (username, org, email, phonenum, notes) => {
 
-  const [selected, setSelected] = React.useState("");
-  
-  const data = [
-      {key:'1', value:'Member1'},
-      {key:'2', value:'Member2'},
-      {key:'3', value:'Member3'}
-  ];
-  return(
-    <View>
-      <Text style={styles.dropDownText}> Select the Member:</Text>
-      <SelectList data={data} setSelected={setSelected} />
-    </View>
-  );
+  const storedUserId = await SecureStore.getItemAsync('user_id');
+  const end_point = 'https://www.swng.org.au/wp-json/swng-app/v1/rap';
+
+  const data ={
+    status_code: 200,
+    status: 'success',
+    message: 'Referral submitted'
+  };
+  if(storedUserId){
+    data.user_id = storedUserId;
+  }
+  if(username){
+    data.name = username;
+  }
+  if(org){
+    data.organisation = org;
+  }
+  if(phonenum){
+    data.phone = phonenum;
+  }
+  if(email){
+    data.email = email;
+  }
+  if(notes){
+    data.notes = notes;
+  }
+ 
+  const options = {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    },
+  body: JSON.stringify(data),
+  };
+
+  const response = await fetch(end_point, options);
+  const result = await response.json();
+  const alertMess = `Status Code: ${result.status_code}\nStatus: ${result.status}\nMessage: ${result.message}`;
+  alert(alertMess);
+  return result;
 };
 
 export default function ReferralsPage() {
-
+  const [isUpdated, setIsUpdated] = useState(false);
   const [username, setUsername] = React.useState('');
+  const [org, setorg] = React.useState('');
   const [email, setemail] = React.useState('');
   const[checkValidEmail, setCheckValidEmail] = React.useState(false);
   const [phonenum, setphonenum] = React.useState('');
@@ -83,19 +172,25 @@ export default function ReferralsPage() {
     }
   };
 
+  const updateinfo = async () => {
+    const result = await postReferral(username, org, email, phonenum, notes); //call postReferral function
+    console.log(result);
+
+    setIsUpdated(true);
+    setUsername('');
+    setorg('');
+    setemail('');
+    setphonenum('');
+    setnotes('')
+  };
+
 return (
   <View style={styles.container}>
     <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} automaticallyAdjustKeyboardInsets={true}>
-      <View style={styles.dropdown}>
-        <View style={styles.chap_dropdown}>
-          <Chapters/>
-        </View>
-        <View style={styles.mem_dropdown}>
-          <Members/>
-        </View>
-      </View>
+    
+      <Chapters_Members/>
 
       <View style={styles.centeredContainer}>
         <Text style={styles.textboxAnchorText}>Name(required):</Text>
@@ -104,7 +199,7 @@ return (
 
       <View style={styles.centeredContainer}>
         <Text style={styles.textboxAnchorText}>Business/Organisation:</Text>
-        <TextInput placeholder=" Enter Business/Organisation" style={styles.input1}></TextInput>
+        <TextInput placeholder=" Enter Business/Organisation" value={org} onChangeText={text => setorg(text)} style={styles.input1}></TextInput>
       </View>
 
       <View style={styles.centeredContainer}>
@@ -136,9 +231,8 @@ return (
         <TextInput placeholder=" " value={notes} onChangeText={text => setnotes(text)} style={styles.input1}></TextInput>
       </View>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
-        disabled={isAnyFieldEmpty}>
+      <TouchableOpacity 
+        style={[styles.button, { backgroundColor: buttonBackgroundColor }]} disabled={isAnyFieldEmpty} onPress={updateinfo}>
         <Text style={styles.buttonText}>Submit Referral</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -174,6 +268,10 @@ const styles = StyleSheet.create({
     padding:5,
     width: "45%",
    },
+  dropDownText:{
+    alignSelf: 'flex-start',
+    marginBottom: '2%',
+  },
   textboxAnchorText: {
     alignSelf: 'flex-start',
     marginLeft: '10%',
@@ -239,9 +337,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 13,
     position:'absolute',
-  },
-  dropDownText:{
-    alignSelf: 'flex-start',
-    marginBottom: '2%',
   },
 });

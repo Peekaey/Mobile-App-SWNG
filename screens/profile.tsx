@@ -1,243 +1,289 @@
-import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { Text, View} from '../components/Themed';
-import { SelectList } from 'react-native-dropdown-select-list';
-import React, { useState } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
+import { StatusBar } from 'expo-status-bar';
+import {
+  StyleSheet,
+  Image,
+  Modal,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Alert,
+} from 'react-native';
 import * as SecureStore from 'expo-secure-store';
+import { Text, View } from '../components/Themed';
+import React, {useEffect, useState} from 'react';
+import { ScrollView } from 'react-native-gesture-handler';
+import UpdateProfileCheck from "../components/checkTokenStatus";
+import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
+import userAvatar from '../assets/userAvatar.png'
+import {ParamListBase, useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import axios from "axios";
 
-const Chapters_Members = () => {
-  const [selected, setSelected] = React.useState("");
-  const [chapterNames, setChapterNames] = React.useState([]);
-  const [memberNames, setMemberNames] = React.useState([]);
 
-  React.useEffect(() => {
-      async function fetchChapterNames() {
-          try {
-              const response = await fetch(
-                  "https://www.swng.org.au/wp-json/swng-app/v1/chapterNames"
-              );
-              const data = await response.json();
-              const names = Object.values(data);
-              setChapterNames(names);
-          } catch (error) {
-              console.error(error);
-          }
-      }
-      fetchChapterNames();
-  }, []);
 
-  React.useEffect(() => {
-      async function fetchMemberNames() {
-          try {
-              if (selected) {
-                  const response = await fetch(
-                      `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${selected}`
-                  );
-                  const data = await response.json();
-                  const names = Object.values(data).map((member) => member.name);
-                  setMemberNames(names);
-              } else {
-                  setMemberNames([]);
-              }
-          } 
-          catch (error) {
-              console.error(error);
-          }
-      }
-      fetchMemberNames();
-  }, [selected]);
+async function getAvatar() {
+  let storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
 
-  const chapterData = chapterNames.slice(1).map((name, index) => ({
-      key: index.toString(),
-      value: name,
-  }));
+  if (storedAvatarURL === null) {
+    console.log("Profile Photo Local Storage is empty");
+    storedAvatarURL = '';
+  } else {
+    console.log("Profile Photo Local Storage is not empty and is:", storedAvatarURL);
+  }
 
-  const memberData = memberNames.map((name, index) => ({
-      key: index.toString(),
-      value: name,
-  }));
+  return storedAvatarURL;
+}
 
-  const handleSelectChapter = (selectedOption) => {
-      const selectedChapterName = chapterData.find(
-          (option) => option.key === selectedOption
-      )?.value;
-      setSelected(selectedChapterName);
-  };
 
-  const handleSelectMember = (selectedOption) => {
-      const selectedMemberName = memberData.find(
-          (option) => option.key === selectedOption
-      )?.value;
-  };
 
-  return (
-      <View style={styles.dropdown}>
-          <View style={styles.chap_dropdown}>
-            <Text style={styles.dropDownText}>Select the Chapter:</Text>
-            <SelectList data={chapterData} setSelected={handleSelectChapter} />
-          </View>
-          <View style={styles.mem_dropdown}>
-            <Text style={styles.dropDownText}>Select the Member:</Text>
-            <SelectList data={memberData} setSelected={handleSelectMember} />
-          </View>
-      </View>
-  );
-};
+// const for update data
+const updateUserProfile = async (user_name, user_url, user_description) => {
 
-// const for POST data 
-const postReferral = async (username, org, email, phonenum, notes) => {
-
+  const storedToken = await SecureStore.getItemAsync('token');
   const storedUserId = await SecureStore.getItemAsync('user_id');
-  const end_point = 'https://www.swng.org.au/wp-json/swng-app/v1/rap';
 
-  const data ={
-    status_code: 200,
-    status: 'success',
-    message: 'Referral submitted'
-  };
-  if(storedUserId){
-    data.user_id = storedUserId;
+  // console.log ("PROFILE SCREEN STORED USER ID", storedUserId)
+  // console.log ("PROFILE SCREEN STORED token", storedToken)
+
+
+  const end_point = `https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`;
+  const data ={};
+  if(user_name){
+    data.name = user_name;
   }
-  if(username){
-    data.name = username;
+  if(user_url){
+    data.url = user_url;
   }
-  if(org){
-    data.organisation = org;
+  if(user_description){
+    data.description = user_description;
   }
-  if(phonenum){
-    data.phone = phonenum;
-  }
-  if(email){
-    data.email = email;
-  }
-  if(notes){
-    data.notes = notes;
-  }
- 
+
   const options = {
-    method: 'POST',
+    method: 'PUT',
     headers: {
-    'Content-Type': 'application/json',
+      Authorization: `Bearer ${storedToken}`,
+      'Content-Type': 'application/json',
     },
-  body: JSON.stringify(data),
+    body: JSON.stringify(data),
   };
-
   const response = await fetch(end_point, options);
   const result = await response.json();
-  const alertMess = `Status Code: ${result.status_code}\nStatus: ${result.status}\nMessage: ${result.message}`;
-  alert(alertMess);
   return result;
 };
 
-export default function ReferralsPage() {
+
+
+
+
+
+export default function ProfilePage() {
+
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+
+
+CheckTokenStatusOnPageLoad();
+
+
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const storedAvatarURL = await getAvatar();
+
+      if (storedAvatarURL === '') {
+        setAvatarUrl(undefined);
+      } else {
+        setAvatarUrl(storedAvatarURL);
+      }
+    };
+
+    fetchAvatar();
+  }, []);
+
+
+
   const [isUpdated, setIsUpdated] = useState(false);
-  const [username, setUsername] = React.useState('');
-  const [org, setorg] = React.useState('');
-  const [email, setemail] = React.useState('');
-  const[checkValidEmail, setCheckValidEmail] = React.useState(false);
-  const [phonenum, setphonenum] = React.useState('');
-  const[checkValidPhoneNum, setcheckValidPhoneNum] = React.useState(false);
-  const [notes, setnotes] = React.useState('');
+  const [user_name, setName] = useState('');
+  const [user_description, setdescription] = useState('');
+  const[checkValidURL, setcheckValidURL] = useState(false);
+  const [user_url, setUrl] = useState('');
 
-  const isAnyFieldEmpty = !username || checkValidPhoneNum || checkValidEmail || !notes;
-  const buttonBackgroundColor = isAnyFieldEmpty ? '#c11717' : '#ed3434';
-  const isPhoneEmpty = phonenum;
+  const [isAnyFieldFilled, setIsAnyFieldFilled] = useState(false);  //Variable for regx validation
+  const is_URL_Wrong = checkValidURL;
+  const is_URL_empty = user_url;
+  const buttonBackgroundColor = is_URL_Wrong || !isAnyFieldFilled ? '#8B0000' : '#ed3434';
+  const [checkToken, setCheckToken] = useState(false);
+  const [ValidatedToken, setValidatedToken] = useState(false);
 
-  const handleCheckEmail = text => {
-    let re = /\S+@\S+\.\S+/;
-    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
-    setemail(text);
-    if (re.test(text) || regex.test(text)) {
-      setCheckValidEmail(false);
-    } else {
-      setCheckValidEmail(true);
-    }
-  };
+  function updateProfile() {
 
-  const handleCheckPhoneNum = Value => {
-    let regex1 = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+    const validateToken = async () => {
+      try {
+        const token = await SecureStore.getItemAsync('token');
+        if (!token) {
+          navigation.navigate('Login');
+          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+        }
+        const axiosInstance = axios.create({
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'User-Agent': 'Your-User-Agent',
+          },
+        });
 
-    setphonenum(Value);
-    if (regex1.test(Value)) {
-      setcheckValidPhoneNum(false);
-    } else {
-      setcheckValidPhoneNum(true);
-    }
-  };
+        const response = await axiosInstance.post('https://swng.org.au/wp-json/jwt-auth/v1/token/validate');
+        if (response.data.code === 'jwt_auth_valid_token' && response.data.data.status === 200) {
+          console.log('Token is valid111');
+          await updateinfo();
+        } else {
+          navigation.navigate('Login');
+          console.log('Token is Invalid111');
+          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+        }
+      } catch (error) {
+        navigation.navigate('Login');
+        console.log("Token is error")
+        Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+      }
+    };
 
-  const handleBlur = () => {
-    if(phonenum.length==0){
-    setcheckValidPhoneNum("");
-    }
-  };
+    validateToken();
+
+    return null;
+  }
 
   const updateinfo = async () => {
-    const result = await postReferral(username, org, email, phonenum, notes); //call postReferral function
+    const result = await updateUserProfile(user_name, user_url, user_description); //call updateUserProfile function
     console.log(result);
 
     setIsUpdated(true);
-    setUsername('');
-    setorg('');
-    setemail('');
-    setphonenum('');
-    setnotes('')
+    setName('');
+    setUrl('');
+    setdescription('');
+    setcheckValidURL(false);
+    setIsAnyFieldFilled(false);
   };
 
-return (
-  <View style={styles.container}>
-    <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
-    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} automaticallyAdjustKeyboardInsets={true}>
-    
-      <Chapters_Members/>
 
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}>Name(required):</Text>
-        <TextInput placeholder="Enter Name" value={username} onChangeText={text => setUsername(text)} style={styles.input1}></TextInput>
-      </View>
 
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}>Business/Organisation:</Text>
-        <TextInput placeholder=" Enter Business/Organisation" value={org} onChangeText={text => setorg(text)} style={styles.input1}></TextInput>
-      </View>
 
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}>Phone:</Text>
-        <TextInput placeholder="0000000000" value={phonenum} onChangeText={text => handleCheckPhoneNum(text)} onBlur={handleBlur} style={styles.input1}></TextInput>
-      </View>
-      <View style={styles.errorContainer}>
-        {checkValidPhoneNum ? (
-          <Text style={styles.errorMessage}>Please enter a valid Phone number</Text>
+  useEffect(() => {
+    if (isUpdated) {
+      Alert.alert(
+          'Update Successful',
+          'Your profile has been updated successfully.',
+          [
+            {
+              text: 'OK',
+              onPress: () => setIsUpdated(false),
+            },
+          ]
+      );
+    }
+  }, [isUpdated]);
+  //function for regx validation
+  const handleCheckURL = text => {
+    let regx = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/im;
+    setUrl(text);
+    if (regx.test(text)) {
+      setcheckValidURL(false);
+    }
+    else {
+      setcheckValidURL(true);
+    }
+  };
+
+  // check if the url input box is empty
+  const handleBlur = () => {
+    if(is_URL_empty == ""){
+      setcheckValidURL("");
+    }
+  };
+
+  return (
+
+      <View style={styles.container}>
+
+        <View style={styles.centeredContainer}>
+          <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        </View>
+
+        <View style={styles.centeredContainer}>
+          {avatarUrl ? (
+              <Image source={{ uri: avatarUrl }} style={styles.image} />
+          ) : (
+              <View>
+                <Image
+                    source={userAvatar}
+                    style={styles.image}
+                />
+              </View>
+          )}
+        </View>
+
+
+        <View style={styles.centeredContainer}>
+          <Text style={styles.ProfilePhotoAnchorText}> Edit ✎ </Text>
+
+          <Text style={styles.textboxAnchorText}>Business Name</Text>
+          <TextInput
+              placeholder="Enter business name"
+              onChangeText={(text) => {
+                setName(text);
+                setIsAnyFieldFilled(!!text);
+              }}
+              style={styles.input}
+          />
+        </View>
+
+        <View style={styles.centeredContainer}>
+          <Text style={styles.textboxAnchorText}>Business Website URL</Text>
+          <TextInput
+              placeholder="https://example.com"
+              value={user_url}
+              onChangeText={(text) => {
+                handleCheckURL(text);
+                setIsAnyFieldFilled(!!text);
+              }}
+              onBlur={handleBlur}
+              style={styles.input}
+          />
+        </View>
+        {checkValidURL? (
+            <Text style={styles.errorMessage}>Please enter a valid URL</Text>
         ) : (
-          <Text style={styles.errorMessage}> </Text>
+            <Text style={styles.errorMessage}></Text>
         )}
-      </View>
 
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}>Email(required):</Text>
-        <TextInput placeholder="someone@example.com" value={email} onChangeText={text => handleCheckEmail(text)} style={styles.input1}></TextInput>
-      </View>
-      <View style={styles.errorContainer}>
-        {checkValidEmail ? (
-          <Text style={styles.errorMessage}>Please enter a valid email address</Text>
-        ) : (
-          <Text style={styles.errorMessage}> </Text>
-        )}
-      </View>
+        <View style={styles.centeredContainer}>
+          <Text style={styles.textboxAnchorText}>Company Description</Text>
+          <TextInput
+              placeholder="Enter company description"
+              value={user_description}
+              onChangeText={(text) => {
+                setdescription(text);
+                setIsAnyFieldFilled(!!text);
+              }}
+              style={styles.input}
+          />
+        </View>
 
-      <View style={styles.centeredContainer}>
-        <Text style={styles.textboxAnchorText}>Notes(required):</Text>
-        <TextInput placeholder=" " value={notes} onChangeText={text => setnotes(text)} style={styles.input1}></TextInput>
+        <View style={styles.centeredContainer}>
+          <TouchableOpacity
+              style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
+              disabled={checkValidURL || !isAnyFieldFilled}
+              onPress={updateProfile}
+          >
+            <Text style={styles.buttonText}>Update Profile</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <TouchableOpacity 
-        style={[styles.button, { backgroundColor: buttonBackgroundColor }]} disabled={isAnyFieldEmpty} onPress={updateinfo}>
-        <Text style={styles.buttonText}>Submit Referral</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({
@@ -247,95 +293,80 @@ const styles = StyleSheet.create({
   },
   centeredContainer: {
     alignItems: 'center',
-    top: 110,
-  },
-  dropdown:{
-    flexDirection: 'row',
-    alignSelf: 'flex-start',
-    marginLeft: '5%',
-    marginBottom: '2%',
-    backgroundColor: "white",
-    position: "absolute",
-    top: 30,
-    width: "100%",
-    zIndex: 1,
-   },
-   chap_dropdown:{
-    padding:5,
-    width: "45%",
-   },
-  mem_dropdown:{
-    padding:5,
-    width: "45%",
-   },
-  dropDownText:{
-    alignSelf: 'flex-start',
-    marginBottom: '2%',
-  },
-  textboxAnchorText: {
-    alignSelf: 'flex-start',
-    marginLeft: '10%',
-  },
-  input: {
-    width: '50%',
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 30,
-    alignItems: 'center',
-    textAlign: 'center',
   },
   image: {
-    marginLeft: '8%',
     resizeMode: 'contain',
-    height: '20%',
-    width: '20%',
-    alignSelf: 'flex-start',
+    height: 100,
+    width: 100,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 3,
+    marginVertical: 20,
     height: 1,
     width: '100%',
-    top:15,
+    alignItems: 'center',
   },
-  input1: {
+  input: {
     width: '80%',
-    height: 40,
+    height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 20,
+    alignItems: 'center',
+    textAlign: 'center',
   },
   button: {
-    backgroundColor: '#c11717',
-    width: '30%',
-    height: 35,
+    backgroundColor: '#ed3434',
+    width: '40%',
+    height: 50,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: '10%',
-    top: 110,
+    marginTop: '2%',
   },
   buttonText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: 'bold',
   },
-  errorContainer: {
-    top: 90,
-    marginLeft:40,
+  textboxAnchorText: {
+    marginBottom: '2%',
+  },
+  ProfilePhotoAnchorText: {
+    marginTop: '10%',
+    marginBottom: '5%'
   },
   errorMessage: {
     color: 'red',
     fontWeight: 'bold',
     fontSize: 13,
     position:'absolute',
+    margin:10,
+    top: 335,
+    marginLeft: 40,
+  },
+  //pop-up css
+  popUpContainer:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  popUpTextContainer:{
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  popUpText:{
+    fontSize: 28,
+  },
+  popUpButton:{
+    color: 'red',
+    marginTop: 20,
+    fontSize: 20,
+    marginLeft: 100,
   },
 });

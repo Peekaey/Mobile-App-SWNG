@@ -17,11 +17,12 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import MobileAppsManLogo from '../assets/MobileAppsManLogo.png'
 import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
-
+import TestInAppNotification from "../components/scheduledNotification";
+import scheduledNotification from "../components/scheduledNotification";
 
 // Placeholder code for now, please do not edit any notification related code 
 // // - Related to asking the user for notification permission to display event notifications
-const enableForegroundNotifications = async () => {
+const askNotificationPermission = async () => {
   const { status } = await Notifications.getPermissionsAsync();
   let finalStatus = status;
 
@@ -56,7 +57,7 @@ const enableForegroundNotifications = async () => {
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#FF231F7C',
     });
-  
+
     const channel = await Notifications.getNotificationChannelAsync('default');
     if (channel && channel.sound === null) {
       await Notifications.setNotificationChannelAsync('default', {
@@ -78,33 +79,14 @@ const handleNotificationResponse = (response) => {
 };
 
 // Call the function to enable foreground notifications and schedule a local notification
-enableForegroundNotifications();
 
 
-// -- Doesnt error out scheduling a notification - only when asking for it on android
 
-// Schedule a local notification
-const scheduleLocalNotification = async () => {
-  const schedulingOptions = {
-    content: {
-      title: 'Scheduled Notification',
-      body: "Notification Contents",
-    },
-    trigger: {
-      seconds: 15, // Schedule after 15 seconds
-    },
-  };
-
-  const notificationId = await Notifications.scheduleNotificationAsync(schedulingOptions);
-  console.log('Scheduled notification with ID:', notificationId);
-};
-
-// Schedules the notification
-scheduleLocalNotification();
 
 
 export default function LoginScreen() {
 
+  askNotificationPermission();
 
 
 
@@ -155,14 +137,23 @@ export default function LoginScreen() {
       });
   
       // Extract the token and user_id from the response
-      const { token, user_id } = response.data; 
+      const { token, user_id , chapter } = response.data; 
 
       // Stores the token and userid in encrypted local storage
       await SecureStore.setItemAsync('token', token);
       await SecureStore.setItemAsync('user_id', user_id.toString());
+      await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
 
       const storedToken = await SecureStore.getItemAsync('token');
       const storedUserId = await SecureStore.getItemAsync('user_id');
+      const storedChapter = await SecureStore.getItemAsync('chapter');
+
+      if (storedChapter !== null) {
+        console.log('Stored Chapter:', JSON.parse(storedChapter));
+      } else {
+        console.log('Chapter is not stored.');
+      }
+
       console.log('Stored Token:', storedToken);
       console.log('Stored User ID:', storedUserId);
 

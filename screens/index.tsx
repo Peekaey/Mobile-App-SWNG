@@ -10,7 +10,10 @@ import cheerio from 'cheerio';
 import * as MailComposer from 'expo-mail-composer';
 import { TouchableOpacity} from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
+import scheduledNotification from "../components/scheduledNotification";
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
+import * as Notifications from 'expo-notifications';
+
 
 import { Chapter, swngURL } from './loading';
 
@@ -27,7 +30,9 @@ import {
 // Main function
 export default function IndexPage() {
 
-
+  useEffect(() => {
+    scheduledNotification();
+  }, []);
   // Display page information - call several functions and variables for data
 
   return (
@@ -142,17 +147,16 @@ const RedBox = () => {
 
   return (
       <View style={styles.bottomBox}>
-        <Text style={[styles.contactText, { textAlignVertical: 'top' }]}> Contact SWNG! </Text>
+        <Text style={[styles.contactText, { textAlignVertical: 'top' }]}> Website Homepages </Text>
         <View style={styles.gridRow}>
           <View style={styles.chapterContainer}>
             <TouchableWithoutFeedback onPress={OpenBrowserCamden}>
               <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
             </TouchableWithoutFeedback >
-            <Text style={styles.chapterTitle}>CAMDEN {'\n'}
-              President: {'\n'}
-              David Young {'\n'}
-              Phone: {'\n'}
-              0450525005 {'\n'}
+            <Text style={styles.chapterTitle}> {'\n'}
+              CAMDEN {'\n'}
+              Chapter {'\n'}
+
             </Text>
 
           </View>
@@ -160,11 +164,10 @@ const RedBox = () => {
             <TouchableWithoutFeedback onPress={OpenBrowserCampbelltown}>
               <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
             </TouchableWithoutFeedback>
-            <Text style={styles.chapterTitle}>CAMPBELLTOWN {'\n'}
-              President: {'\n'}
-              Wendy White {'\n'}
-              Phone: {'\n'}
-              0409 228 149 {'\n'}
+            <Text style={styles.chapterTitle}> {'\n'}
+              CAMPBELLTOWN {'\n'}
+              Chapter {'\n'}
+ {'\n'}
             </Text>
           </View>
         </View>
@@ -173,22 +176,20 @@ const RedBox = () => {
             <TouchableWithoutFeedback onPress={OpenBrowserLiverpool}>
               <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
             </TouchableWithoutFeedback>
-            <Text style={styles.chapterTitle}>LIVERPOOL {'\n'}
-              President: {'\n'}
-              Rolf Fuchs {'\n'}
-              Phone: {'\n'}
-              0404 840 506
+            <Text style={styles.chapterTitle}> {'\n'}
+              LIVERPOOL {'\n'}
+              Chapter {'\n'}
+
+
             </Text>
           </View>
           <View style={styles.chapterContainer}>
             <TouchableWithoutFeedback onPress={OpenBrowserNarellan}>
               <Image style={styles.chapterArrow} source={require('../assets/arrow.png')} />
             </TouchableWithoutFeedback>
-            <Text style={styles.chapterTitle}>NARELLAN {'\n'}
-              President: {'\n'}
-              Darrel Stenhouse {'\n'}
-              Phone: {'\n'}
-              0438 789 455 {'\n'}
+            <Text style={styles.chapterTitle}> {'\n'}
+              NARELLAN {'\n'}
+              Chapter {'\n'}
             </Text>
             <Text>
 
@@ -301,7 +302,8 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 13,
+    fontSize: 15,
+
   },
   chapterBody: {
     flexBasis: '80%',

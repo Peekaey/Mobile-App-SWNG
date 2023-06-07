@@ -1,9 +1,24 @@
-import { StyleSheet, ScrollView, TextInput, TouchableOpacity,SafeAreaView,TouchableWithoutFeedback, ImageBackground, KeyboardAvoidingView, Animated} from 'react-native';
+import {
+    StyleSheet,
+    ScrollView,
+    TextInput,
+    TouchableOpacity,
+    SafeAreaView,
+    TouchableWithoutFeedback,
+    ImageBackground,
+    KeyboardAvoidingView,
+    Animated,
+    Alert
+} from 'react-native';
 import { Text, View } from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
+import {ParamListBase, useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import axios from "axios/index";
 
 const Star = () => {
 const [star_Rating, setStar_Rating] = useState(null);
@@ -173,22 +188,69 @@ const postRap = async (subject, review, rating) => {
 
   const response = await fetch(end_point, options);
   const result = await response.json();
-  const alertMess = `Status Code: ${result.status_code}\nStatus: ${result.status}\nMessage: ${result.message}`;
-  alert(alertMess);
+  Alert.alert('Rap Submitted',' Your rap has been successfully saved');
   return result;
 };
 
 export default function RapPage() {
 
-  const [isUpdated, setIsUpdated] = useState(false);
+    CheckTokenStatusOnPageLoad();
+
+
+
+    const [isUpdated, setIsUpdated] = useState(false);
   const [subject, setsubject] = React.useState('');
   const [review, setreview] = React.useState('');
   const [rating, setrating] = React.useState('');
 
   const isAnyFieldEmpty = !subject || !review;
-  const buttonBackgroundColor = isAnyFieldEmpty ? '#c11717' : '#ed3434';
+  const buttonBackgroundColor = isAnyFieldEmpty ? '#8B0000' : '#ed3434';
 
-  const updateinfo = async () => {
+    const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+
+
+    function updateProfile() {
+
+        const validateToken = async () => {
+            try {
+                const token = await SecureStore.getItemAsync('token');
+                if (!token) {
+                    navigation.navigate('Login');
+                    Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+                }
+                const axiosInstance = axios.create({
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'User-Agent': 'Your-User-Agent',
+                    },
+                });
+
+                const response = await axiosInstance.post('https://swng.org.au/wp-json/jwt-auth/v1/token/validate');
+                if (response.data.code === 'jwt_auth_valid_token' && response.data.data.status === 200) {
+                    console.log('Token is valid111');
+                    await updateinfo();
+                } else {
+                    navigation.navigate('Login');
+                    console.log('Token is Invalid111');
+                    Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+                }
+            } catch (error) {
+                navigation.navigate('Login');
+                console.log("Token is error")
+                Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+            }
+        };
+
+        validateToken();
+
+        return null;
+    }
+
+
+    const updateinfo = async () => {
     const result = await postRap(subject, review, rating); //call postRap function
     console.log(result);
 
@@ -215,7 +277,7 @@ export default function RapPage() {
         </View>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: buttonBackgroundColor }]} disabled={isAnyFieldEmpty} onPress={updateinfo}>
+          style={[styles.button, { backgroundColor: buttonBackgroundColor }]} disabled={isAnyFieldEmpty} onPress={updateProfile}>
           <Text style={styles.buttonText}>Submit Review</Text>
         </TouchableOpacity>
       </ScrollView>

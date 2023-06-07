@@ -1,9 +1,13 @@
-import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import {Alert, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import { Text, View} from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import * as SecureStore from 'expo-secure-store';
+import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
+import axios from "axios/index";
+import {ParamListBase, useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 const Chapters_Members = () => {
   const [selected, setSelected] = React.useState("");
@@ -124,12 +128,15 @@ const postReferral = async (username, org, email, phonenum, notes) => {
 
   const response = await fetch(end_point, options);
   const result = await response.json();
-  const alertMess = `Status Code: ${result.status_code}\nStatus: ${result.status}\nMessage: ${result.message}`;
-  alert(alertMess);
+  Alert.alert('Referral Submitted',' Your rap has been successfully saved')
   return result;
 };
 
 export default function ReferralsPage() {
+
+  CheckTokenStatusOnPageLoad();
+
+
   const [isUpdated, setIsUpdated] = useState(false);
   const [username, setUsername] = React.useState('');
   const [org, setorg] = React.useState('');
@@ -140,8 +147,55 @@ export default function ReferralsPage() {
   const [notes, setnotes] = React.useState('');
 
   const isAnyFieldEmpty = !username || checkValidPhoneNum || checkValidEmail || !notes;
-  const buttonBackgroundColor = isAnyFieldEmpty ? '#c11717' : '#ed3434';
+  const buttonBackgroundColor = isAnyFieldEmpty ? '#8B0000' : '#ed3434';
   const isPhoneEmpty = phonenum;
+
+
+
+
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+
+  function updateProfile() {
+
+    const validateToken = async () => {
+      try {
+        const token = await SecureStore.getItemAsync('token');
+        if (!token) {
+          navigation.navigate('Login');
+          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+        }
+        const axiosInstance = axios.create({
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'User-Agent': 'Your-User-Agent',
+          },
+        });
+
+        const response = await axiosInstance.post('https://swng.org.au/wp-json/jwt-auth/v1/token/validate');
+        if (response.data.code === 'jwt_auth_valid_token' && response.data.data.status === 200) {
+          console.log('Token is valid111');
+          await updateinfo();
+        } else {
+          navigation.navigate('Login');
+          console.log('Token is Invalid111');
+          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+        }
+      } catch (error) {
+        navigation.navigate('Login');
+        console.log("Token is error")
+        Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+      }
+    };
+
+    validateToken();
+
+    return null;
+  }
+
+
 
   const handleCheckEmail = text => {
     let re = /\S+@\S+\.\S+/;
@@ -232,7 +286,7 @@ return (
       </View>
 
       <TouchableOpacity 
-        style={[styles.button, { backgroundColor: buttonBackgroundColor }]} disabled={isAnyFieldEmpty} onPress={updateinfo}>
+        style={[styles.button, { backgroundColor: buttonBackgroundColor }]} disabled={isAnyFieldEmpty} onPress={updateProfile}>
         <Text style={styles.buttonText}>Submit Referral</Text>
       </TouchableOpacity>
     </ScrollView>

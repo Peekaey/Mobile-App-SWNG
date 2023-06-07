@@ -14,7 +14,7 @@ import scheduledNotification from "../components/scheduledNotification";
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
 import * as Notifications from 'expo-notifications';
 
-
+import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
 import { Chapter, swngURL } from './loading';
 
 // Import Event Details from loading page
@@ -29,6 +29,7 @@ import {
 
 // Main function
 export default function IndexPage() {
+  CheckTokenStatusOnPageLoad();
 
   useEffect(() => {
     scheduledNotification();
@@ -219,10 +220,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 20,
+    marginVertical: 3,
     height: 1,
-    width: '50%',
-    backgroundColor: 'white',
+    width: '100%',
+    top:15,
+    marginBottom: 40,
   },
   
   middleBox: {

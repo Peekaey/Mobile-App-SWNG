@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Image, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Button } from 'react-native';
 import { Text } from '../components/Themed';
+import { useNavigation } from '@react-navigation/native';
 
 export default function AttendancePage() {
+  const navigation = useNavigation();
   const [attendance, setAttendance] = useState<boolean[]>([]);
 
   const handleAttendance = (index: number) => {
@@ -11,17 +13,28 @@ export default function AttendancePage() {
     setAttendance(updatedAttendance);
   };
 
+  async function fetchmembers() {
+    try {
+      const selected = 'camden';
+      const response = await fetch(`https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${selected}`);
+      const data = await response.json();
+      const memberNames = data.map((member) => member.name);
+      console.log(memberNames);
+      setAttendance(memberNames);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const handleSubmit = () => {
-    // Code to submit attendance data to the database
-    // You can use the 'attendance' state variable to get the updated attendance data
+    navigation.navigate('index');
   };
 
   const names = ['John', 'Sarah', 'Michael', 'Emily']; // Replace with your list of names
 
   return (
     <View style={styles.container}>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Text style={styles.title}>Attendance List </Text>
+      <Text style={styles.title}>Attendance List</Text>
       {names.map((name, index) => (
         <View key={index} style={styles.row}>
           <Text style={[styles.name, attendance[index] && styles.absent]}>{name}</Text>
@@ -37,28 +50,20 @@ export default function AttendancePage() {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start',
     backgroundColor: 'white',
+    paddingTop: 50,
   },
-
   title: {
     fontSize: 31,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
   },
-
-  separator: {
-    marginVertical: 20,
-    height: 1,
-    width: '50%',
-  },
-
   row: {
     flexDirection: 'row',
     alignItems: 'center',

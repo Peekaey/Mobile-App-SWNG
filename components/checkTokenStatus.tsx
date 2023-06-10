@@ -23,7 +23,7 @@ import Toast from 'react-native-toast-message';
 
 // Main function to check status of a session token
 // If Valid = No Action - If invalid = return to login page and display error to tell user to log in again.
-export default function updateProfile() {
+export function updateProfile() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   useEffect(() => {

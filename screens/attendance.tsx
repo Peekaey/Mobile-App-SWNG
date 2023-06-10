@@ -1,52 +1,114 @@
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Button } from 'react-native';
-import { Text } from '../components/Themed';
-import { useNavigation } from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, TouchableOpacity, Button, ScrollView, Alert} from 'react-native';
+import { Text, View } from '../components/Themed';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import { Chapter, swngURL } from './loading';
+import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
+
+import {
+  getEventTitle,
+} from './loading';
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+
+
+const chapter = 'camden';
+const eventTitle = getEventTitle();
 
 export default function AttendancePage() {
-  const navigation = useNavigation();
-  const [attendance, setAttendance] = useState<boolean[]>([]);
+  CheckTokenStatusOnPageLoad();
 
-  const handleAttendance = (index: number) => {
-    const updatedAttendance: boolean[] = [...attendance];
-    updatedAttendance[index] = !updatedAttendance[index];
-    setAttendance(updatedAttendance);
-  };
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const [attendance, setAttendance] = useState<string[]>([]);
+  const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
 
-  async function fetchmembers() {
-    try {
-      const selected = 'camden';
-      const response = await fetch(`https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${selected}`);
-      const data = await response.json();
-      const memberNames = data.map((member) => member.name);
-      console.log(memberNames);
-      setAttendance(memberNames);
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    async function fetchmembers() {
+      try {
+        const response = await fetch(`https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${chapter}`);
+        const data = await response.json();
+        const memberNames = Object.values(data).map((member) => member.name);
+        console.log(memberNames);
+        setAttendance(memberNames);
+        setCheckedItems(new Array(memberNames.length).fill(false));
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }
+
+    fetchmembers();
+  }, []);
+
+  const handleToggleCheckbox = (index: number) => {
+    setCheckedItems((prevCheckedItems) => {
+      const updatedCheckedItems = [...prevCheckedItems];
+      updatedCheckedItems[index] = !updatedCheckedItems[index];
+      return updatedCheckedItems;
+    });
+  };
 
   const handleSubmit = () => {
-    navigation.navigate('index');
+
+    const validateToken = async () => {
+      try {
+        const token = await SecureStore.getItemAsync('token');
+        if (!token) {
+          navigation.navigate('Login');
+          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+        }
+        const axiosInstance = axios.create({
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'User-Agent': 'Your-User-Agent',
+          },
+        });
+
+        const response = await axiosInstance.post('https://swng.org.au/wp-json/jwt-auth/v1/token/validate');
+        if (response.data.code === 'jwt_auth_valid_token' && response.data.data.status === 200) {
+          console.log('Token is valid111');
+          navigation.navigate('Home');
+        } else {
+          navigation.navigate('Login');
+          console.log('Token is Invalid111');
+          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+        }
+      } catch (error) {
+        navigation.navigate('Login');
+        console.log("Token is error")
+        Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+      }
+    };
+
+    validateToken()
+
   };
 
-  const names = ['John', 'Sarah', 'Michael', 'Emily']; // Replace with your list of names
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Attendance List</Text>
-      {names.map((name, index) => (
-        <View key={index} style={styles.row}>
-          <Text style={[styles.name, attendance[index] && styles.absent]}>{name}</Text>
-          <TouchableOpacity style={styles.checkbox} onPress={() => handleAttendance(index)}>
-            {attendance[index] && <View style={styles.checked} />}
-          </TouchableOpacity>
-        </View>
-      ))}
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </TouchableOpacity>
-    </View>
+      <View style={styles.containerHead}>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        <Text style={styles.title}>Attendance list for event</Text>
+        <Text style={styles.subtitle}>{getEventTitle()}</Text>
+        <ScrollView style={styles.scrollView}>
+          {attendance.map((name, index) => (
+              <View key={index} style={styles.row}>
+                <Text style={styles.name}>{name}</Text>
+                <TouchableOpacity
+                    style={styles.checkbox}
+                    onPress={() => handleToggleCheckbox(index)}
+                >
+                  {checkedItems[index] && <View style={styles.checked} />}
+                </TouchableOpacity>
+              </View>
+          ))}
+        </ScrollView>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Submit Attendance</Text>
+        </TouchableOpacity>
+      </View>
   );
 }
 
@@ -59,25 +121,25 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   title: {
-    fontSize: 31,
+    fontSize: 29,
     fontWeight: 'bold',
-    marginBottom: 20,
     textAlign: 'center',
+  },
+  containerHead: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     marginBottom: 10,
-  },
-  name: {
-    flex: 1,
-    fontSize: 18,
-    textAlign: 'left',
-    marginLeft: 10,
-  },
-  absent: {
-    color: 'red',
+    paddingHorizontal: 20,
   },
   checkbox: {
     width: 20,
@@ -93,6 +155,12 @@ const styles = StyleSheet.create({
     height: 10,
     backgroundColor: '#c11717',
   },
+  name: {
+    flex: 1,
+    fontSize: 18,
+    textAlign: 'left',
+    marginLeft: 10,
+  },
   button: {
     backgroundColor: '#c11717',
     width: '50%',
@@ -100,11 +168,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 30,
+
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  subtitle: {
+    fontSize: 25,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  separator: {
+    marginVertical: 3,
+    height: 1,
+    width: '100%',
+    top:15,
+    marginBottom: 40,
   },
 });

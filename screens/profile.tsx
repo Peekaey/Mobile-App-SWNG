@@ -22,9 +22,9 @@ import axios from "axios";
 
 
 
+
 async function getAvatar() {
   let storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
-
   if (storedAvatarURL === null) {
     console.log("Profile Photo Local Storage is empty");
     storedAvatarURL = '';
@@ -35,6 +35,15 @@ async function getAvatar() {
   return storedAvatarURL;
 }
 
+async function getName() {
+  let storedUsername = await SecureStore.getItemAsync('userName');
+  if (storedUsername === null) {
+    storedUsername = '';
+  } else {
+  }
+
+  return storedUsername;
+}
 
 
 // const for update data
@@ -98,6 +107,22 @@ CheckTokenStatusOnPageLoad();
     };
 
     fetchAvatar();
+  }, []);
+
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const fetchusername = async () => {
+      const storedUsername = await getName();
+
+      if (storedUsername === '') {
+        setUsername(undefined);
+      } else {
+        setUsername(storedUsername)
+      }
+    };
+
+    fetchusername();
   }, []);
 
 
@@ -215,20 +240,17 @@ CheckTokenStatusOnPageLoad();
 
         <View style={styles.centeredContainer}>
           {avatarUrl ? (
-              <Image source={{ uri: avatarUrl }} style={styles.image} />
+              <Image source={{ uri: avatarUrl }} style={styles.profileimage} />
           ) : (
               <View>
-                <Image
-                    source={userAvatar}
-                    style={styles.image}
-                />
+                <Image source={userAvatar} style={styles.profileimage} />
               </View>
           )}
         </View>
 
 
         <View style={styles.centeredContainer}>
-          <Text style={styles.ProfilePhotoAnchorText}> Edit ✎ </Text>
+          <Text style={styles.ProfilePhotoAnchorText}> {username}'s profile  </Text>
 
           <Text style={styles.textboxAnchorText}>Business Name</Text>
           <TextInput
@@ -338,7 +360,7 @@ const styles = StyleSheet.create({
     marginBottom: '2%',
   },
   ProfilePhotoAnchorText: {
-    marginTop: '10%',
+    marginTop: '5%',
     marginBottom: '5%'
   },
   errorMessage: {
@@ -368,5 +390,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 20,
     marginLeft: 100,
+  },
+  profileimage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    resizeMode: 'cover',
   },
 });

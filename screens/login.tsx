@@ -137,16 +137,21 @@ export default function LoginScreen() {
       });
   
       // Extract the token and user_id from the response
-      const { token, user_id , chapter } = response.data; 
+      const { token, user_id , chapter, role } = response.data;
 
       // Stores the token and userid in encrypted local storage
       await SecureStore.setItemAsync('token', token);
       await SecureStore.setItemAsync('user_id', user_id.toString());
       await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
+      await SecureStore.setItemAsync('role', JSON.stringify(response.data.role));
+
 
       const storedToken = await SecureStore.getItemAsync('token');
       const storedUserId = await SecureStore.getItemAsync('user_id');
       const storedChapter = await SecureStore.getItemAsync('chapter');
+      const storedRole = await SecureStore.getItemAsync('role');
+
+      console.log("Stored Role", storedRole)
 
       if (storedChapter !== null) {
         console.log('Stored Chapter:', JSON.parse(storedChapter));

@@ -121,11 +121,17 @@ const axiosInstance = axios.create({
 const fetchAndStoreAvatar = async (storedUserId:any) => {
   try {
     const response = await axiosInstance.get(`https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`);
+
     const avatarUrl = response.data.avatar_urls['96'];
     await SecureStore.setItemAsync('avatarURL', avatarUrl);
+    const name = response.data.name;
+    await SecureStore.setItemAsync('userName', name);
+    console.log('Name stored successfully');
     console.log('Avatar URL stored successfully');
 
     const storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
+    const storedUserName = await SecureStore.getItemAsync('userName');
+    console.log(storedUserName);
     console.log(storedAvatarURL);
   } catch (error) {
     console.error('Error retrieving user data:', error);

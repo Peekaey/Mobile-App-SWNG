@@ -269,15 +269,15 @@ export default function LoginScreen() {
   {/*    </View>*/}
 
 
-      <TouchableOpacity
-        // Disable button style if loading
-        style={[styles.button, isLoading && styles.disabledButton]} 
-        onPress={handleLogin}
-        // Disable button if loading
-        disabled={isLoading} 
-      >
-        <Text style={styles.buttonText}>{isLoading ? 'Logging In...' : 'Login'}</Text>
-      </TouchableOpacity>
+      {/*<TouchableOpacity*/}
+      {/*  // Disable button style if loading*/}
+      {/*  style={[styles.button, isLoading && styles.disabledButton]} */}
+      {/*  onPress={handleLogin}*/}
+      {/*  // Disable button if loading*/}
+      {/*  disabled={isLoading} */}
+      {/*>*/}
+      {/*  <Text style={styles.buttonText}>{isLoading ? 'Logging In...' : 'Login'}</Text>*/}
+      {/*</TouchableOpacity>*/}
       <Text style={styles.poweredBy}> Powered By </Text>
       <Image style={styles.mobileAppsLogo} source={MobileAppsManLogo} />
     </View>

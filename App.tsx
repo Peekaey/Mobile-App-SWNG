@@ -106,12 +106,6 @@ export const HomeTabs = () => {
                 key={route.name}
                 name={route.name}
                 component={route.component}
-                options={{
-                  header: ({ navigation, route }) => (
-                    <TopNavigationSimpleUsageShowcase navigation={navigation} route={route} />
-                  ),
-                  headerShown: true,
-                }}
               />
             ))}
           </Tab.Navigator>
@@ -172,10 +166,10 @@ const App = () => {
             <IconRegistry icons={EvaIconsPack} />
             <ApplicationProvider {...eva} theme={eva.light}>
                 <NavigationContainer>
-                    <Layout style={{ flex: 1 }}>
+                    {/*<Layout style={{ flex: 1 }}>*/}
                         {/*<TopNavigationSimpleUsageShowcase />*/}
                         <HomeTabs  />
-                    </Layout>
+                    {/*</Layout>*/}
                 </NavigationContainer>
             </ApplicationProvider>
         </React.Fragment>

@@ -173,7 +173,7 @@ const App = () => {
             <ApplicationProvider {...eva} theme={eva.light}>
                 <NavigationContainer>
                     <Layout style={{ flex: 1 }}>
-                        <TopNavigationSimpleUsageShowcase />
+                        {/*<TopNavigationSimpleUsageShowcase />*/}
                         <HomeTabs  />
                     </Layout>
                 </NavigationContainer>

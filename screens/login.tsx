@@ -279,7 +279,7 @@ export default function LoginScreen() {
       {/*  <Text style={styles.buttonText}>{isLoading ? 'Logging In...' : 'Login'}</Text>*/}
       {/*</TouchableOpacity>*/}
       <Text style={styles.poweredBy}> Powered By </Text>
-      <Image style={styles.mobileAppsLogo} source={MobileAppsManLogo} />
+      {/*<Image style={styles.mobileAppsLogo} source={MobileAppsManLogo} />*/}
     </View>
   );
 }

@@ -227,7 +227,7 @@ export default function ReferralsPage() {
   };
 
   const updateinfo = async () => {
-    const result = await postReferral(username, org, email, phonenum, notes); //call postReferral function
+    const result = await postReferral(username, org, email, phonenum, notes);
     console.log(result);
 
     setIsUpdated(true);

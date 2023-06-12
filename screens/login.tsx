@@ -117,7 +117,7 @@ export default function LoginScreen() {
     };
 
     checkStoredLoginCredentials();
-  }, []); // Empty dependency array to run the effect only once
+  }, []);
 
   const handleLogin = async () => {
 
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   checkboxTick: {
-    top: 1, // Adjust this value to vertically center the tick icon
+    top: 1,
   },
 
 });

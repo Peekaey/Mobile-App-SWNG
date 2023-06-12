@@ -62,6 +62,7 @@ export function getEventURL() {
   return eventURL;
 }
 
+
 export async function GrabChapter() {
   try {
     Chapter = await SecureStore.getItemAsync('role');

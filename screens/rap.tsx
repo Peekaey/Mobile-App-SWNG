@@ -152,7 +152,6 @@ const Chapters_Members = () => {
   );
 };
 
-// const for POST RAP data 
 const postRap = async (subject, review, rating) => {
 
   const storedUserId = await SecureStore.getItemAsync('user_id');
@@ -248,10 +247,9 @@ export default function RapPage() {
 
 
     const updateinfo = async () => {
-    const result = await postRap(subject, review, rating); //call postRap function
+    const result = await postRap(subject, review, rating);
     console.log(result);
 
-    setIsUpdated(true);
     setsubject('');
     setreview('');
     setrating('')

@@ -27,10 +27,6 @@ import LoadingPage from './screens/loading';
 import {useEffect , useState} from 'react';
 
 
-
-
-
-
 // Pages for the navigation to be able to navigate to
 
 // Creates the bottom navigation bar

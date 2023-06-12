@@ -34,7 +34,7 @@ async function deleteRoleItem() {
 // Main function
 export default function IndexPage() {
   CheckTokenStatusOnPageLoad();
-  deleteRoleItem();
+
 
 
 
@@ -83,11 +83,6 @@ export const GreyBox = () => {
     Linking.openURL(eventURL);
   };
 
-  // Action for Apology button
-  // const ApologyButton = () => {
-  //   console.log('HitTheApologyButton');
-  //
-  // };
 
   // Display content in center box
   return (
@@ -243,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: 'cover',
 
-    backgroundColor: '#cccccc', // change this to your preferred shade of grey
+    backgroundColor: '#cccccc',
     alignItems: 'center',
   },
   centeredBoxText: {
@@ -264,7 +259,6 @@ const styles = StyleSheet.create({
     textAlign:'left',
     fontSize: 22,
     fontWeight: 'bold',
-    // backgroundColor: '#d93b39', // change this to your preferred shade of grey
     color: 'red',
   },
 
@@ -283,7 +277,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     height: 200,
-    backgroundColor: '#d93b39', // change this to your preferred shade of grey
+    backgroundColor: '#d93b39',
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -296,15 +290,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#d93b39',
-    marginBottom: 10, // add some margin between rows
+    marginBottom: 10,
   },
   chapterContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 5, // add some margin between containers
-    backgroundColor: '#d93b39', // change this to your preferred shade of grey
+    marginHorizontal: 5,
+    backgroundColor: '#d93b39',
   },
   chapterTitle: {
     flexBasis: '80%',
@@ -335,7 +329,7 @@ const styles = StyleSheet.create({
   chapterArrow: {
     width: 20,
     height: 20,
-    marginHorizontal: 5, // add some margin between arrow and title
+    marginHorizontal: 5,
     backgroundColor: 'transparent'
   },
   contactText: {
@@ -348,7 +342,5 @@ const styles = StyleSheet.create({
     zIndex: 1,
 
   }
-
-
 });
 

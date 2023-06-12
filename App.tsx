@@ -36,18 +36,21 @@ import {useEffect , useState} from 'react';
 // Creates the bottom navigation bar
 const Tab = createBottomTabNavigator();
 
-const homeRoutes = [
-    { name: 'Loading', component: LoadingPage },
-    { name: 'Login', component: LoginScreen },
-    { name: 'Home', component: IndexPage },
-    { name: 'Profile', component: ProfilePage },
-    { name: 'Rap', component: RapPage },
-    { name: 'Referrals', component: ReferralsPage },
-    { name: 'Attendance', component: AttendancePage },
-];
+
 
 // Function underneath is the styling of the bottom navigation bar, including icons
 export const HomeTabs = () => {
+
+    const homeRoutes = [
+        { name: 'Loading', component: LoadingPage },
+        { name: 'Login', component: LoginScreen },
+        { name: 'Home', component: IndexPage },
+        { name: 'Profile', component: ProfilePage },
+        { name: 'Rap', component: RapPage },
+        { name: 'Referrals', component: ReferralsPage },
+        { name: 'Attendance', component: AttendancePage },
+    ];
+
 
     return (
     <Tab.Navigator tabBar={props => <BottomTabBar {...props} state={{...props.state, routes: props.state.routes.slice(0,7)}}></BottomTabBar>}

@@ -16,219 +16,219 @@ import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
 
 // Placeholder code for now, please do not edit any notification related code 
 // // - Related to asking the user for notification permission to display event notifications
-const askNotificationPermission = async () => {
-  const { status } = await Notifications.getPermissionsAsync();
-  let finalStatus = status;
-
-  if (status !== 'granted') {
-    const { status: newStatus } = await Notifications.requestPermissionsAsync();
-    finalStatus = newStatus;
-  }
-
-  if (finalStatus !== 'granted') {
-    console.log('Notification permission not granted');
-    return;
-  }
-
-  // Config/settings for the notifications
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: true,
-    }),
-  });
-
-  // Listeners - not exactly sure what each thing does but related to receiving permissions
-  Notifications.addNotificationReceivedListener(handleNotificationReceived);
-  Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
-
-  // Android specific code for displaying request permission for notification
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'Default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-
-    const channel = await Notifications.getNotificationChannelAsync('default');
-    if (channel && channel.sound === null) {
-      await Notifications.setNotificationChannelAsync('default', {
-        ...channel,
-        sound: 'default',
-      });
-    }
-  }
-};
-
-const handleNotificationReceived = (notification:any) => {
-  console.log('Notification received:', notification);
-  // Handle the received notification in the foreground
-};
-
-const handleNotificationResponse = (response:any) => {
-  console.log('Notification response:', response);
-  // Handle the user's response to the notification
-};
-
-// Call the function to enable foreground notifications and schedule a local notification
-
+// const askNotificationPermission = async () => {
+//   const { status } = await Notifications.getPermissionsAsync();
+//   let finalStatus = status;
+//
+//   if (status !== 'granted') {
+//     const { status: newStatus } = await Notifications.requestPermissionsAsync();
+//     finalStatus = newStatus;
+//   }
+//
+//   if (finalStatus !== 'granted') {
+//     console.log('Notification permission not granted');
+//     return;
+//   }
+//
+//   // Config/settings for the notifications
+//   Notifications.setNotificationHandler({
+//     handleNotification: async () => ({
+//       shouldShowAlert: true,
+//       shouldPlaySound: true,
+//       shouldSetBadge: true,
+//     }),
+//   });
+//
+//   // Listeners - not exactly sure what each thing does but related to receiving permissions
+//   Notifications.addNotificationReceivedListener(handleNotificationReceived);
+//   Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
+//
+//   // Android specific code for displaying request permission for notification
+//   if (Platform.OS === 'android') {
+//     await Notifications.setNotificationChannelAsync('default', {
+//       name: 'Default',
+//       importance: Notifications.AndroidImportance.MAX,
+//       vibrationPattern: [0, 250, 250, 250],
+//       lightColor: '#FF231F7C',
+//     });
+//
+//     const channel = await Notifications.getNotificationChannelAsync('default');
+//     if (channel && channel.sound === null) {
+//       await Notifications.setNotificationChannelAsync('default', {
+//         ...channel,
+//         sound: 'default',
+//       });
+//     }
+//   }
+// };
+//
+// const handleNotificationReceived = (notification:any) => {
+//   console.log('Notification received:', notification);
+//   // Handle the received notification in the foreground
+// };
+//
+// const handleNotificationResponse = (response:any) => {
+//   console.log('Notification response:', response);
+//   // Handle the user's response to the notification
+// };
+//
+// // Call the function to enable foreground notifications and schedule a local notification
+//
 
 
 
 
 export default function LoginScreen() {
 
-   askNotificationPermission();
-
-
-
-  
-  // Declaring navigation dependencies
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
-
-
-  // State variables for various functions
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setError] = useState('');
-  const [isLoading, setLoading] = useState(false); 
-  const [rememberPassword, setRememberPassword] = useState(false);
-
-  // Grabs stored username and password - if rememeber password function was not used on last saved - uses placeholder values
-  useEffect(() => {
-    const checkStoredLoginCredentials = async () => {
-      const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
-
-      if (RememberPassword === 'true') {
-        const storedUsername = await SecureStore.getItemAsync('LongTermUsername');
-        const storedPassword = await SecureStore.getItemAsync('LongTermPassword');
-        if (storedUsername && storedPassword) {
-          setUsername(storedUsername);
-          setPassword(storedPassword);
-          setRememberPassword(true);
-        }
-      } else {
-        setUsername('');
-        setPassword('');
-      }
-    };
-
-    checkStoredLoginCredentials();
-  }, []); // Empty dependency array to run the effect only once
-
-  const handleLogin = async () => {
-
-    setLoading(true); // Start the loading process once "Login" has been clicked
-
-    // Hitting wordpress API to get a JWT session token
-    try {
-      const response = await axios.post('https://www.swng.org.au/wp-json/jwt-auth/v1/token', {
-        username,
-        password,
-      });
-      // Extract the token, user_id, chapter, and role from the response
-      const { token, user_id, chapter, role } = response.data;
-      console.log("ROLE IN RESPONSE", role);
-
-      let matchedRole: any;
-      let normalizedRole: string = '';
-
-      if (Array.isArray(role) && role.length > 0) {
-        const roleString = role[0]; // Get the first element of the role array
-        normalizedRole = roleString.toLowerCase();
-        console.log("Normalized role:", normalizedRole);
-
-        if (normalizedRole.includes('narellan')) {
-          matchedRole = 'Narellan';
-          await SecureStore.setItemAsync('role', matchedRole);
-        } else if (normalizedRole.includes('camden')) {
-          matchedRole = 'Camden';
-          await SecureStore.setItemAsync('role', matchedRole);
-        } else if (normalizedRole.includes('campbelltown')) {
-          matchedRole = 'Campbelltown';
-          await SecureStore.setItemAsync('role', matchedRole);
-        } else if (normalizedRole.includes('liverpool')) {
-          matchedRole = 'Liverpool';
-          await SecureStore.setItemAsync('role', matchedRole);
-        }
-      } else {
-        console.log("Invalid role");
-      }
-
-
-
-      // Stores the token and userid in encrypted local storage
-      await SecureStore.setItemAsync('token', token);
-      await SecureStore.setItemAsync('user_id', user_id.toString());
-      await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
-
-
-
-      const storedToken = await SecureStore.getItemAsync('token');
-      const storedUserId = await SecureStore.getItemAsync('user_id');
-      const storedChapter = await SecureStore.getItemAsync('chapter');
-      const storedRole = await SecureStore.getItemAsync('role');
-
-
-      console.log("Stored Role", storedRole)
-
-      if (storedChapter !== null) {
-        console.log('Stored Chapter:', JSON.parse(storedChapter));
-      } else {
-        console.log('Chapter is not stored.');
-      }
-
-      console.log('Stored Token:', storedToken);
-      console.log('Stored User ID:', storedUserId);
-
-      // If rememberPassword option was ticked - stores the username and password in encrypted local storage
-      if (rememberPassword) {
-        console.log('Storing Password Long Term');
-
-        await SecureStore.setItemAsync('LongTermUsername', username);
-        await SecureStore.setItemAsync('LongTermPassword', password);
-        await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
-
-        const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
-        const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
-        const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
-        console.log('Stored Username:', LongTermUsername);
-        console.log('Stored Password:', LongTermPassword);
-        console.log('Remember Password Stored value:', RememberPassword);
-      
-      // Otherwise deletes/clears and local saved username/passwords
-      } else {
-        console.log('Removing Password Long Term');
-
-        await SecureStore.deleteItemAsync('LongTermUsername');
-        await SecureStore.deleteItemAsync('LongTermPassword');
-        await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
-
-        const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
-        const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
-        const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
-        console.log('Stored Username:', LongTermUsername);
-        console.log('Stored Password:', LongTermPassword);
-        console.log('Remember Password Stored value:', RememberPassword);
-      }
-
-      // After login is successful - navigates to loading screen
-      navigation.navigate('Loading' as never);
-    } catch (error) {
-      console.log(error);
-      // Otherwises sticks to login screen and displays error if username/password was incorrect
-      setError('Invalid username or password');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // State Variables to display placeholder username/password values in this order: Default , RememberPasswordTicked
-  const usernamePlaceholder = rememberPassword ? 'Username' : 'Username';
-  const passwordPlaceholder = rememberPassword ? 'Password' : 'Password';
+  //  askNotificationPermission();
+  //
+  //
+  //
+  //
+  // // Declaring navigation dependencies
+  // const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  // navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
+  //
+  //
+  // // State variables for various functions
+  // const [username, setUsername] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [errorMessage, setError] = useState('');
+  // const [isLoading, setLoading] = useState(false);
+  // const [rememberPassword, setRememberPassword] = useState(false);
+  //
+  // // Grabs stored username and password - if rememeber password function was not used on last saved - uses placeholder values
+  // useEffect(() => {
+  //   const checkStoredLoginCredentials = async () => {
+  //     const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
+  //
+  //     if (RememberPassword === 'true') {
+  //       const storedUsername = await SecureStore.getItemAsync('LongTermUsername');
+  //       const storedPassword = await SecureStore.getItemAsync('LongTermPassword');
+  //       if (storedUsername && storedPassword) {
+  //         setUsername(storedUsername);
+  //         setPassword(storedPassword);
+  //         setRememberPassword(true);
+  //       }
+  //     } else {
+  //       setUsername('');
+  //       setPassword('');
+  //     }
+  //   };
+  //
+  //   checkStoredLoginCredentials();
+  // }, []); // Empty dependency array to run the effect only once
+  //
+  // const handleLogin = async () => {
+  //
+  //   setLoading(true); // Start the loading process once "Login" has been clicked
+  //
+  //   // Hitting wordpress API to get a JWT session token
+  //   try {
+  //     const response = await axios.post('https://www.swng.org.au/wp-json/jwt-auth/v1/token', {
+  //       username,
+  //       password,
+  //     });
+  //     // Extract the token, user_id, chapter, and role from the response
+  //     const { token, user_id, chapter, role } = response.data;
+  //     console.log("ROLE IN RESPONSE", role);
+  //
+  //     let matchedRole: any;
+  //     let normalizedRole: string = '';
+  //
+  //     if (Array.isArray(role) && role.length > 0) {
+  //       const roleString = role[0]; // Get the first element of the role array
+  //       normalizedRole = roleString.toLowerCase();
+  //       console.log("Normalized role:", normalizedRole);
+  //
+  //       if (normalizedRole.includes('narellan')) {
+  //         matchedRole = 'Narellan';
+  //         await SecureStore.setItemAsync('role', matchedRole);
+  //       } else if (normalizedRole.includes('camden')) {
+  //         matchedRole = 'Camden';
+  //         await SecureStore.setItemAsync('role', matchedRole);
+  //       } else if (normalizedRole.includes('campbelltown')) {
+  //         matchedRole = 'Campbelltown';
+  //         await SecureStore.setItemAsync('role', matchedRole);
+  //       } else if (normalizedRole.includes('liverpool')) {
+  //         matchedRole = 'Liverpool';
+  //         await SecureStore.setItemAsync('role', matchedRole);
+  //       }
+  //     } else {
+  //       console.log("Invalid role");
+  //     }
+  //
+  //
+  //
+  //     // Stores the token and userid in encrypted local storage
+  //     await SecureStore.setItemAsync('token', token);
+  //     await SecureStore.setItemAsync('user_id', user_id.toString());
+  //     await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
+  //
+  //
+  //
+  //     const storedToken = await SecureStore.getItemAsync('token');
+  //     const storedUserId = await SecureStore.getItemAsync('user_id');
+  //     const storedChapter = await SecureStore.getItemAsync('chapter');
+  //     const storedRole = await SecureStore.getItemAsync('role');
+  //
+  //
+  //     console.log("Stored Role", storedRole)
+  //
+  //     if (storedChapter !== null) {
+  //       console.log('Stored Chapter:', JSON.parse(storedChapter));
+  //     } else {
+  //       console.log('Chapter is not stored.');
+  //     }
+  //
+  //     console.log('Stored Token:', storedToken);
+  //     console.log('Stored User ID:', storedUserId);
+  //
+  //     // If rememberPassword option was ticked - stores the username and password in encrypted local storage
+  //     if (rememberPassword) {
+  //       console.log('Storing Password Long Term');
+  //
+  //       await SecureStore.setItemAsync('LongTermUsername', username);
+  //       await SecureStore.setItemAsync('LongTermPassword', password);
+  //       await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
+  //
+  //       const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
+  //       const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
+  //       const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
+  //       console.log('Stored Username:', LongTermUsername);
+  //       console.log('Stored Password:', LongTermPassword);
+  //       console.log('Remember Password Stored value:', RememberPassword);
+  //
+  //     // Otherwise deletes/clears and local saved username/passwords
+  //     } else {
+  //       console.log('Removing Password Long Term');
+  //
+  //       await SecureStore.deleteItemAsync('LongTermUsername');
+  //       await SecureStore.deleteItemAsync('LongTermPassword');
+  //       await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
+  //
+  //       const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
+  //       const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
+  //       const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
+  //       console.log('Stored Username:', LongTermUsername);
+  //       console.log('Stored Password:', LongTermPassword);
+  //       console.log('Remember Password Stored value:', RememberPassword);
+  //     }
+  //
+  //     // After login is successful - navigates to loading screen
+  //     navigation.navigate('Loading' as never);
+  //   } catch (error) {
+  //     console.log(error);
+  //     // Otherwises sticks to login screen and displays error if username/password was incorrect
+  //     setError('Invalid username or password');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  //
+  // // State Variables to display placeholder username/password values in this order: Default , RememberPasswordTicked
+  // const usernamePlaceholder = rememberPassword ? 'Username' : 'Username';
+  // const passwordPlaceholder = rememberPassword ? 'Password' : 'Password';
 
   // Displays various content
   return (
@@ -278,7 +278,7 @@ export default function LoginScreen() {
       {/*>*/}
       {/*  <Text style={styles.buttonText}>{isLoading ? 'Logging In...' : 'Login'}</Text>*/}
       {/*</TouchableOpacity>*/}
-      <Text style={styles.poweredBy}> Powered By </Text>
+      {/*<Text style={styles.poweredBy}> Powered By </Text>*/}
       {/*<Image style={styles.mobileAppsLogo} source={MobileAppsManLogo} />*/}
     </View>
   );

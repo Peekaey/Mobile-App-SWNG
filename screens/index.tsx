@@ -2,20 +2,13 @@
 // Need to refactor and remove thats unneeded in future
 import { StyleSheet, Image, Linking } from 'react-native';
 import { Text, View } from '../components/Themed';
-const WordPressAPI = 'https://example.com/wp-json/wp/v2/posts?_embed&per_page=5';
 import React, { useState, useEffect } from 'react';
-
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import cheerio from 'cheerio';
-import * as MailComposer from 'expo-mail-composer';
-import { TouchableOpacity} from 'react-native-gesture-handler';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 import scheduledNotification from "../components/scheduledNotification";
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
-import * as Notifications from 'expo-notifications';
 
 import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
-import { Chapter, swngURL } from './loading';
+import { Chapter} from './loading';
 
 // Import Event Details from loading page
 import {
@@ -25,11 +18,26 @@ import {
   getEventTimes,
   getEventURL,
 } from './loading';
+import * as SecureStore from "expo-secure-store";
+
+async function deleteRoleItem() {
+  try {
+    await SecureStore.deleteItemAsync('role');
+    console.log('Role item deleted successfully.');
+  } catch (error) {
+    console.log('Error deleting role item:', error);
+  }
+}
+
 
 
 // Main function
 export default function IndexPage() {
   CheckTokenStatusOnPageLoad();
+  deleteRoleItem();
+
+
+
 
   useEffect(() => {
     scheduledNotification();
@@ -40,7 +48,7 @@ export default function IndexPage() {
     <View style={styles.containerHead}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <Text style={styles.title } > Upcoming Event </Text> 
-      <Text style={styles.title } > {Chapter} Chapter </Text> 
+      <Text style={styles.title } > {Chapter}  </Text>
       <GreyBox/>
       <RedBox/>
       </View> 
@@ -95,7 +103,7 @@ export const GreyBox = () => {
       <Text style={styles.LeftBoxText}>SEE MORE</Text>
       </TouchableWithoutFeedback>
       <TouchableWithoutFeedback onPress={ApologyButton}>
-      <Text style={styles.RightBoxText}>Apology</Text>
+      <Text style={styles.RightBoxText}>Submit Apology</Text>
       </TouchableWithoutFeedback>
       </View>
       </View>
@@ -104,10 +112,12 @@ export const GreyBox = () => {
 
 
 const ApologyButton = () => {
+  const event = getEventTitle();
+  const eventdate = getEventDate();
   console.log('HitTheApologyButton');
 
-  const subject = 'UNAVAILABLE for upcoming event';
-  const body = 'Hey, hope you are well. Unfortunately, I will not be able to attend the upcoming event.';
+  const subject = `UNAVAILABLE for upcoming event: ${event} `;
+  const body = `Hey, hope you are well. Unfortunately, I will not be able to attend the upcoming event: ${event} on the ${eventdate}.`;
 
   const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
@@ -230,6 +240,9 @@ const styles = StyleSheet.create({
   middleBox: {
     width: 300,
     height: 250,
+    borderRadius: 10,
+    resizeMode: 'cover',
+
     backgroundColor: '#cccccc', // change this to your preferred shade of grey
     alignItems: 'center',
   },

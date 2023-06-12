@@ -1,24 +1,12 @@
 // Modules and Stuff to work
 // Need to refactor and remove thats unneeded in future
-import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-
-import { Text, View } from '../components/Themed';
-
-import React, { useState, useEffect } from 'react';
-import { ScreenStackHeaderSearchBarView } from 'react-native-screens';
-import { Navigator } from 'expo-router';
+import {Alert } from 'react-native';
+import React, { useEffect } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation, ParamListBase } from '@react-navigation/native';
-
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Nav from '../App';
 import axios from 'axios';
-
-import * as Notifications from 'expo-notifications';
-import { FontAwesome } from '@expo/vector-icons'; // Import the required icon library
 import * as SecureStore from 'expo-secure-store';
-import Toast from 'react-native-toast-message';
+
 
 
 // Main function to check status of a session token

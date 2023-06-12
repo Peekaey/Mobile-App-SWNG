@@ -1,12 +1,8 @@
-// TO DO
-// - Update and change storedUserId variable to storedUserURL
-
 
 // Modules and Stuff to work
-// Need to refactor and remove thats unneeded in future
-import { StyleSheet, Image, View, Text, Platform, TouchableOpacity} from 'react-native';
-import { NavigationContainer, useNavigation, useRoute } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StyleSheet, Image, View , TouchableOpacity} from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import * as React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -14,11 +10,8 @@ import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout} from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TouchableWebElement } from '@ui-kitten/components/devsupport';
-import { Icon, IconElement, TopNavigationAction , TopNavigation, IconRegistry, IconProps,} from '@ui-kitten/components';
+import { IconRegistry} from '@ui-kitten/components';
 import * as SecureStore from 'expo-secure-store';
-
-
 import SWNGLogo from './assets/SWNGTransparentLogo.png'
 import userAvatar from './assets/userAvatar.png'
 
@@ -31,37 +24,32 @@ import AttendancePage from './screens/attendance';
 import RapPage from './screens/rap';
 import ProfilePage from './screens/profile';
 import LoadingPage from './screens/loading';
-import CheckTokenStatus from './components/checkTokenStatus';
-import { useEffect, useState } from 'react';
+import {useEffect , useState} from 'react';
 
 
-// Pages for the navigation to be able to navigate to
-export const homeRoutes = [
-  { name: 'Loading', component: LoadingPage },
-  { name: 'Login', component: LoginScreen },
-  { name: 'Home', component: IndexPage },
-  { name: 'Profile', component: ProfilePage },
-  { name: 'Rap', component: RapPage },
-  { name: 'Referrals', component: ReferralsPage },
-  { name: 'Attendance', component: AttendancePage },
-
-
-];
 
 
 
 
+// Pages for the navigation to be able to navigate to
 
 // Creates the bottom navigation bar
 const Tab = createBottomTabNavigator();
 
+const homeRoutes = [
+    { name: 'Loading', component: LoadingPage },
+    { name: 'Login', component: LoginScreen },
+    { name: 'Home', component: IndexPage },
+    { name: 'Profile', component: ProfilePage },
+    { name: 'Rap', component: RapPage },
+    { name: 'Referrals', component: ReferralsPage },
+    { name: 'Attendance', component: AttendancePage },
+];
+
 // Function underneath is the styling of the bottom navigation bar, including icons
-const HomeTabs = () => {
+export const HomeTabs = () => {
 
-  getAvatar();
-
-
-  return (
+    return (
     <Tab.Navigator tabBar={props => <BottomTabBar {...props} state={{...props.state, routes: props.state.routes.slice(0,7)}}></BottomTabBar>}
       initialRouteName='Login'
       screenOptions={({ route }) => ({
@@ -97,7 +85,7 @@ const HomeTabs = () => {
           display: (route.name === 'Login' || route.name === 'Loading') ? 'none' : 'flex',
           backgroundColor: 'grey'
         },
-        
+
         // Removes the screen from the navigation bar - include the page name for each new screen that you don't want the nav bar
         tabBarButton: [
           'Loading',
@@ -110,13 +98,12 @@ const HomeTabs = () => {
         : undefined,
       })
       }>
-        
       {homeRoutes.map(route => (
               <Tab.Screen
                 key={route.name}
                 name={route.name}
                 component={route.component}
-                options={{ 
+                options={{
                   header: ({ navigation, route }) => (
                     <TopNavigationSimpleUsageShowcase navigation={navigation} route={route} />
                   ),
@@ -138,6 +125,7 @@ async function getAvatar() {
 
 // Creating Top Navigation Bar
 export const TopNavigationSimpleUsageShowcase = ({ navigation, route }: any) => {
+    console.log("TopNavigationSimpleShowcase")
   const [avatarSource, setAvatarSource] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -176,19 +164,19 @@ export const TopNavigationSimpleUsageShowcase = ({ navigation, route }: any) => 
 
 // Components of the app - incldues all dependencies as well as bottom/top navbars
 const App = () => {
-  return (
-    <React.Fragment>
-      <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider {...eva} theme={eva.light}>
-        <NavigationContainer>
-          <Layout style={{ flex: 1 }}>
-          <TopNavigationSimpleUsageShowcase />
-            <HomeTabs  />
-          </Layout>
-        </NavigationContainer>
-      </ApplicationProvider>
-    </React.Fragment>
-  );
+    return (
+        <React.Fragment>
+            <IconRegistry icons={EvaIconsPack} />
+            <ApplicationProvider {...eva} theme={eva.light}>
+                <NavigationContainer>
+                    <Layout style={{ flex: 1 }}>
+                        <TopNavigationSimpleUsageShowcase />
+                        <HomeTabs  />
+                    </Layout>
+                </NavigationContainer>
+            </ApplicationProvider>
+        </React.Fragment>
+    );
 };
 
 export default App;

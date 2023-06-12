@@ -1,15 +1,24 @@
 import * as Notifications from 'expo-notifications';
 import {Platform} from "react-native";
+import * as SecureStore from 'expo-secure-store';
+
+
 
 export default async function scheduleNotification(title:any, body:any, time:any) {
     const notificationTime = new Date(getNextThursday().getFullYear(), getNextThursday().getMonth(), getNextThursday().getDate(), 16, 0, 0); // Set the time to 4 PM
     const now = new Date();
 
+    const eventTitle = await SecureStore.getItemAsync('eventTitle');
+    const eventTime = await SecureStore.getItemAsync('eventDate');
+    const eventDate = await SecureStore.getItemAsync('venueText')
+    const eventVenue = await SecureStore.getItemAsync('eventTimes')
+    const chapter = await SecureStore.getItemAsync('role')
+
     if (notificationTime > now) {
         const scheduledNotificationConfig = {
             content: {
-                title: `Scheduled Notification`,
-                body: 'At Liverpool:',
+                title: `Next Event for ${chapter} chapter`,
+                body: `${eventTitle} at ${eventVenue} on ${eventDate} at ${eventTime}`,
             },
             trigger: {
                 date: notificationTime,

@@ -1,19 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
+
 import {
   StyleSheet,
   Image,
-  Modal,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
-  KeyboardAvoidingView,
   Alert,
 } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { Text, View } from '../components/Themed';
 import React, {useEffect, useState} from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
-import UpdateProfileCheck from "../components/checkTokenStatus";
+
 import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
 import userAvatar from '../assets/userAvatar.png'
 import {ParamListBase, useNavigation} from "@react-navigation/native";
@@ -47,7 +43,7 @@ async function getName() {
 
 
 // const for update data
-const updateUserProfile = async (user_name, user_url, user_description) => {
+const updateUserProfile = async (user_name:any, user_url:any, user_description:any) => {
 
   const storedToken = await SecureStore.getItemAsync('token');
   const storedUserId = await SecureStore.getItemAsync('user_id');
@@ -137,8 +133,6 @@ CheckTokenStatusOnPageLoad();
   const is_URL_Wrong = checkValidURL;
   const is_URL_empty = user_url;
   const buttonBackgroundColor = is_URL_Wrong || !isAnyFieldFilled ? '#8B0000' : '#ed3434';
-  const [checkToken, setCheckToken] = useState(false);
-  const [ValidatedToken, setValidatedToken] = useState(false);
 
 
   function updateProfile() {

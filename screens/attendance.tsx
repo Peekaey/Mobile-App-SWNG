@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, TouchableOpacity, Button, ScrollView, Alert} from 'react-native';
+import {StyleSheet, TouchableOpacity, ScrollView, Alert} from 'react-native';
 import { Text, View } from '../components/Themed';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import { Chapter, swngURL } from './loading';
+
 import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
 
 import {
@@ -13,8 +13,6 @@ import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
 
-const chapter = 'camden';
-const eventTitle = getEventTitle();
 
 export default function AttendancePage() {
   CheckTokenStatusOnPageLoad();
@@ -24,21 +22,25 @@ export default function AttendancePage() {
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
 
   useEffect(() => {
-    async function fetchmembers() {
-      try {
-        const response = await fetch(`https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${chapter}`);
-        const data = await response.json();
-        const memberNames = Object.values(data).map((member) => member.name);
+    getStoredMemberNames();
+  }, []);
+
+
+
+  async function getStoredMemberNames() {
+    try {
+      const memberNamesString = await SecureStore.getItemAsync('memberNames');
+      if (memberNamesString) {
+        const memberNames = JSON.parse(memberNamesString);
         console.log(memberNames);
         setAttendance(memberNames);
         setCheckedItems(new Array(memberNames.length).fill(false));
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error(error);
     }
+  }
 
-    fetchmembers();
-  }, []);
 
   const handleToggleCheckbox = (index: number) => {
     setCheckedItems((prevCheckedItems) => {

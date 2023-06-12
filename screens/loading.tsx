@@ -1,24 +1,18 @@
 
 // Modules and Stuff to work
 // Need to refactor and remove thats unneeded in future
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Image, TextInput, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Animated, Easing } from 'react-native';
-import React, { Component, useEffect, useState } from 'react';
-import { Text, View } from '../components/Themed';
+import { StyleSheet, Animated, Easing } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View } from '../components/Themed';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation, ParamListBase, CommonActions } from '@react-navigation/native';
 import axios from 'axios';
 import cheerio from 'cheerio';
-import { GreyBox } from '.';
 import * as SecureStore from 'expo-secure-store';
 import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
 
 // Flag for the chapter to scrape
 export var Chapter = 'Liverpool'
-
-// Chapter Webpage to Scrape
-export const url: string = `https://www.swng.org.au/chapters/${Chapter}/`;
-export const swngURL: string = 'https://www.swng.org.au/';
 
 
 // Setters and Getters for Event Information for Index Page
@@ -68,20 +62,36 @@ export function getEventURL() {
   return eventURL;
 }
 
+export async function GrabChapter() {
+  try {
+    Chapter = await SecureStore.getItemAsync('role');
+    // You can now use the 'Chapter' variable for further processing
+    console.log('Chapter:', Chapter);
+    return Chapter;
+  } catch (error) {
+    console.log('Error retrieving Chapter:', error);
+    return null;
+  }
+}
+
 
 // Main function
 export async function BackEndLoading() {
 
+await GrabChapter();
+  console.log('Stored Chapter in loading.tsx',Chapter);
   // Scrapes SWNG Website for appropriate event information
-  axios.get(url)
+
+  axios.get(`https://www.swng.org.au/chapters/${Chapter}/`)
   .then((response: any) => {
     const html = response.data;
     const $ = cheerio.load(html);
-    
+
       // Grabbing event Title
       setEventTitle( $('div.columns div.column:first-child a:first-child').text());
+
       // console.log('Event Title: ' + eventTitle);
-      
+
       // Extracting event date
        setEventDate($('div.columns div.column:first-child h3:first-of-type').text());
       // console.log('Event Date: ' + eventDate);
@@ -138,8 +148,37 @@ const fetchAndStoreAvatar = async (storedUserId:any) => {
   }
 };
 
+  async function fetchmembers() {
+    try {
+      const chapter = 'camden';
+      const response = await fetch(
+          `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${chapter}`
+      );
+      const data = await response.json();
+      const memberNames = Object.values(data).map((member:any) => member.name);
+      await SecureStore.setItemAsync('memberNames', JSON.stringify(memberNames));
+      console.log('Member names stored in SecureStore:', memberNames);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+  const handleEventDetails = async () => {
+    const eventTitle = getEventTitle()
+    await SecureStore.setItemAsync('eventTitle', eventTitle);
+    const eventDate = getEventDate()
+    await SecureStore.setItemAsync('eventDate', eventDate);
+    const venueText = getVenueText()
+    await SecureStore.setItemAsync('venueText', venueText);
+    const eventTime = getEventTimes()
+    await SecureStore.setItemAsync('eventTimes', JSON.stringify(eventTimes));
+  }
+
+
+await fetchmembers();
 // Call the function and store member avatar's URL in secure storage
-fetchAndStoreAvatar(storedUserId);
+await fetchAndStoreAvatar(storedUserId);
 
 }
 
@@ -147,6 +186,7 @@ fetchAndStoreAvatar(storedUserId);
 interface LoadingPageProps {
   // Define the types for any props that your component will receive
 }
+
 export default function LoadingPage(props: LoadingPageProps) {
 
   // Declaring Navigation dependencies to navigate to index page

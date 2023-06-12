@@ -38,7 +38,7 @@ const Chapters_Members = () => {
                       `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${selected}`
                   );
                   const data = await response.json();
-                  const names = Object.values(data).map((member) => member.name);
+                  const names = Object.values(data).map((member:any) => member.name);
                   setMemberNames(names);
               } else {
                   setMemberNames([]);
@@ -61,14 +61,14 @@ const Chapters_Members = () => {
       value: name,
   }));
 
-  const handleSelectChapter = (selectedOption) => {
+  const handleSelectChapter = (selectedOption:any) => {
       const selectedChapterName = chapterData.find(
           (option) => option.key === selectedOption
       )?.value;
       setSelected(selectedChapterName);
   };
 
-  const handleSelectMember = (selectedOption) => {
+  const handleSelectMember = (selectedOption:any) => {
       const selectedMemberName = memberData.find(
           (option) => option.key === selectedOption
       )?.value;
@@ -89,7 +89,7 @@ const Chapters_Members = () => {
 };
 
 // const for POST data 
-const postReferral = async (username, org, email, phonenum, notes) => {
+const postReferral = async (username:any, org:any, email:any, phonenum:any, notes:any) => {
 
   const storedUserId = await SecureStore.getItemAsync('user_id');
   const end_point = 'https://www.swng.org.au/wp-json/swng-app/v1/rap';

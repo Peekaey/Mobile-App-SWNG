@@ -4,21 +4,15 @@
 import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text, View } from '../components/Themed';
 import React, { useState, useEffect } from 'react';
-import { ScreenStackHeaderSearchBarView } from 'react-native-screens';
-import { Navigator } from 'expo-router';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation, ParamListBase } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Nav from '../App';
 import axios from 'axios';
 import * as Notifications from 'expo-notifications';
 import { FontAwesome } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
 import MobileAppsManLogo from '../assets/MobileAppsManLogo.png'
 import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
-import TestInAppNotification from "../components/scheduledNotification";
-import scheduledNotification from "../components/scheduledNotification";
+
 
 // Placeholder code for now, please do not edit any notification related code 
 // // - Related to asking the user for notification permission to display event notifications
@@ -51,7 +45,7 @@ const askNotificationPermission = async () => {
 
   // Android specific code for displaying request permission for notification
   if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
+    await Notifications.setNotificationChannelAsync('default', {
       name: 'Default',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
@@ -68,12 +62,12 @@ const askNotificationPermission = async () => {
   }
 };
 
-const handleNotificationReceived = (notification) => {
+const handleNotificationReceived = (notification:any) => {
   console.log('Notification received:', notification);
   // Handle the received notification in the foreground
 };
 
-const handleNotificationResponse = (response) => {
+const handleNotificationResponse = (response:any) => {
   console.log('Notification response:', response);
   // Handle the user's response to the notification
 };
@@ -86,7 +80,7 @@ const handleNotificationResponse = (response) => {
 
 export default function LoginScreen() {
 
-  askNotificationPermission();
+   askNotificationPermission();
 
 
 
@@ -135,21 +129,49 @@ export default function LoginScreen() {
         username,
         password,
       });
-  
-      // Extract the token and user_id from the response
-      const { token, user_id , chapter, role } = response.data;
+      // Extract the token, user_id, chapter, and role from the response
+      const { token, user_id, chapter, role } = response.data;
+      console.log("ROLE IN RESPONSE", role);
+
+      let matchedRole: any;
+      let normalizedRole: string = '';
+
+      if (Array.isArray(role) && role.length > 0) {
+        const roleString = role[0]; // Get the first element of the role array
+        normalizedRole = roleString.toLowerCase();
+        console.log("Normalized role:", normalizedRole);
+
+        if (normalizedRole.includes('narellan')) {
+          matchedRole = 'Narellan';
+          await SecureStore.setItemAsync('role', matchedRole);
+        } else if (normalizedRole.includes('camden')) {
+          matchedRole = 'Camden';
+          await SecureStore.setItemAsync('role', matchedRole);
+        } else if (normalizedRole.includes('campbelltown')) {
+          matchedRole = 'Campbelltown';
+          await SecureStore.setItemAsync('role', matchedRole);
+        } else if (normalizedRole.includes('liverpool')) {
+          matchedRole = 'Liverpool';
+          await SecureStore.setItemAsync('role', matchedRole);
+        }
+      } else {
+        console.log("Invalid role");
+      }
+
+
 
       // Stores the token and userid in encrypted local storage
       await SecureStore.setItemAsync('token', token);
       await SecureStore.setItemAsync('user_id', user_id.toString());
       await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
-      await SecureStore.setItemAsync('role', JSON.stringify(response.data.role));
+
 
 
       const storedToken = await SecureStore.getItemAsync('token');
       const storedUserId = await SecureStore.getItemAsync('user_id');
       const storedChapter = await SecureStore.getItemAsync('chapter');
       const storedRole = await SecureStore.getItemAsync('role');
+
 
       console.log("Stored Role", storedRole)
 
@@ -227,9 +249,9 @@ export default function LoginScreen() {
         value={password}
         onChangeText={(text) => setPassword(text)}
         // Use asterisks instead of plain text for password security
-        secureTextEntry 
+        secureTextEntry
       />
-  
+
   <View style={styles.checkboxContainer}>
         <Text style={styles.checkboxLabel}>Remember Password  </Text>
         <TouchableOpacity onPress={() => setRememberPassword(!rememberPassword)}>

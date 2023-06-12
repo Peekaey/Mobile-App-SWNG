@@ -5,15 +5,13 @@ import {
     TouchableOpacity,
     SafeAreaView,
     TouchableWithoutFeedback,
-    ImageBackground,
-    KeyboardAvoidingView,
     Animated,
     Alert
 } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
 import {ParamListBase, useNavigation} from "@react-navigation/native";
@@ -52,7 +50,7 @@ return (
     <View style={styles.container1}>
     <Text style={styles.rateheading} >Tap to Rate</Text>
       <View style={styles.stars}>
-        {starRatingArray.map((option) => (
+        {starRatingArray.map((option:any) => (
           <TouchableWithoutFeedback
             onPressIn={() => handlePressIn(option)}
             onPressOut={() => handlePressOut(option)}
@@ -134,7 +132,7 @@ const Chapters_Members = () => {
       setSelected(selectedChapterName);
   };
 
-  const handleSelectMember = (selectedOption) => {
+  const handleSelectMember = (selectedOption:any) => {
       const selectedMemberName = memberData.find(
           (option) => option.key === selectedOption
       )?.value;
@@ -198,7 +196,6 @@ export default function RapPage() {
 
 
 
-    const [isUpdated, setIsUpdated] = useState(false);
   const [subject, setsubject] = React.useState('');
   const [review, setreview] = React.useState('');
   const [rating, setrating] = React.useState('');

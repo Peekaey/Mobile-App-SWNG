@@ -233,7 +233,7 @@ export default function LoginScreen() {
   // Displays various content
   return (
     <View style={styles.container}>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+      {/*<View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />*/}
       {/*<Image style={styles.image} source={SWNGLogoWhite} />*/}
       {/*<Text></Text>*/}
       {/*{errorMessage !== '' && <Text style={styles.errorMessage}>{errorMessage}</Text>}*/}

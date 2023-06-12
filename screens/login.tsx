@@ -234,39 +234,39 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Image style={styles.image} source={SWNGLogoWhite} />
-      <Text></Text>
-      {errorMessage !== '' && <Text style={styles.errorMessage}>{errorMessage}</Text>}
-      <TextInput
-        placeholder={`${usernamePlaceholder}`}
-        style={styles.input}
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-      />
-      <TextInput
-        placeholder={`${passwordPlaceholder}`}
-        style={styles.input}
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        // Use asterisks instead of plain text for password security
-        secureTextEntry
-      />
+      {/*<Image style={styles.image} source={SWNGLogoWhite} />*/}
+      {/*<Text></Text>*/}
+      {/*{errorMessage !== '' && <Text style={styles.errorMessage}>{errorMessage}</Text>}*/}
+      {/*<TextInput*/}
+      {/*  placeholder={`${usernamePlaceholder}`}*/}
+      {/*  style={styles.input}*/}
+      {/*  value={username}*/}
+      {/*  onChangeText={(text) => setUsername(text)}*/}
+      {/*/>*/}
+      {/*<TextInput*/}
+      {/*  placeholder={`${passwordPlaceholder}`}*/}
+      {/*  style={styles.input}*/}
+      {/*  value={password}*/}
+      {/*  onChangeText={(text) => setPassword(text)}*/}
+      {/*  // Use asterisks instead of plain text for password security*/}
+      {/*  secureTextEntry*/}
+      {/*/>*/}
 
-  <View style={styles.checkboxContainer}>
-        <Text style={styles.checkboxLabel}>Remember Password  </Text>
-        <TouchableOpacity onPress={() => setRememberPassword(!rememberPassword)}>
-          <View
-            style={[
-              styles.checkbox,
-              rememberPassword ? styles.checkedBox : styles.uncheckedBox,
-            ]}
-          >
-            {rememberPassword ? (
-              <FontAwesome name="check" color="white" size={12} style={styles.checkboxTick} />
-            ) : null}
-          </View>
-        </TouchableOpacity>
-      </View>
+  {/*<View style={styles.checkboxContainer}>*/}
+  {/*      <Text style={styles.checkboxLabel}>Remember Password  </Text>*/}
+  {/*      <TouchableOpacity onPress={() => setRememberPassword(!rememberPassword)}>*/}
+  {/*        <View*/}
+  {/*          style={[*/}
+  {/*            styles.checkbox,*/}
+  {/*            rememberPassword ? styles.checkedBox : styles.uncheckedBox,*/}
+  {/*          ]}*/}
+  {/*        >*/}
+  {/*          {rememberPassword ? (*/}
+  {/*            <FontAwesome name="check" color="white" size={12} style={styles.checkboxTick} />*/}
+  {/*          ) : null}*/}
+  {/*        </View>*/}
+  {/*      </TouchableOpacity>*/}
+  {/*    </View>*/}
 
 
       <TouchableOpacity

@@ -1,8 +1,8 @@
 // Modules and Stuff to work
-// Need to refactor and remove thats unneeded in future
+// Need to refactor and remove what's unneeded in future
 import { StyleSheet, Image, Linking } from 'react-native';
 import { Text, View } from '../components/Themed';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 import scheduledNotification from "../components/scheduledNotification";
 // Main Function - Needs to be exported so that the react-navigation can define and read the page
@@ -34,13 +34,20 @@ async function deleteRoleItem() {
 // Main function
 export default function IndexPage() {
   CheckTokenStatusOnPageLoad();
-  deleteRoleItem();
 
 
 
 
   useEffect(() => {
-    scheduledNotification();
+    scheduledNotification("Notification Title", "Notification Body", "Notification Time")
+        .then(() => {
+          // Handle successful scheduling of the notification
+          console.log('Notification scheduled successfully');
+        })
+        .catch((error) => {
+          // Handle error during scheduling of the notification
+          console.error('Error scheduling notification:', error);
+        });
   }, []);
   // Display page information - call several functions and variables for data
 
@@ -80,14 +87,16 @@ export const GreyBox = () => {
   // Action to open EventURL in browser
   const OpenEventDetails = () => {
     console.log('Called');
-    Linking.openURL(eventURL);
+    Linking.openURL(eventURL)
+        .then(() => {
+          // Handle successful opening of the URL
+          console.log('URL opened successfully');
+        })
+        .catch((error) => {
+          // Handle error while opening the URL
+          console.error('Error opening URL:', error);
+        });
   };
-
-  // Action for Apology button
-  // const ApologyButton = () => {
-  //   console.log('HitTheApologyButton');
-  //
-  // };
 
   // Display content in center box
   return (
@@ -139,21 +148,44 @@ const RedBox = () => {
 
   const OpenBrowserCamden = () => {
     console.log('Called');
-    Linking.openURL('https://www.swng.org.au/chapters/camden/');
+    Linking.openURL('https://www.swng.org.au/chapters/camden')
+        .then(() => {
+          console.log('URL opened successfully');
+        })
+        .catch((error) => {
+          console.error('Error opening URL:', error);
+        });
   };
   const OpenBrowserCampbelltown = () => {
     console.log('Called');
-    Linking.openURL('https://www.swng.org.au/chapters/campbelltown');
+    Linking.openURL('https://www.swng.org.au/chapters/campbelltown')
+        .then(() => {
+          console.log('URL opened successfully');
+        })
+        .catch((error) => {
+          console.error('Error opening URL:', error);
+        });
   };
   const OpenBrowserLiverpool = () => {
     console.log('Called');
-    Linking.openURL('https://www.swng.org.au/chapters/liverpool');
+    Linking.openURL('https://www.swng.org.au/chapters/liverpool')
+        .then(() => {
+          console.log('URL opened successfully');
+        })
+        .catch((error) => {
+          console.error('Error opening URL:', error);
+        });
   };
   const OpenBrowserNarellan = () => {
     console.log('Called');
-    Linking.openURL('https://www.swng.org.au/chapters/narellan');
+    Linking.openURL('https://www.swng.org.au/chapters/narellan')
+        .then(() => {
+          console.log('URL opened successfully');
+        })
+        .catch((error) => {
+          console.error('Error opening URL:', error);
+        });
   };
-
   // Displays red box info
 
   return (

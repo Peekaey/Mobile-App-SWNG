@@ -42,25 +42,29 @@ async function getName() {
 }
 
 
-// const for update data
-const updateUserProfile = async (user_name:any, user_url:any, user_description:any) => {
 
+// const for update data
+
+const data = {
+  name: '',
+  url: '',
+  description: ''
+};
+
+const updateUserProfile = async (user_name: any, user_url: any, user_description: any) => {
   const storedToken = await SecureStore.getItemAsync('token');
   const storedUserId = await SecureStore.getItemAsync('user_id');
 
-  // console.log ("PROFILE SCREEN STORED USER ID", storedUserId)
-  // console.log ("PROFILE SCREEN STORED token", storedToken)
-
-
   const end_point = `https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`;
-  const data ={};
-  if(user_name){
+  const data: { name?: string, url?: string, description?: string } = {};
+
+  if (user_name) {
     data.name = user_name;
   }
-  if(user_url){
+  if (user_url) {
     data.url = user_url;
   }
-  if(user_description){
+  if (user_description) {
     data.description = user_description;
   }
 
@@ -72,11 +76,11 @@ const updateUserProfile = async (user_name:any, user_url:any, user_description:a
     },
     body: JSON.stringify(data),
   };
+
   const response = await fetch(end_point, options);
   const result = await response.json();
   return result;
 };
-
 
 
 
@@ -112,7 +116,7 @@ CheckTokenStatusOnPageLoad();
       const storedUsername = await getName();
 
       if (storedUsername === '') {
-        setUsername(undefined);
+        setUsername('');
       } else {
         setUsername(storedUsername)
       }
@@ -206,7 +210,7 @@ CheckTokenStatusOnPageLoad();
     }
   }, [isUpdated]);
   //function for regx validation
-  const handleCheckURL = text => {
+  const handleCheckURL = (text: string) => {
     let regx = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/im;
     setUrl(text);
     if (regx.test(text)) {
@@ -220,7 +224,7 @@ CheckTokenStatusOnPageLoad();
   // check if the url input box is empty
   const handleBlur = () => {
     if(is_URL_empty == ""){
-      setcheckValidURL("");
+      setcheckValidURL(false);
     }
   };
 

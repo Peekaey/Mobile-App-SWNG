@@ -23,7 +23,7 @@ const [star_Rating, setStar_Rating] = useState(null);
 const animatedButtonScale = new Animated.Value(1);
 const starRatingArray = [1, 2, 3, 4, 5];
 
-const handlePressIn = () => {
+const handlePressIn = (option: any) => {
   Animated.spring(animatedButtonScale, {
     toValue: 1.5,
     useNativeDriver: true,
@@ -32,7 +32,7 @@ const handlePressIn = () => {
   }).start();
 };
 
-const handlePressOut = () => {
+const handlePressOut = (option: any) => {
   Animated.spring(animatedButtonScale, {
     toValue: 1,
     useNativeDriver: true,

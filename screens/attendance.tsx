@@ -52,13 +52,15 @@ export default function AttendancePage() {
 
   const handleSubmit = () => {
 
-    const validateToken = async () => {
+    async function validateToken() {
       try {
         const token = await SecureStore.getItemAsync('token');
         if (!token) {
           navigation.navigate('Login');
           Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+          return; // Return early to prevent further execution
         }
+
         const axiosInstance = axios.create({
           headers: {
             Authorization: `Bearer ${token}`,
@@ -83,9 +85,13 @@ export default function AttendancePage() {
         console.log("Token is error")
         Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
       }
-    };
+    }
 
-    validateToken()
+// Call the validateToken function and handle the promise
+    validateToken().catch(error => {
+      console.error(error);
+      // Handle the error (e.g., display an error message)
+    });
 
   };
 

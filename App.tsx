@@ -125,7 +125,6 @@ async function getAvatar() {
 
 // Creating Top Navigation Bar
 export const TopNavigationSimpleUsageShowcase = ({ navigation, route }: any) => {
-    console.log("TopNavigationSimpleShowcase")
   const [avatarSource, setAvatarSource] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -162,7 +161,7 @@ export const TopNavigationSimpleUsageShowcase = ({ navigation, route }: any) => 
   );
 };
 
-// Components of the app - incldues all dependencies as well as bottom/top navbars
+// Components of the app - includes all dependencies as well as bottom/top navbars
 const App = () => {
     return (
         <React.Fragment>

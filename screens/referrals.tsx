@@ -11,44 +11,45 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 const Chapters_Members = () => {
   const [selected, setSelected] = React.useState("");
-  const [chapterNames, setChapterNames] = React.useState([]);
-  const [memberNames, setMemberNames] = React.useState([]);
+  const [chapterNames, setChapterNames] = React.useState<string[]>([]);
+  const [memberNames, setMemberNames] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-      async function fetchChapterNames() {
-          try {
-              const response = await fetch(
-                  "https://www.swng.org.au/wp-json/swng-app/v1/chapterNames"
-              );
-              const data = await response.json();
-              const names = Object.values(data);
-              setChapterNames(names);
-          } catch (error) {
-              console.error(error);
-          }
+    async function fetchChapterNames() {
+      try {
+        const response = await fetch(
+            "https://www.swng.org.au/wp-json/swng-app/v1/chapterNames"
+        );
+        const data = await response.json();
+        const names = Object.values(data) as string[];
+        setChapterNames(names);
+      } catch (error) {
+        console.error(error);
       }
-      fetchChapterNames();
+    }
+
+    fetchChapterNames().catch(console.error); // Handle the promise
+
   }, []);
 
   React.useEffect(() => {
-      async function fetchMemberNames() {
-          try {
-              if (selected) {
-                  const response = await fetch(
-                      `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${selected}`
-                  );
-                  const data = await response.json();
-                  const names = Object.values(data).map((member:any) => member.name);
-                  setMemberNames(names);
-              } else {
-                  setMemberNames([]);
-              }
-          } 
-          catch (error) {
-              console.error(error);
-          }
+    async function fetchMemberNames() {
+      try {
+        if (selected) {
+          const response = await fetch(
+              `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${selected}`
+          );
+          const data = await response.json();
+          const names = Object.values(data).map((member: any) => member.name);
+          setMemberNames(names);
+        } else {
+          setMemberNames([]);
+        }
+      } catch (error) {
+        console.error(error);
       }
-      fetchMemberNames();
+    }
+    fetchMemberNames().catch(console.error);
   }, [selected]);
 
   const chapterData = chapterNames.slice(1).map((name, index) => ({

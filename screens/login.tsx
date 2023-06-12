@@ -1,7 +1,7 @@
 // Modules and Stuff to work
 // Need to refactor and remove thats unneeded in future
 
-import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableOpacity, Platform } from 'react-native';
 import { Text, View } from '../components/Themed';
 import React, { useState, useEffect } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -80,7 +80,15 @@ const handleNotificationResponse = (response:any) => {
 
 export default function LoginScreen() {
 
-   askNotificationPermission();
+  askNotificationPermission()
+      .then((permissionResult) => {
+        // Handle the permission result
+        console.log('Permission result:', permissionResult);
+      })
+      .catch((error) => {
+        // Handle any errors that occurred during permission request
+        console.error('Error occurred during permission request:', error);
+      });
 
 
 
@@ -100,23 +108,36 @@ export default function LoginScreen() {
   // Grabs stored username and password - if rememeber password function was not used on last saved - uses placeholder values
   useEffect(() => {
     const checkStoredLoginCredentials = async () => {
-      const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
+      try {
+        const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
 
-      if (RememberPassword === 'true') {
-        const storedUsername = await SecureStore.getItemAsync('LongTermUsername');
-        const storedPassword = await SecureStore.getItemAsync('LongTermPassword');
-        if (storedUsername && storedPassword) {
-          setUsername(storedUsername);
-          setPassword(storedPassword);
-          setRememberPassword(true);
+        if (RememberPassword === 'true') {
+          const storedUsername = await SecureStore.getItemAsync('LongTermUsername');
+          const storedPassword = await SecureStore.getItemAsync('LongTermPassword');
+          if (storedUsername && storedPassword) {
+            setUsername(storedUsername);
+            setPassword(storedPassword);
+            setRememberPassword(true);
+          }
+        } else {
+          setUsername('');
+          setPassword('');
         }
-      } else {
-        setUsername('');
-        setPassword('');
+      } catch (error) {
+        // Handle any errors that occurred during checkStoredLoginCredentials
+        console.error('Error occurred during checkStoredLoginCredentials:', error);
       }
     };
 
-    checkStoredLoginCredentials();
+    checkStoredLoginCredentials()
+        .then(() => {
+          // Handle the completion of checkStoredLoginCredentials
+          console.log('checkStoredLoginCredentials completed successfully');
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during checkStoredLoginCredentials
+          console.error('Error occurred during checkStoredLoginCredentials:', error);
+        });
   }, []); // Empty dependency array to run the effect only once
 
   const handleLogin = async () => {

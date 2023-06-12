@@ -9,16 +9,16 @@ export default async function scheduleNotification(title:any, body:any, time:any
     const now = new Date();
 
     const eventTitle = await SecureStore.getItemAsync('eventTitle');
-    const eventTime = await SecureStore.getItemAsync('eventDate');
+    // const eventTime = await SecureStore.getItemAsync('eventDate');
     const eventDate = await SecureStore.getItemAsync('venueText')
-    const eventVenue = await SecureStore.getItemAsync('eventTimes')
+    const eventVenue = await SecureStore.getItemAsync('eventTime')
     const chapter = await SecureStore.getItemAsync('role')
 
     if (notificationTime > now) {
         const scheduledNotificationConfig = {
             content: {
                 title: `Next Event for ${chapter} chapter`,
-                body: `${eventTitle} at ${eventVenue} on ${eventDate} at ${eventTime}`,
+                body: `${eventTitle} at ${eventVenue} on ${eventDate} at 07:00`,
             },
             trigger: {
                 date: notificationTime,
@@ -76,7 +76,7 @@ export async function TestInAppNotification() {
         }
     }
 
-    async function scheduleNotification(title, body, time) {
+    async function scheduleNotification(title:any, body:any, time:any) {
         const scheduledNotificationConfig = {
             content: {
                 title: `Next event is : Liverpool Chapter`,

@@ -163,19 +163,20 @@ const fetchAndStoreAvatar = async (storedUserId:any) => {
     }
   }
 
-
+// Need to fix this
   const handleEventDetails = async () => {
     const eventTitle = getEventTitle()
-    await SecureStore.setItemAsync('eventTitle', eventTitle);
+    console.log("eventTitle", eventTitle)
+   await SecureStore.setItemAsync('eventTitle', eventTitle);
     const eventDate = getEventDate()
-    await SecureStore.setItemAsync('eventDate', eventDate);
+    console.log("eventDate", eventDate)
+   await SecureStore.setItemAsync('eventDate', eventDate);
     const venueText = getVenueText()
-    await SecureStore.setItemAsync('venueText', venueText);
-    const eventTime = getEventTimes()
-    await SecureStore.setItemAsync('eventTimes', JSON.stringify(eventTimes));
+    console.log("VenueText", venueText);
+   await SecureStore.setItemAsync('venueText', venueText);
   }
 
-
+await handleEventDetails();
 await fetchmembers();
 // Call the function and store member avatar's URL in secure storage
 await fetchAndStoreAvatar(storedUserId);
@@ -202,9 +203,20 @@ export default function LoadingPage(props: LoadingPageProps) {
       setLoading(false);
     };
 
-    fetchData();
-  }, []);
+    const fetchDataAndHandlePromise = async () => {
+      try {
+        await fetchData();
+      } catch (error) {
+        // Handle any error that occurred during fetchData()
+        console.error('Error occurred during fetchData:', error);
+      }
+    };
 
+    fetchDataAndHandlePromise().catch((error) => {
+      // Handle any error that occurred during fetchDataAndHandlePromise
+      console.error('Error occurred during fetchDataAndHandlePromise:', error);
+    });
+  }, []);
 
   // Animation related code for the spinning SWNG logo
   const spinValue = React.useRef(new Animated.Value(0)).current;

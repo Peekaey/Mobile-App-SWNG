@@ -57,7 +57,6 @@ export function updateProfile() {
 // Main function to check status of a session token
 // If Valid = No Action - If invalid = return to login page and display error to tell user to log in again.
 export default function CheckTokenStatusOnPageLoad() {
-
   // Declaring navigation dependencies
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
@@ -69,6 +68,7 @@ export default function CheckTokenStatusOnPageLoad() {
         if (!token) {
           navigation.navigate('Login');
           Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
+          return; // Add a return statement here to exit the function after navigating
         }
 
         // Add headers to POST request before validating token
@@ -99,7 +99,10 @@ export default function CheckTokenStatusOnPageLoad() {
       }
     };
 
-    validateToken();
+    validateToken().catch((error) => {
+      // Handle any errors that occurred during validateToken
+      console.error('Error occurred during validateToken:', error);
+    });
   }, []);
 
   return null;

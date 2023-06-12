@@ -54,7 +54,7 @@ export const HomeTabs = () => {
 
     return (
     <Tab.Navigator tabBar={props => <BottomTabBar {...props} state={{...props.state, routes: props.state.routes.slice(0,7)}}></BottomTabBar>}
-      initialRouteName='Home'
+      initialRouteName='Rap'
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName = '';

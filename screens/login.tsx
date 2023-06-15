@@ -131,55 +131,56 @@ export default function LoginScreen() {
       });
       // Extract the token, user_id, chapter, and role from the response
       const { token, user_id, chapter, role } = response.data;
-      console.log("ROLE IN RESPONSE", role);
+      // console.log("ROLE IN RESPONSE", role);
+      //
+      // let matchedRole: any;
+      // let normalizedRole: string = '';
+      //
+      // if (Array.isArray(role) && role.length > 0) {
+      //   const roleString = role[0]; // Get the first element of the role array
+      //   normalizedRole = roleString.toLowerCase();
+      //   console.log("Normalized role:", normalizedRole);
+      //
+      //   if (normalizedRole.includes('narellan')) {
+      //     matchedRole = 'Narellan';
+      //     await SecureStore.setItemAsync('role', matchedRole);
+      //   } else if (normalizedRole.includes('camden')) {
+      //     matchedRole = 'Camden';
+      //     await SecureStore.setItemAsync('role', matchedRole);
+      //   } else if (normalizedRole.includes('campbelltown')) {
+      //     matchedRole = 'Campbelltown';
+      //     await SecureStore.setItemAsync('role', matchedRole);
+      //   } else if (normalizedRole.includes('liverpool')) {
+      //     matchedRole = 'Liverpool';
+      //     await SecureStore.setItemAsync('role', matchedRole);
+      //   }
+      // } else {
+      //   console.log("Invalid role");
+      // }
 
-      let matchedRole: any;
-      let normalizedRole: string = '';
 
-      if (Array.isArray(role) && role.length > 0) {
-        const roleString = role[0]; // Get the first element of the role array
-        normalizedRole = roleString.toLowerCase();
-        console.log("Normalized role:", normalizedRole);
-
-        if (normalizedRole.includes('narellan')) {
-          matchedRole = 'Narellan';
-          await SecureStore.setItemAsync('role', matchedRole);
-        } else if (normalizedRole.includes('camden')) {
-          matchedRole = 'Camden';
-          await SecureStore.setItemAsync('role', matchedRole);
-        } else if (normalizedRole.includes('campbelltown')) {
-          matchedRole = 'Campbelltown';
-          await SecureStore.setItemAsync('role', matchedRole);
-        } else if (normalizedRole.includes('liverpool')) {
-          matchedRole = 'Liverpool';
-          await SecureStore.setItemAsync('role', matchedRole);
-        }
-      } else {
-        console.log("Invalid role");
-      }
-
-
+      await SecureStore.setItemAsync('chapter', chapter)
 
       // Stores the token and userid in encrypted local storage
       await SecureStore.setItemAsync('token', token);
       await SecureStore.setItemAsync('user_id', user_id.toString());
-      await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
+      // await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
 
 
 
       const storedToken = await SecureStore.getItemAsync('token');
       const storedUserId = await SecureStore.getItemAsync('user_id');
       const storedChapter = await SecureStore.getItemAsync('chapter');
-      const storedRole = await SecureStore.getItemAsync('role');
-
-
-      console.log("Stored Role", storedRole)
-
-      if (storedChapter !== null) {
-        console.log('Stored Chapter:', JSON.parse(storedChapter));
-      } else {
-        console.log('Chapter is not stored.');
-      }
+      // const storedRole = await SecureStore.getItemAsync('role');
+      //
+      //
+      // console.log("Stored Role", storedRole)
+      //
+      // if (storedChapter !== null) {
+      //   console.log('Stored Chapter:', JSON.parse(storedChapter));
+      // } else {
+      //   console.log('Chapter is not stored.');
+      // }
 
       console.log('Stored Token:', storedToken);
       console.log('Stored User ID:', storedUserId);

@@ -79,8 +79,8 @@ export async function TestInAppNotification() {
     async function scheduleNotification(title, body, time) {
         const scheduledNotificationConfig = {
             content: {
-                title: `Next event is : Liverpool Chapter`,
-                body: 'At Liverpool Bla Bla Bla',
+                title: `Next Event for Narellan chapter`,
+                body: 'Combined Chapter Meeting - Hosted by Campbelltown Chapter at Wests Leagues Club - Leumeah on 21st June at 07:00',
             },
             trigger: {
                 seconds: 5,

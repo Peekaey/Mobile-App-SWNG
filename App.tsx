@@ -14,7 +14,7 @@ import { IconRegistry} from '@ui-kitten/components';
 import * as SecureStore from 'expo-secure-store';
 import SWNGLogo from './assets/SWNGTransparentLogo.png'
 import userAvatar from './assets/userAvatar.png'
-
+import { LogBox } from "react-native"
 
 // Import each new screen when it is created so the navigator can read it
 import LoginScreen from './screens/login';
@@ -26,6 +26,7 @@ import ProfilePage from './screens/profile';
 import LoadingPage from './screens/loading';
 import {useEffect , useState} from 'react';
 
+LogBox.ignoreAllLogs(true)
 
 // Pages for the navigation to be able to navigate to
 

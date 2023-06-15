@@ -128,7 +128,7 @@ const postReferral = async (username:any, org:any, email:any, phonenum:any, note
 
   const response = await fetch(end_point, options);
   const result = await response.json();
-  Alert.alert('Referral Submitted',' Your rap has been successfully saved')
+  Alert.alert('Referral Submitted',' Your referral has been successfully saved')
   return result;
 };
 
@@ -353,10 +353,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 3,
+    marginVertical: 20,
     height: 1,
     width: '100%',
-    top:15,
   },
   input1: {
     width: '80%',

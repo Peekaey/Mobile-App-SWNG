@@ -9,7 +9,7 @@ import {
 import * as SecureStore from 'expo-secure-store';
 import { Text, View } from '../components/Themed';
 import React, {useEffect, useState} from 'react';
-
+import { ScrollView } from 'react-native-gesture-handler';
 import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
 import userAvatar from '../assets/userAvatar.png'
 import {ParamListBase, useNavigation} from "@react-navigation/native";
@@ -87,7 +87,7 @@ export default function ProfilePage() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
 
-CheckTokenStatusOnPageLoad();
+  CheckTokenStatusOnPageLoad();
 
 
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
@@ -232,72 +232,74 @@ CheckTokenStatusOnPageLoad();
           <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         </View>
 
-        <View style={styles.centeredContainer}>
-          {avatarUrl ? (
-              <Image source={{ uri: avatarUrl }} style={styles.profileimage} />
+        <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} automaticallyAdjustKeyboardInsets={true}>
+          <View style={styles.centeredContainer}>
+            {avatarUrl ? (
+                <Image source={{ uri: avatarUrl }} style={styles.profileimage} />
+            ) : (
+                <View>
+                  <Image source={userAvatar} style={styles.profileimage} />
+                </View>
+            )}
+          </View>
+
+
+          <View style={styles.centeredContainer}>
+            <Text style={styles.ProfilePhotoAnchorText}> {username}'s profile  </Text>
+
+            <Text style={styles.textboxAnchorText}>Business Name</Text>
+            <TextInput
+                placeholder="Enter business name"
+                onChangeText={(text) => {
+                  setName(text);
+                  setIsAnyFieldFilled(!!text);
+                }}
+                style={styles.input}
+            />
+          </View>
+
+          <View style={styles.centeredContainer}>
+            <Text style={styles.textboxAnchorText}>Business Website URL</Text>
+            <TextInput
+                placeholder="https://example.com"
+                value={user_url}
+                onChangeText={(text) => {
+                  handleCheckURL(text);
+                  setIsAnyFieldFilled(!!text);
+                }}
+                onBlur={handleBlur}
+                style={styles.input}
+            />
+          </View>
+          {checkValidURL? (
+              <Text style={styles.errorMessage}>Please enter a valid URL</Text>
           ) : (
-              <View>
-                <Image source={userAvatar} style={styles.profileimage} />
-              </View>
+              <Text style={styles.errorMessage}></Text>
           )}
-        </View>
 
+          <View style={styles.centeredContainer}>
+            <Text style={styles.textboxAnchorText}>Company Description</Text>
+            <TextInput
+                placeholder="Enter company description"
+                value={user_description}
+                onChangeText={(text) => {
+                  setdescription(text);
+                  setIsAnyFieldFilled(!!text);
+                }}
+                style={styles.input}
+            />
+          </View>
 
-        <View style={styles.centeredContainer}>
-          <Text style={styles.ProfilePhotoAnchorText}> {username}'s profile  </Text>
-
-          <Text style={styles.textboxAnchorText}>Business Name</Text>
-          <TextInput
-              placeholder="Enter business name"
-              onChangeText={(text) => {
-                setName(text);
-                setIsAnyFieldFilled(!!text);
-              }}
-              style={styles.input}
-          />
-        </View>
-
-        <View style={styles.centeredContainer}>
-          <Text style={styles.textboxAnchorText}>Business Website URL</Text>
-          <TextInput
-              placeholder="https://example.com"
-              value={user_url}
-              onChangeText={(text) => {
-                handleCheckURL(text);
-                setIsAnyFieldFilled(!!text);
-              }}
-              onBlur={handleBlur}
-              style={styles.input}
-          />
-        </View>
-        {checkValidURL? (
-            <Text style={styles.errorMessage}>Please enter a valid URL</Text>
-        ) : (
-            <Text style={styles.errorMessage}></Text>
-        )}
-
-        <View style={styles.centeredContainer}>
-          <Text style={styles.textboxAnchorText}>Company Description</Text>
-          <TextInput
-              placeholder="Enter company description"
-              value={user_description}
-              onChangeText={(text) => {
-                setdescription(text);
-                setIsAnyFieldFilled(!!text);
-              }}
-              style={styles.input}
-          />
-        </View>
-
-        <View style={styles.centeredContainer}>
-          <TouchableOpacity
-              style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
-              disabled={checkValidURL || !isAnyFieldFilled}
-              onPress={updateProfile}
-          >
-            <Text style={styles.buttonText}>Update Profile</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.centeredContainer}>
+            <TouchableOpacity
+                style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
+                disabled={checkValidURL || !isAnyFieldFilled}
+                onPress={updateProfile}
+            >
+              <Text style={styles.buttonText}>Update Profile</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
   );
 }
@@ -363,7 +365,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     position:'absolute',
     margin:10,
-    top: 335,
+    top: 312,
     marginLeft: 40,
   },
   //pop-up css

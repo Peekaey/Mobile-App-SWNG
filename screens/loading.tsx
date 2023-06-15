@@ -65,7 +65,7 @@ export function getEventURL() {
 
 export async function GrabChapter() {
   try {
-    Chapter = await SecureStore.getItemAsync('role');
+    Chapter = await SecureStore.getItemAsync('chapter');
     // You can now use the 'Chapter' variable for further processing
     console.log('Chapter:', Chapter);
     return Chapter;
@@ -151,9 +151,8 @@ const fetchAndStoreAvatar = async (storedUserId:any) => {
 
   async function fetchmembers() {
     try {
-      const chapter = 'camden';
       const response = await fetch(
-          `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${chapter}`
+          `https://www.swng.org.au/wp-json/swng-app/v1/memberNames/${Chapter}`
       );
       const data = await response.json();
       const memberNames = Object.values(data).map((member:any) => member.name);

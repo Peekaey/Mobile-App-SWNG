@@ -4,33 +4,25 @@ import * as SecureStore from 'expo-secure-store';
 
 
 
-export default async function scheduleNotification(title:any, body:any, time:any) {
-    const notificationTime = new Date(getNextThursday().getFullYear(), getNextThursday().getMonth(), getNextThursday().getDate(), 16, 0, 0); // Set the time to 4 PM
-    const now = new Date();
-
-    const eventTitle = await SecureStore.getItemAsync('eventTitle');
-    const eventTime = await SecureStore.getItemAsync('eventDate');
-    const eventDate = await SecureStore.getItemAsync('venueText')
-    const eventVenue = await SecureStore.getItemAsync('eventTimes')
-    const chapter = await SecureStore.getItemAsync('role')
-
-    if (notificationTime > now) {
-        const scheduledNotificationConfig = {
-            content: {
-                title: `Next Event for ${chapter} chapter`,
-                body: `${eventTitle} at ${eventVenue} on ${eventDate} at ${eventTime}`,
-            },
-            trigger: {
-                date: notificationTime,
-            },
-        };
-
-        const notificationId = await Notifications.scheduleNotificationAsync(scheduledNotificationConfig);
-        console.log('Scheduled notification with ID:', notificationId);
-    } else {
-        console.log('Notification time has already passed');
-    }
-}
+// export default async function scheduleNotification(title:any, body:any, time:any) {
+//
+//     if (notificationTime > now) {
+//         const scheduledNotificationConfig = {
+//             content: {
+//                 title: `Next Event for ${chapter} chapter`,
+//                 body: `${eventTitle} at ${eventVenue} on ${eventDate} at ${eventTime}`,
+//             },
+//             trigger: {
+//                 date: notificationTime,
+//             },
+//         };
+//
+//         const notificationId = await Notifications.scheduleNotificationAsync(scheduledNotificationConfig);
+//         console.log('Scheduled notification with ID:', notificationId);
+//     } else {
+//         console.log('Notification time has already passed');
+//     }
+// }
 
 function getNextThursday() {
     const currentDate = new Date();
@@ -40,13 +32,13 @@ function getNextThursday() {
 
 
 
-export async function TestInAppNotification() {
+export default async function TestInAppNotification() {
     console.log("TestInAppNotification ScheduledNotification.tsx")
     const checkNotificationPermissionAndSchedule = async () => {
         const { status } = await Notifications.getPermissionsAsync();
         if (status === 'granted') {
             console.log('Notification permission is granted');
-            await scheduleNotification('Reminder', 'Hello, world!', 10); // Schedule a notification after 10 seconds
+            await scheduleNotification();
         } else {
             console.warn('Notification permission is not granted');
             return false;
@@ -76,14 +68,23 @@ export async function TestInAppNotification() {
         }
     }
 
-    async function scheduleNotification(title, body, time) {
+    async function scheduleNotification() {
+        const notificationTime = new Date(getNextThursday().getFullYear(), getNextThursday().getMonth(), getNextThursday().getDate(), 16, 0, 0); // Set the time to 4 PM
+        const now = new Date();
+
+        const eventTitle = await SecureStore.getItemAsync('eventTitle');
+        const eventTime = await SecureStore.getItemAsync('eventDate');
+        const eventDate = await SecureStore.getItemAsync('venueText')
+        const eventVenue = await SecureStore.getItemAsync('eventTimes')
+        const chapter = await SecureStore.getItemAsync('role')
+
         const scheduledNotificationConfig = {
             content: {
-                title: `Next Event for Narellan chapter`,
-                body: 'Combined Chapter Meeting - Hosted by Campbelltown Chapter at Wests Leagues Club - Leumeah on 21st June at 07:00',
+                title: `Next Event for ${chapter} chapter`,
+                body: `${eventTitle} at ${eventVenue} on ${eventDate} at ${eventTime}`,
             },
             trigger: {
-                seconds: 5,
+                date: notificationTime,
             },
         };
 

@@ -18,7 +18,7 @@ import axios from "axios";
 
 
 
-
+ // Grabs User Avatar to display on page
 async function getAvatar() {
   let storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
   if (storedAvatarURL === null) {
@@ -31,6 +31,7 @@ async function getAvatar() {
   return storedAvatarURL;
 }
 
+// Gets users name to display on page
 async function getName() {
   let storedUsername = await SecureStore.getItemAsync('userName');
   if (storedUsername === null) {
@@ -42,14 +43,11 @@ async function getName() {
 }
 
 
-// const for update data
+// const for update user profile data
 const updateUserProfile = async (user_name:any, user_url:any, user_description:any) => {
 
   const storedToken = await SecureStore.getItemAsync('token');
   const storedUserId = await SecureStore.getItemAsync('user_id');
-
-  // console.log ("PROFILE SCREEN STORED USER ID", storedUserId)
-  // console.log ("PROFILE SCREEN STORED token", storedToken)
 
 
   const end_point = `https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`;
@@ -78,18 +76,14 @@ const updateUserProfile = async (user_name:any, user_url:any, user_description:a
 };
 
 
-
-
-
-
 export default function ProfilePage() {
 
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
-
+  // Checks token status on page laod
   CheckTokenStatusOnPageLoad();
 
-
+// Grabs user avatar from stored and displays, if no avatar sets it to the default placeholder
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
   useEffect(() => {
     const fetchAvatar = async () => {
@@ -122,7 +116,7 @@ export default function ProfilePage() {
   }, []);
 
 
-
+  // Several state hooks for validation
   const [isUpdated, setIsUpdated] = useState(false);
   const [user_name, setName] = useState('');
   const [user_description, setdescription] = useState('');
@@ -134,7 +128,7 @@ export default function ProfilePage() {
   const is_URL_empty = user_url;
   const buttonBackgroundColor = is_URL_Wrong || !isAnyFieldFilled ? '#8B0000' : '#ed3434';
 
-
+  // Checks if user session token is valid
   function updateProfile() {
 
     const validateToken = async () => {
@@ -175,6 +169,7 @@ export default function ProfilePage() {
     return null;
   }
 
+  // Updates user profile
   const updateinfo = async () => {
     const result = await updateUserProfile(user_name, user_url, user_description); //call updateUserProfile function
     console.log(result);
@@ -186,10 +181,6 @@ export default function ProfilePage() {
     setcheckValidURL(false);
     setIsAnyFieldFilled(false);
   };
-
-
-
-
 
   useEffect(() => {
     if (isUpdated) {
@@ -205,7 +196,8 @@ export default function ProfilePage() {
       );
     }
   }, [isUpdated]);
-  //function for regx validation
+
+  //Validation for URL
   const handleCheckURL = text => {
     let regx = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/im;
     setUrl(text);
@@ -227,11 +219,9 @@ export default function ProfilePage() {
   return (
 
       <View style={styles.container}>
-
         <View style={styles.centeredContainer}>
           <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
         </View>
-
         <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }} automaticallyAdjustKeyboardInsets={true}>
           <View style={styles.centeredContainer}>
             {avatarUrl ? (
@@ -242,8 +232,6 @@ export default function ProfilePage() {
                 </View>
             )}
           </View>
-
-
           <View style={styles.centeredContainer}>
             <Text style={styles.ProfilePhotoAnchorText}> {username}'s profile  </Text>
 
@@ -257,7 +245,6 @@ export default function ProfilePage() {
                 style={styles.input}
             />
           </View>
-
           <View style={styles.centeredContainer}>
             <Text style={styles.textboxAnchorText}>Business Website URL</Text>
             <TextInput
@@ -276,7 +263,6 @@ export default function ProfilePage() {
           ) : (
               <Text style={styles.errorMessage}></Text>
           )}
-
           <View style={styles.centeredContainer}>
             <Text style={styles.textboxAnchorText}>Company Description</Text>
             <TextInput
@@ -289,13 +275,11 @@ export default function ProfilePage() {
                 style={styles.input}
             />
           </View>
-
           <View style={styles.centeredContainer}>
             <TouchableOpacity
                 style={[styles.button, { backgroundColor: buttonBackgroundColor }]}
                 disabled={checkValidURL || !isAnyFieldFilled}
-                onPress={updateProfile}
-            >
+                onPress={updateProfile}>
               <Text style={styles.buttonText}>Update Profile</Text>
             </TouchableOpacity>
           </View>

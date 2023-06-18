@@ -3,24 +3,29 @@ import {StyleSheet, TouchableOpacity, ScrollView, Alert} from 'react-native';
 import { Text, View } from '../components/Themed';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
 import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
 
+
+// Gets event title
 import {
   getEventTitle,
 } from './loading';
-import * as SecureStore from "expo-secure-store";
-import axios from "axios";
+
 
 
 
 export default function AttendancePage() {
+
+  // Checks token status on page laod
   CheckTokenStatusOnPageLoad();
 
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [attendance, setAttendance] = useState<string[]>([]);
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
 
+  // Grabs list of stored members grabbed during the loading screen
   useEffect(() => {
     getStoredMemberNames();
   }, []);
@@ -183,10 +188,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   separator: {
-    marginVertical: 3,
+    marginVertical: 20,
     height: 1,
     width: '100%',
-    top:15,
-    marginBottom: 40,
   },
 });

@@ -1,12 +1,6 @@
-import {
-    StyleSheet,
-    ScrollView,
-    TextInput,
-    TouchableOpacity,
-    SafeAreaView,
-    TouchableWithoutFeedback,
-    Animated,
-    Alert
+
+
+import {StyleSheet, ScrollView, TextInput, TouchableOpacity, SafeAreaView, TouchableWithoutFeedback, Animated, Alert
 } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -18,10 +12,13 @@ import {ParamListBase, useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import axios from "axios/index";
 
+
+// Function for the star rating
 const Star = () => {
 const [star_Rating, setStar_Rating] = useState(null);
 const animatedButtonScale = new Animated.Value(1);
 const starRatingArray = [1, 2, 3, 4, 5];
+
 
 const handlePressIn = () => {
   Animated.spring(animatedButtonScale, {
@@ -73,11 +70,13 @@ return (
 );
 };
 
+// combined function for displaying chapter/member names in the dropdown fields
 const Chapters_Members = () => {
   const [selected, setSelected] = React.useState("");
   const [chapterNames, setChapterNames] = React.useState([]);
   const [memberNames, setMemberNames] = React.useState([]);
 
+  // Displaying chapter names in dropdown field
   React.useEffect(() => {
       async function fetchChapterNames() {
           try {
@@ -94,6 +93,7 @@ const Chapters_Members = () => {
       fetchChapterNames();
   }, []);
 
+  // Displaying member names in dropdown field
   React.useEffect(() => {
       async function fetchMemberNames() {
           try {
@@ -152,6 +152,7 @@ const Chapters_Members = () => {
   );
 };
 
+// Action to handle after the information has been selected and then submitted to be saved - Occurs after token status has been validated
 const postRap = async (subject, review, rating) => {
 
   const storedUserId = await SecureStore.getItemAsync('user_id');
@@ -189,11 +190,11 @@ const postRap = async (subject, review, rating) => {
   return result;
 };
 
+
 export default function RapPage() {
 
+    // Checks token status on page laod
     CheckTokenStatusOnPageLoad();
-
-
 
   const [subject, setsubject] = React.useState('');
   const [review, setreview] = React.useState('');
@@ -204,7 +205,7 @@ export default function RapPage() {
 
     const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
-
+    // Checks if the token status is expired before saving the information and calling post rap function
     function updateProfile() {
 
         const validateToken = async () => {
@@ -226,16 +227,16 @@ export default function RapPage() {
 
                 const response = await axiosInstance.post('https://swng.org.au/wp-json/jwt-auth/v1/token/validate');
                 if (response.data.code === 'jwt_auth_valid_token' && response.data.data.status === 200) {
-                    console.log('Token is valid111');
+                    console.log('Token is valid');
                     await updateinfo();
                 } else {
                     navigation.navigate('Login');
-                    console.log('Token is Invalid111');
+                    console.log('Token is Invalid');
                     Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
                 }
             } catch (error) {
                 navigation.navigate('Login');
-                console.log("Token is error")
+                console.log("Token error")
                 Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
             }
         };
@@ -246,6 +247,7 @@ export default function RapPage() {
     }
 
 
+    // Post Rap Submit Login - Checks if Token is valid first then submits rap
     const updateinfo = async () => {
     const result = await postRap(subject, review, rating);
     console.log(result);
@@ -290,7 +292,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     top: 110,
   },
-  //dropdown css
   dropdown:{
    flexDirection: 'row',
    marginLeft: '5%',
@@ -328,7 +329,6 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
   },
-  // input text css
   input: {
     width: '80%',
     height: 50,
@@ -362,7 +362,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
-  // star rating css
   rateheading:{
     fontSize: 20,
     fontWeight: 'bold',

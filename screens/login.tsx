@@ -1,7 +1,5 @@
-// Modules and Stuff to work
-// Need to refactor and remove thats unneeded in future
-
-import { StyleSheet, Image, TextInput, TouchableOpacity, StatusBar, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+// Modules  to work
+import { StyleSheet, Image, TextInput, TouchableOpacity,Platform } from 'react-native';
 import { Text, View } from '../components/Themed';
 import React, { useState, useEffect } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -14,8 +12,7 @@ import MobileAppsManLogo from '../assets/MobileAppsManLogo.png'
 import SWNGLogoWhite from '../assets/SWNGWhiteLogo.png'
 
 
-// Placeholder code for now, please do not edit any notification related code 
-// // - Related to asking the user for notification permission to display event notifications
+// Asks for notification permission on first startup
 const askNotificationPermission = async () => {
   const { status } = await Notifications.getPermissionsAsync();
   let finalStatus = status;
@@ -72,19 +69,16 @@ const handleNotificationResponse = (response:any) => {
   // Handle the user's response to the notification
 };
 
-// Call the function to enable foreground notifications and schedule a local notification
 
 
 
 
 
 export default function LoginScreen() {
+  // Asks for Notification Permission on first run
+  askNotificationPermission();
 
-   askNotificationPermission();
 
-
-
-  
   // Declaring navigation dependencies
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   navigation.getParent()?.setOptions({tabBarStyle: {display: 'none'}});
@@ -98,6 +92,7 @@ export default function LoginScreen() {
   const [rememberPassword, setRememberPassword] = useState(false);
 
   // Grabs stored username and password - if rememeber password function was not used on last saved - uses placeholder values
+  // Displays either placeholder or stored credentials for the login text fields
   useEffect(() => {
     const checkStoredLoginCredentials = async () => {
       const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
@@ -119,6 +114,7 @@ export default function LoginScreen() {
     checkStoredLoginCredentials();
   }, []);
 
+
   const handleLogin = async () => {
 
     setLoading(true); // Start the loading process once "Login" has been clicked
@@ -131,75 +127,21 @@ export default function LoginScreen() {
       });
       // Extract the token, user_id, chapter, and role from the response
       const { token, user_id, chapter, role } = response.data;
-      // console.log("ROLE IN RESPONSE", role);
-      //
-      // let matchedRole: any;
-      // let normalizedRole: string = '';
-      //
-      // if (Array.isArray(role) && role.length > 0) {
-      //   const roleString = role[0]; // Get the first element of the role array
-      //   normalizedRole = roleString.toLowerCase();
-      //   console.log("Normalized role:", normalizedRole);
-      //
-      //   if (normalizedRole.includes('narellan')) {
-      //     matchedRole = 'Narellan';
-      //     await SecureStore.setItemAsync('role', matchedRole);
-      //   } else if (normalizedRole.includes('camden')) {
-      //     matchedRole = 'Camden';
-      //     await SecureStore.setItemAsync('role', matchedRole);
-      //   } else if (normalizedRole.includes('campbelltown')) {
-      //     matchedRole = 'Campbelltown';
-      //     await SecureStore.setItemAsync('role', matchedRole);
-      //   } else if (normalizedRole.includes('liverpool')) {
-      //     matchedRole = 'Liverpool';
-      //     await SecureStore.setItemAsync('role', matchedRole);
-      //   }
-      // } else {
-      //   console.log("Invalid role");
-      // }
-
 
       await SecureStore.setItemAsync('chapter', chapter)
 
       // Stores the token and userid in encrypted local storage
       await SecureStore.setItemAsync('token', token);
       await SecureStore.setItemAsync('user_id', user_id.toString());
-      // await SecureStore.setItemAsync('chapter', JSON.stringify(chapter));
 
-
-
-      const storedToken = await SecureStore.getItemAsync('token');
-      const storedUserId = await SecureStore.getItemAsync('user_id');
-      const storedChapter = await SecureStore.getItemAsync('chapter');
-      // const storedRole = await SecureStore.getItemAsync('role');
-      //
-      //
-      // console.log("Stored Role", storedRole)
-      //
-      // if (storedChapter !== null) {
-      //   console.log('Stored Chapter:', JSON.parse(storedChapter));
-      // } else {
-      //   console.log('Chapter is not stored.');
-      // }
-
-      console.log('Stored Token:', storedToken);
-      console.log('Stored User ID:', storedUserId);
 
       // If rememberPassword option was ticked - stores the username and password in encrypted local storage
       if (rememberPassword) {
-        console.log('Storing Password Long Term');
 
         await SecureStore.setItemAsync('LongTermUsername', username);
         await SecureStore.setItemAsync('LongTermPassword', password);
         await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
 
-        const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
-        const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
-        const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
-        console.log('Stored Username:', LongTermUsername);
-        console.log('Stored Password:', LongTermPassword);
-        console.log('Remember Password Stored value:', RememberPassword);
-      
       // Otherwise deletes/clears and local saved username/passwords
       } else {
         console.log('Removing Password Long Term');
@@ -208,16 +150,10 @@ export default function LoginScreen() {
         await SecureStore.deleteItemAsync('LongTermPassword');
         await SecureStore.setItemAsync('RememberPassword', rememberPassword.toString());
 
-        const LongTermUsername = await SecureStore.getItemAsync('LongTermUsername');
-        const LongTermPassword = await SecureStore.getItemAsync('LongTermPassword');
-        const RememberPassword = await SecureStore.getItemAsync('RememberPassword');
-        console.log('Stored Username:', LongTermUsername);
-        console.log('Stored Password:', LongTermPassword);
-        console.log('Remember Password Stored value:', RememberPassword);
       }
 
       // After login is successful - navigates to loading screen
-      navigation.navigate('Loading' as never);
+      navigation.navigate('Loading');
     } catch (error) {
       console.log(error);
       // Otherwises sticks to login screen and displays error if username/password was incorrect
@@ -293,11 +229,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-
     resizeMode: 'contain',
     height: 200,
     width: '80%'
-  
   },
   mobileAppsLogo: {
     marginBottom: '5%',
@@ -351,7 +285,6 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#8B0000',
   },
-
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -373,7 +306,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   checkboxLabel: {
-
     marginLeft: 8,
   },
   checkboxTick: {

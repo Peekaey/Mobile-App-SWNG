@@ -1,3 +1,4 @@
+// Imports to work
 import {Alert, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import { Text, View} from '../components/Themed';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -9,11 +10,14 @@ import axios from "axios/index";
 import {ParamListBase, useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
+
+// Same Logic as Rap Page - Entire function responsible for dropdowns that display chapter/members
 const Chapters_Members = () => {
   const [selected, setSelected] = React.useState("");
   const [chapterNames, setChapterNames] = React.useState([]);
   const [memberNames, setMemberNames] = React.useState([]);
 
+  // Fetch and display chapterNames
   React.useEffect(() => {
       async function fetchChapterNames() {
           try {
@@ -30,6 +34,7 @@ const Chapters_Members = () => {
       fetchChapterNames();
   }, []);
 
+  // Fetch and display member names
   React.useEffect(() => {
       async function fetchMemberNames() {
           try {
@@ -74,6 +79,7 @@ const Chapters_Members = () => {
       )?.value;
   };
 
+  // Display dropdowns
   return (
       <View style={styles.dropdown}>
           <View style={styles.chap_dropdown}>
@@ -88,7 +94,7 @@ const Chapters_Members = () => {
   );
 };
 
-// const for POST data 
+// const for post data and submitting referral
 const postReferral = async (username:any, org:any, email:any, phonenum:any, notes:any) => {
 
   const storedUserId = await SecureStore.getItemAsync('user_id');
@@ -132,8 +138,10 @@ const postReferral = async (username:any, org:any, email:any, phonenum:any, note
   return result;
 };
 
+
 export default function ReferralsPage() {
 
+  // Checks token status on page laod
   CheckTokenStatusOnPageLoad();
 
 
@@ -154,6 +162,8 @@ export default function ReferralsPage() {
 
 
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+
+  // Checks if the token status is expired before saving the information and calling post referral function
 
   function updateProfile() {
 
@@ -196,7 +206,7 @@ export default function ReferralsPage() {
   }
 
 
-
+ // Regex validation for phone number and email
   const handleCheckEmail = text => {
     let re = /\S+@\S+\.\S+/;
     let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
@@ -226,6 +236,7 @@ export default function ReferralsPage() {
     }
   };
 
+  // If token status valid - submits referral information to API
   const updateinfo = async () => {
     const result = await postReferral(username, org, email, phonenum, notes);
     console.log(result);

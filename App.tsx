@@ -1,5 +1,5 @@
 
-// Modules and Stuff to work
+// Modules to import
 import { StyleSheet, Image, View , TouchableOpacity} from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -26,13 +26,15 @@ import ProfilePage from './screens/profile';
 import LoadingPage from './screens/loading';
 import {useEffect , useState} from 'react';
 
+// Hides the logs from appearing in expo previewer - reading errors from terminal instead
 LogBox.ignoreAllLogs(true)
 
-// Pages for the navigation to be able to navigate to
 
-// Creates the bottom navigation bar
+// Initialises the bottom navigation bar
 const Tab = createBottomTabNavigator();
 
+
+// Pages for the navigation to be able to navigate to - add an additional page to the array after importing a new page
 const homeRoutes = [
     { name: 'Loading', component: LoadingPage },
     { name: 'Login', component: LoginScreen },
@@ -43,12 +45,12 @@ const homeRoutes = [
     { name: 'Attendance', component: AttendancePage },
 ];
 
-// Function underneath is the styling of the bottom navigation bar, including icons
-export const HomeTabs = () => {
 
+// Hometabs const is the styling of the bottom navigation bar, including icons
+export const HomeTabs = () => {
     return (
     <Tab.Navigator tabBar={props => <BottomTabBar {...props} state={{...props.state, routes: props.state.routes.slice(0,7)}}></BottomTabBar>}
-      initialRouteName='Login'
+      initialRouteName='Login' // Sets initial startup page
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName = '';
@@ -56,7 +58,6 @@ export const HomeTabs = () => {
           // Icons for each route
           if (route.name === 'Login') {
             iconName = focused ? 'person-circle' : 'person-circle-outline';
-
           }
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
@@ -101,6 +102,7 @@ export const HomeTabs = () => {
                 name={route.name}
                 component={route.component}
                 options={{
+                    // Initialising the top navigation bar
                   header: ({ navigation, route }) => (
                     <TopNavigationSimpleUsageShowcase navigation={navigation} route={route} />
                   ),
@@ -122,9 +124,10 @@ async function getAvatar() {
 
 // Creating Top Navigation Bar
 export const TopNavigationSimpleUsageShowcase = ({ navigation, route }: any) => {
-    console.log("TopNavigationSimpleShowcase")
-  const [avatarSource, setAvatarSource] = useState<string | undefined>(undefined);
 
+    const [avatarSource, setAvatarSource] = useState<string | undefined>(undefined);
+
+    // Sets avatar to display - If null then displays default picture
   useEffect(() => {
     getAvatar().then((avatarUrl) => {
       setAvatarSource(avatarUrl);
@@ -159,7 +162,7 @@ export const TopNavigationSimpleUsageShowcase = ({ navigation, route }: any) => 
   );
 };
 
-// Components of the app - incldues all dependencies as well as bottom/top navbars
+// Components of the app - includes all dependencies as well as bottom/top navigation bars
 const App = () => {
     return (
         <React.Fragment>
@@ -187,7 +190,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
     paddingTop: 10
-
   },
   logo: {
     width: 120,
@@ -199,7 +201,5 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 8,
-  },   
-  
-  
+  },
 });

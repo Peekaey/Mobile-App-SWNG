@@ -1,6 +1,5 @@
 
 // Modules and Stuff to work
-// Need to refactor and remove thats unneeded in future
 import { StyleSheet, Animated, Easing } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { View } from '../components/Themed';
@@ -63,11 +62,10 @@ export function getEventURL() {
 }
 
 
+// Grabs the stored chapter from login and retrieves it
 export async function GrabChapter() {
   try {
     Chapter = await SecureStore.getItemAsync('chapter');
-    // You can now use the 'Chapter' variable for further processing
-    console.log('Chapter:', Chapter);
     return Chapter;
   } catch (error) {
     console.log('Error retrieving Chapter:', error);
@@ -80,7 +78,7 @@ export async function GrabChapter() {
 export async function BackEndLoading() {
 
 await GrabChapter();
-  console.log('Stored Chapter in loading.tsx',Chapter);
+
   // Scrapes SWNG Website for appropriate event information
 
   axios.get(`https://www.swng.org.au/chapters/${Chapter}/`)
@@ -118,8 +116,6 @@ await GrabChapter();
     const storedToken = await SecureStore.getItemAsync('token');
     const storedUserId = await SecureStore.getItemAsync('user_id');
 
-    console.log ("LOADING SCREEN STORED USER ID", storedUserId)
-
 // Set the Authorization header with the bearer token
 const axiosInstance = axios.create({
   headers: {
@@ -127,8 +123,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// fetching member's saved avatar through wordpress API
-
+// fetching member's saved avatar through Wordpress API
 const fetchAndStoreAvatar = async (storedUserId:any) => {
   try {
     const response = await axiosInstance.get(`https://swng.org.au/wp-json/wp/v2/users/${storedUserId}`);
@@ -137,18 +132,12 @@ const fetchAndStoreAvatar = async (storedUserId:any) => {
     await SecureStore.setItemAsync('avatarURL', avatarUrl);
     const name = response.data.name;
     await SecureStore.setItemAsync('userName', name);
-    console.log('Name stored successfully');
-    console.log('Avatar URL stored successfully');
-
-    const storedAvatarURL = await SecureStore.getItemAsync('avatarURL');
-    const storedUserName = await SecureStore.getItemAsync('userName');
-    console.log(storedUserName);
-    console.log(storedAvatarURL);
   } catch (error) {
     console.error('Error retrieving user data:', error);
   }
 };
 
+// fetching list of members for the chapter that the user is assigned to - make attendace page preload data
   async function fetchmembers() {
     try {
       const response = await fetch(
@@ -157,36 +146,25 @@ const fetchAndStoreAvatar = async (storedUserId:any) => {
       const data = await response.json();
       const memberNames = Object.values(data).map((member:any) => member.name);
       await SecureStore.setItemAsync('memberNames', JSON.stringify(memberNames));
-      console.log('Member names stored in SecureStore:', memberNames);
     } catch (error) {
       console.error(error);
     }
   }
 
-
-  const handleEventDetails = async () => {
-    const eventTitle = getEventTitle()
-    await SecureStore.setItemAsync('eventTitle', eventTitle);
-    const eventDate = getEventDate()
-    await SecureStore.setItemAsync('eventDate', eventDate);
-    const venueText = getVenueText()
-    await SecureStore.setItemAsync('venueText', venueText);
-    const eventTime = getEventTimes()
-    await SecureStore.setItemAsync('eventTimes', JSON.stringify(eventTimes));
-  }
-
-
+// Call the function and stored list of members in the same chapter as the user
 await fetchmembers();
 // Call the function and store member avatar's URL in secure storage
 await fetchAndStoreAvatar(storedUserId);
 
 }
 
-// NGL not sure what this does, only to avoid error with typescript props
+// Avoiding errors with typescript prompts
 interface LoadingPageProps {
   // Define the types for any props that your component will receive
 }
 
+
+// Default function for the LoadingPage
 export default function LoadingPage(props: LoadingPageProps) {
 
   // Declaring Navigation dependencies to navigate to index page
@@ -195,11 +173,10 @@ export default function LoadingPage(props: LoadingPageProps) {
 
   // State Variable to prevent navigation to index page unless event data is grabbed.
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchData = async () => {
       await BackEndLoading();
-      setLoading(false);
+      setLoading(false); // Once all the day has been gathered, set loading to be finished and render the final animation
     };
 
     fetchData();

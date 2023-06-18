@@ -1,14 +1,14 @@
-// Modules and Stuff to work
-// Need to refactor and remove thats unneeded in future
+// Modules to work
+
 import { StyleSheet, Image, Linking } from 'react-native';
 import { Text, View } from '../components/Themed';
 import React, { useState, useEffect } from 'react';
 import { TouchableWithoutFeedback } from '@ui-kitten/components/devsupport';
 import scheduledNotification from "../components/scheduledNotification";
-// Main Function - Needs to be exported so that the react-navigation can define and read the page
-
 import CheckTokenStatusOnPageLoad from "../components/checkTokenStatus";
+import * as SecureStore from "expo-secure-store";
 import { Chapter} from './loading';
+import TestInAppNotification from "../components/scheduledNotification";
 
 // Import Event Details from loading page
 import {
@@ -18,31 +18,19 @@ import {
   getEventTimes,
   getEventURL,
 } from './loading';
-import * as SecureStore from "expo-secure-store";
-
-async function deleteRoleItem() {
-  try {
-    await SecureStore.deleteItemAsync('role');
-    console.log('Role item deleted successfully.');
-  } catch (error) {
-    console.log('Error deleting role item:', error);
-  }
-}
 
 
 
 // Main function
 export default function IndexPage() {
+  // Sets Notification to run
+  TestInAppNotification();
+  // Checks if stored token status is invalid on page load
   CheckTokenStatusOnPageLoad();
 
-
-
-
-
-  useEffect(() => {
-    scheduledNotification();
-  }, []);
-  // Display page information - call several functions and variables for data
+  // Returns Page
+  // Greybox contains event information
+  // Redbox contains bottom of the page chapter links
 
   return (
     <View style={styles.containerHead}>
@@ -66,23 +54,16 @@ export const GreyBox = () => {
   const venueText = getVenueText();
   const eventURL = getEventURL();
 
-
   if (!eventTitle || !eventTimes || !eventDate || !venueText) {
     // Render loading state or return null
     return null;
   }
-
-  console.log(eventTitle)
-  console.log(eventTimes)
-  console.log(eventDate)
-  console.log(venueText)
 
   // Action to open EventURL in browser
   const OpenEventDetails = () => {
     console.log('Called');
     Linking.openURL(eventURL);
   };
-
 
   // Display content in center box
   return (
@@ -126,12 +107,10 @@ const ApologyButton = () => {
 };
 
 
-// Function to display content in bottom of screen
+// Function to display more information for each chapter
 const RedBox = () => {
 
-
   // Actions to open each chapters page
-
   const OpenBrowserCamden = () => {
     console.log('Called');
     Linking.openURL('https://www.swng.org.au/chapters/camden/');
@@ -150,7 +129,6 @@ const RedBox = () => {
   };
 
   // Displays red box info
-
   return (
       <View style={styles.bottomBox}>
         <Text style={[styles.contactText, { textAlignVertical: 'top' }]}> Website Homepages </Text>
@@ -173,7 +151,6 @@ const RedBox = () => {
             <Text style={styles.chapterTitle}> {'\n'}
               CAMPBELLTOWN {'\n'}
               Chapter {'\n'}
- {'\n'}
             </Text>
           </View>
         </View>
@@ -185,8 +162,6 @@ const RedBox = () => {
             <Text style={styles.chapterTitle}> {'\n'}
               LIVERPOOL {'\n'}
               Chapter {'\n'}
-
-
             </Text>
           </View>
           <View style={styles.chapterContainer}>
@@ -197,15 +172,11 @@ const RedBox = () => {
               NARELLAN {'\n'}
               Chapter {'\n'}
             </Text>
-            <Text>
-
-            </Text>
           </View>
         </View>
       </View>
   );
 };
-
 
 // Page Styling
 const styles = StyleSheet.create({
@@ -225,11 +196,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   separator: {
-    marginVertical: 3,
+    marginVertical: 20,
     height: 1,
     width: '100%',
-    top:15,
-    marginBottom: 40,
   },
   
   middleBox: {

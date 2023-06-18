@@ -1,57 +1,10 @@
 // Modules and Stuff to work
-// Need to refactor and remove thats unneeded in future
 import {Alert } from 'react-native';
 import React, { useEffect } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation, ParamListBase } from '@react-navigation/native';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-
-
-
-// Main function to check status of a session token
-// If Valid = No Action - If invalid = return to login page and display error to tell user to log in again.
-export function updateProfile() {
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-
-  useEffect(() => {
-    const validateToken = async () => {
-      try {
-        const token = await SecureStore.getItemAsync('token');
-        if (!token) {
-          navigation.navigate('Login');
-          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
-        }
-
-        const axiosInstance = axios.create({
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'User-Agent': 'Your-User-Agent',
-          },
-        });
-
-        const response = await axiosInstance.post('https://swng.org.au/wp-json/jwt-auth/v1/token/validate');
-        if (response.data.code === 'jwt_auth_valid_token' && response.data.data.status === 200) {
-          console.log('Token is valid');
-          updateProfile();
-        } else {
-          navigation.navigate('Login');
-          Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
-        }
-      } catch (error) {
-        navigation.navigate('Login');
-        Alert.alert('Session Expired', 'Your session token is invalid or expired, please login again');
-      }
-    };
-
-    validateToken();
-  }, []);
-
-  return null;
-}
 
 
 // Main function to check status of a session token
